@@ -29,8 +29,8 @@ if (counters.collisionHits < 1) {
   console.log('POSITIVE ASSERTION FAILED: no contact ever detected');
   bad = true;
 }
-if (counters.motionSteps < 1000) {
-  console.log(`POSITIVE ASSERTION FAILED: motion steps ${counters.motionSteps} < 1000`);
+if (counters.collisionChecks < 1000) {
+  console.log(`POSITIVE ASSERTION FAILED: collision checks ${counters.collisionChecks} < 1000`);
   bad = true;
 }
 if (counters.unmaskedBullets > 0) {

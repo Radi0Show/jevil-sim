@@ -14,7 +14,7 @@ import { runTrace } from './run-trace.mjs';
 const RUNS = 10;
 const SEED = 12345;
 const FRAMES = 600;
-const SCENES = ['stub', 'soul-wall', 'soul-focus', 'soul-corner', 'soul-box', 'soul-box-focus', 'soul-box-corner', 'oracle-a70', 'oracle-a65', 'oracle-a49', 'oracle-a68', 'oracle-a71', 'oracle-a50', 'oracle-a48', 'oracle-a46'];
+const SCENES = ['stub', 'soul-wall', 'soul-focus', 'soul-corner', 'soul-box', 'soul-box-focus', 'soul-box-corner', 'oracle-a70', 'oracle-a65', 'oracle-a49', 'oracle-a68', 'oracle-a71', 'oracle-a50', 'oracle-a48', 'oracle-a46', 'oracle-a75', 'oracle-a61', 'oracle-a76', 'oracle-a72', 'oracle-a73', 'oracle-a77'];
 
 const hash = (s) => createHash('sha256').update(s).digest('hex');
 

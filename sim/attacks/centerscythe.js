@@ -25,6 +25,7 @@
 
 import { spawn, destroy } from '../entity.js';
 import { gmlRandom, gmlChoose } from '../rng.js';
+import { gmlGreater, gmlLess } from '../gml.js';
 import { lengthdirX, lengthdirY } from '../gml.js';
 import { bulletInherit } from '../bullets/collidebullet.js';
 import { collidebullet } from '../bullets/collidebullet.js';
@@ -147,10 +148,13 @@ export const centerscythe = {
       e.sine += e.sinespeed;
       e.dir += e.dirspeed;
       if (e.insanity === 1) {
-        if (e.dirspeed > 0 && e.dirspeed < 3) {
+        // GML epsilon bounds: the f64 sum of 0.01-steps lands within 1e-5
+        // of +-3 and the runner stops one increment earlier than a plain
+        // comparison (a75 f177: 0.04px scythe drift growing from there).
+        if (gmlGreater(e.dirspeed, 0) && gmlLess(e.dirspeed, 3)) {
           e.dirspeed += 0.01;
         }
-        if (e.dirspeed < 0 && e.dirspeed > -3) {
+        if (gmlLess(e.dirspeed, 0) && gmlGreater(e.dirspeed, -3)) {
           e.dirspeed -= 0.01;
         }
       }

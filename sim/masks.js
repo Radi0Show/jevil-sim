@@ -121,6 +121,9 @@ export const DIAMONDBULLET_VERT_MASK = build(raw.diamondbulletVert);
 /** spr_tallpx — a 5x640 AxisAlignedRect strip: FINAL CHAOS's light pillar
  *  body (xscale up to 32) and the fade markers. */
 export const TALLPX_MASK = build(raw.tallpx);
+/** spr_carousel — one Precise body-only mask shared by all 3 frames
+ *  (horse/duck/Everyman): bbox [12,18]-[25,24]. Heads have no hitbox. */
+export const CAROUSEL_MASK = build(raw.carousel);
 
 /**
  * sprite name -> its precise mask, for the DEFAULT contact test.
@@ -150,6 +153,7 @@ export const SPRITE_MASKS = {
   spr_clubsball_c: CLUBSBALL_C_MASK,
   spr_diamondbullet_vert: DIAMONDBULLET_VERT_MASK,
   spr_tallpx: TALLPX_MASK,
+  spr_carousel: CAROUSEL_MASK,
 };
 
 /**

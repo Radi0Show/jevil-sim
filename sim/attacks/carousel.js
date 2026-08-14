@@ -21,7 +21,7 @@
 // covering only the BODY (bbox [12,18]-[25,24]) — the wiki's "only the
 // bodies have hitboxes", confirmed from the data file.
 
-import { gmlGreater, gmlLess } from '../gml.js';
+import { gmlGreater, gmlLess, gmlGreaterEq } from '../gml.js';
 
 export const carouselbullet = {
   name: 'obj_carouselbullet',
@@ -92,7 +92,7 @@ export const carouselbullet = {
     }
     if (gmlLess(sinsign, 0)) {
       e.depth = 0;
-      if (e.image_alpha >= 1) {
+      if (gmlGreaterEq(e.image_alpha, 1)) {
         e.active = 1;
       }
       e.image_blend = 'c_white';

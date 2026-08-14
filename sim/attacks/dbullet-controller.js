@@ -15,7 +15,7 @@
 
 import { spawn } from '../entity.js';
 import { gmlRandom, gmlChoose } from '../rng.js';
-import { lengthdirX, lengthdirY } from '../gml.js';
+import { lengthdirX, lengthdirY, gmlGreaterEq, gmlLessEq } from '../gml.js';
 import { jokerTeleport } from './joker-teleport.js';
 import { spadering } from './spadering.js';
 import { suitbomb } from './suitbomb.js';
@@ -474,11 +474,13 @@ export const dbulletController = {
             e.fadewhite.image_alpha += 0.01;
           }
           e.vol += 0.01;
-          if (e.fadewhite.image_alpha >= 1) {
+          // GML epsilon >=: 0.01-steps on an f32 reach 0.99999x one frame
+          // before a plain JS >= would fire (a77 f581, the soul recentre).
+          if (gmlGreaterEq(e.fadewhite.image_alpha, 1)) {
             if (e.darkfader.alive) e.darkfader.alive = false;
             if (e.lastscythe.alive) e.lastscythe.alive = false;
           }
-          if (e.fadewhite.image_alpha >= 1.3) {
+          if (gmlGreaterEq(e.fadewhite.image_alpha, 1.3)) {
             e.special = 3;
           }
         }
@@ -492,7 +494,7 @@ export const dbulletController = {
         if (e.fadewhite.alive) {
           e.fadewhite.image_alpha -= 0.1;
         }
-        if (e.fadewhite.image_alpha <= 0) {
+        if (gmlLessEq(e.fadewhite.image_alpha, 0)) {
           state.turntimer = 11;
           e.special = 4;
         }

@@ -22,7 +22,7 @@
 // on hit; active starts 0 (harmless while faded).
 
 import { destroy } from '../entity.js';
-import { gmlGreater } from '../gml.js';
+import { gmlGreater, gmlLess } from '../gml.js';
 
 export const dbulletVert = {
   name: 'obj_dbullet_vert',
@@ -61,7 +61,9 @@ export const dbulletVert = {
   endStep(e, state) {
     if (e.dont === 0) {
       if (e.active === 0) {
-        if (e.image_alpha < 1) {
+        // GML epsilon <: ten f32 0.1-steps sum to 0.99999994, which the
+        // runner already treats as 1 (math_set_epsilon).
+        if (gmlLess(e.image_alpha, 1)) {
           e.image_alpha += 0.1;
           if (e.gmlType === 1) {
             e.vspeed = 3;

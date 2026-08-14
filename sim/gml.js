@@ -193,3 +193,9 @@ export function gmlGreater(a, b) {
 export function gmlLess(a, b) {
   return b - a > GML_EPSILON;
 }
+export function gmlGreaterEq(a, b) {
+  return a - b >= -GML_EPSILON;
+}
+export function gmlLessEq(a, b) {
+  return b - a >= -GML_EPSILON;
+}
