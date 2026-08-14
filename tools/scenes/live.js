@@ -19,7 +19,9 @@ const bcLite = {
 };
 
 export function buildLiveScene(state, { type = 70, grazepoints = 2 } = {}) {
-  state.invTimer = 0;
+  // One heart-only frame runs before recording starts (the probe's state
+  // 1.5), same as the attack scenes: row 0 shows inv -2.
+  state.invTimer = -1;
   state.phase = 'live';
   state.view = { x: 0, y: 0 };
   state.roomHeight = 480;

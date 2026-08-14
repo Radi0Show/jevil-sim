@@ -36,15 +36,15 @@ function grazes(e, gx, gy) {
   );
 }
 
-export function stepGraze(state) {
+/** One bullet's graze pair — called from the per-bullet collision walk. */
+export function grazeBullet(state, b) {
   if (!state.grazeEnabled) return;
   if (!state.grazePrev) return;
   const { x: gx, y: gy } = state.grazePrev;
-
-  for (const b of [...state.entities].sort((a, z) => a.seq - z.seq)) {
-    if (!b.alive || !b.isBullet) continue;
-    if (b.grazepoints === undefined) continue;
-    if (!grazes(b, gx, gy)) continue;
+  {
+    if (!b.alive || !b.isBullet) return;
+    if (b.grazepoints === undefined) return;
+    if (!grazes(b, gx, gy)) return;
 
     if (state.invTimer < 0) {
       if (b.grazed === 1) {

@@ -53,12 +53,20 @@ function partyLine() {
 function updateHud() {
   if (mode === 'fight') {
     const j = state.joker;
+    if (fightOver === 'violence') {
+      hud.innerHTML = `<b>JEVIL DEFEATED (FIGHT)</b> — "TAKE ME AND DO YOUR STRONGEST---!" · DEVILSKNIFE obtained · restarting...`;
+      return;
+    }
+    if (fightOver === 'pacify') {
+      hud.innerHTML = `<b>JEVIL PACIFIED</b> — "NOW I WILL SLEEP FOR THE OTHER 100 YEARS." · JEVILSTAIL obtained · restarting...`;
+      return;
+    }
     hud.innerHTML =
       `<b>JEVIL — FIGHT (dodge-only)</b> <span class="warn">[lifecycle dump-timed; whole-fight recording pending]</span><br>` +
       `${partyLine()} · TP ${Math.floor(state.tension / state.maxtension * 100)}% · ` +
       `JEVIL ${j.hp}/${j.maxhp}${j.tired ? ' <span class="ok">TIRED</span>' : ''} · turn ${j.turns} (jturn ${j.jturn})<br>` +
       `arrows/WASD move · <kbd>X</kbd>/<kbd>Shift</kbd> focus · <kbd>Z</kbd> skip talk · ` +
-      `<kbd>E</kbd> debug damage (drives the real HP gates) · <kbd>R</kbd> restart · <kbd>F</kbd> practice mode<br>` +
+      `<kbd>E</kbd> debug damage · <kbd>P</kbd> pacify (needs TIRED) · <kbd>R</kbd> restart · <kbd>F</kbd> practice<br>` +
       `<span class="warn">Menu phase replaced by a fixed pause (dodge-only build); ` +
       `damage/graze/i-frames/turn-shortening are the translated chapter 1 systems.</span>`;
     return;
@@ -97,12 +105,29 @@ window.addEventListener('keydown', (ev) => {
     mode = mode === 'fight' ? 'practice' : 'fight';
     rebuild((Math.random() * 1e9) | 0);
   }
-  if (ev.code === 'KeyE' && mode === 'fight' && state.joker) {
+  if (ev.code === 'KeyE' && mode === 'fight' && state.joker && !fightOver) {
     // Debug damage: drives the HP phase gates (knight's E-key precedent).
     state.joker.hp -= 400;
-    if (state.joker.hp <= 0) state.joker.hp = 0;
+    if (state.joker.hp <= 0) {
+      state.joker.hp = 0;
+      // Violence ending — obj_joker Draw: mhpratio <= 0 during the hurt
+      // block ends the fight ON the killing hit (flag[241] = 6).
+      fightOver = 'violence';
+      fightOverAt = state.frame;
+    }
+  }
+  if (ev.code === 'KeyP' && mode === 'fight' && state.joker && !fightOver) {
+    // Debug Pacify: scr_spell case 3's gate — ONLY when TIRED
+    // (monsterstatus == 1). flag[241] = 7 path.
+    if (state.joker.monsterstatus === 1) {
+      fightOver = 'pacify';
+      fightOverAt = state.frame;
+    }
   }
 });
+
+let fightOver = null;
+let fightOverAt = 0;
 
 rebuild(seed);
 
@@ -124,11 +149,13 @@ function frame(now) {
       rebuild((Math.random() * 1e9) | 0);
       break;
     }
-    if (mode === 'fight' && state.joker && state.joker.hp <= 0) {
-      // Violence ending (obj_joker Draw: mhpratio <= 0 during the hurt) —
-      // page-level: brief hold then restart.
-      rebuild((Math.random() * 1e9) | 0);
-      break;
+    if (mode === 'fight' && fightOver) {
+      // Hold the ending banner ~3 seconds, then restart.
+      if (state.frame - fightOverAt > 90) {
+        fightOver = null;
+        rebuild((Math.random() * 1e9) | 0);
+        break;
+      }
     }
     if (mode === 'practice' && state.turntimer <= 0) {
       rebuild((Math.random() * 1e9) | 0);

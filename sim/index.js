@@ -14,7 +14,7 @@
 import { runPhase, runAlarms, reap } from './entity.js';
 import { traceRow } from './trace.js';
 import { spriteMaskHit } from './masks.js';
-import { stepGraze } from './graze.js';
+import { grazeBullet } from './graze.js';
 
 export { createState } from './state.js';
 export { spawn, destroy, ALARM_COUNT } from './entity.js';
@@ -124,9 +124,20 @@ function runCollisions(state) {
   const heart = state.soul;
   if (!heart || !heart.alive) return;
 
-  for (const b of [...state.entities].sort((a, z) => a.seq - z.seq)) {
+  // Pair iteration is NEWEST-FIRST — the with()-style order, distinct from
+  // event dispatch (live-70 f34: the newer hitting spade resolves its
+  // graze+hit before the older passer, whose trickle the fresh inv then
+  // gates).
+  for (const b of [...state.entities].sort((a, z) => z.seq - a.seq)) {
     if (!b.alive || !b.isBullet || !b.type.other15) continue;
     if (b.maskOff) continue; // mask_index = spr_nomask
+    // COLLISION PAIRS INTERLEAVE PER BULLET: each bullet's graze event
+    // (grazebox, object 206) fires before its damage event (heart, 313),
+    // and the NEXT bullet sees the updated inv. Measured — live-70 f34:
+    // bullet A grazes then hits (inv -> 40), and bullet B, overlapping the
+    // same frame, gets NO trickle. A whole-phase graze pass either misses
+    // A's trickle (damage first) or awards B's too (graze first).
+    grazeBullet(state, b);
     const collides = b.type.collides;
     let hit;
     if (collides) {
@@ -198,10 +209,6 @@ export function stepFrame(state, input) {
   runPhase(state, 'step');
   runMotion(state);
   runCollisions(state);
-  // DAMAGE BEFORE GRAZE (knight-measured order, same event layout here):
-  // a hit resolves first, sets inv positive, and the graze gate
-  // `global.inv < 0` then skips this frame's trickle.
-  stepGraze(state);
   runPhase(state, 'endStep');
 
   // obj_grazebox's End Step: the box moves to the heart NOW, after this
