@@ -17,6 +17,7 @@ import { spawn } from '../entity.js';
 import { gmlRandom, gmlChoose } from '../rng.js';
 import { jokerTeleport } from './joker-teleport.js';
 import { spadering } from './spadering.js';
+import { suitbomb } from './suitbomb.js';
 import { bulletInherit } from '../bullets/collidebullet.js';
 
 function box(state) {
@@ -81,6 +82,34 @@ export const dbulletController = {
         jokern.gmlType = 1;
         bulletInherit(e, jokern);
         jokern.active = 0;
+        e.btimer = 0;
+      }
+      return;
+    }
+
+    // Suit bombs 46/48/49/50 share one block shape; per-type cadence and
+    // bomb.type override differ. The random(100) here is CONDITIONAL —
+    // only the chosen side's branch draws (unlike type 70's choose args).
+    if (e.gmlType === 46 || e.gmlType === 48 || e.gmlType === 49 || e.gmlType === 50) {
+      const cadence = e.gmlType === 49 ? 20 : 12;
+      if (e.btimer >= cadence) {
+        const xx = gmlChoose(r, [0, 1]);
+        const basex = gt ? gt.x : state.view.x + 320;
+        let idealx;
+        if (xx === 0) {
+          idealx = basex - 180 - gmlRandom(r, 100);
+        }
+        if (xx === 1) {
+          idealx = basex + 180 + gmlRandom(r, 100);
+        }
+        const bomb = spawn(state, suitbomb, { x: idealx, y: -20 });
+        bulletInherit(e, bomb);
+        if (e.gmlType === 46 && bomb.gmlType === 2) {
+          bomb.gmlType = gmlChoose(r, [0, 1, 2, 3]);
+        }
+        if (e.gmlType === 48) bomb.gmlType = 0;
+        if (e.gmlType === 49) bomb.gmlType = 2;
+        if (e.gmlType === 50) bomb.gmlType = 3;
         e.btimer = 0;
       }
       return;

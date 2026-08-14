@@ -40,6 +40,7 @@ const SUITES = [
   ['verify-t3.mjs', 'chapter 1 soul movement — three oracle recordings'],
   ['verify-a70.mjs', 'attack 1: teleport spade fans (dc.type 70, jattack 0)'],
   ['verify-a65.mjs', 'attack 2: spade rings (dc.type 65, jattack 1)'],
+  ['verify-a49.mjs', 'attack 3: heart suit bombs (dc.type 49, jattack 2)'],
 ];
 
 // EVERY suite file must be in the table. A suite that exists and is never run

@@ -101,6 +101,8 @@ export const SPADEBULLET_MASK = build(raw.spadebullet);
 /** spr_diamondbullet — 33x32, origin (16,15), Precise. Single aimed shot
  *  from dc.type 71 teleports (scale 0.7); also obj_spadering's sprite. */
 export const DIAMONDBULLET_MASK = build(raw.diamondbullet);
+export const HEARTBULLET_MASK = build(raw.heartbullet);
+export const CLUBSBULLET_MASK = build(raw.clubsbullet);
 
 /**
  * sprite name -> its precise mask, for the DEFAULT contact test.
@@ -122,6 +124,8 @@ export const SPRITE_MASKS = {
   // dump via tools/import-masks.mjs.
   spr_spadebullet: SPADEBULLET_MASK,
   spr_diamondbullet: DIAMONDBULLET_MASK,
+  spr_heartbullet: HEARTBULLET_MASK,
+  spr_clubsbullet: CLUBSBULLET_MASK,
 };
 
 /**

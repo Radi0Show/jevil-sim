@@ -173,9 +173,15 @@ export function destroy(e) {
  * The vortex's ordering remains unexplained and stays a per-type knob.
  */
 function phaseList(state) {
+  // CHAPTER 1 ORDER: NEWEST FIRST. Measured via a49 (heart-bomb blast): a
+  // son bullet repositioned past the wall line by its parent SURVIVES the
+  // frame — its own wall-check ran BEFORE the parent's step, which is only
+  // true if newer instances step before older ones (the GM8-legacy order;
+  // chapter 3's runner is oldest-first and knight-sim verified that way).
+  // stepOrder stays available as a per-type override.
   return state.entities
     .filter((e) => e.alive)
-    .sort((a, b) => (a.type.stepOrder ?? 0) - (b.type.stepOrder ?? 0) || a.seq - b.seq);
+    .sort((a, b) => (a.type.stepOrder ?? 0) - (b.type.stepOrder ?? 0) || b.seq - a.seq);
 }
 
 export function runPhase(state, phase) {

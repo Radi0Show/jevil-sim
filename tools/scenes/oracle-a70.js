@@ -97,3 +97,6 @@ export function buildOracleA68Scene(state) {
 export function buildOracleA71Scene(state) {
   return buildAttackScene(state, { type: 71, vel: true });
 }
+export function buildOracleA49Scene(state) {
+  return buildAttackScene(state, { type: 49, vel: true });
+}

@@ -23,6 +23,8 @@ const WANTED = {
   graze: 'spr_grazemask',
   spadebullet: 'spr_spadebullet',
   diamondbullet: 'spr_diamondbullet',
+  heartbullet: 'spr_heartbullet',
+  clubsbullet: 'spr_clubsbullet',
 };
 
 function parse(spriteName) {

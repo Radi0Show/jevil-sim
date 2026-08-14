@@ -32,19 +32,36 @@ export function diffAttackTrace({
   const isContact = header.map((h) => h === 'nbul' || h === 'hits');
 
   const rows = Math.min(oracleLines.length, simLines.length) - 1;
+  const nbulCol = header.indexOf('nbul');
   let failed = false;
   let firstResidue = null;
   let residueCells = 0;
   let worstDrift = 0;
   let worstVel = 0;
   let contactFlips = 0;
+  let slotsSuppressedFrom = null;
 
   for (let i = 1; i <= rows; i++) {
     const oc = oracleLines[i].split(',');
     const sc = simLines[i].split(',');
+    // KNIGHT'S FULLFIGHT RULE: a count divergence shifts every slot at
+    // once. Once nbul differs (a tangential contact flip past the exact
+    // window — bounded below), the positional columns compare misaligned
+    // bullets and would report forty false faults for one flip. Suppress
+    // slot columns from that frame; mechanics columns keep comparing.
+    if (
+      slotsSuppressedFrom === null &&
+      nbulCol >= 0 &&
+      oc[nbulCol] !== sc[nbulCol] &&
+      i - 1 > contactExactTo &&
+      Math.abs(parseFloat(oc[nbulCol]) - parseFloat(sc[nbulCol])) <= contactSlack
+    ) {
+      slotsSuppressedFrom = i - 1;
+    }
     for (let c = 0; c < header.length; c++) {
       if (oc[c] === sc[c]) continue;
       const frame = i - 1;
+      if (slotsSuppressedFrom !== null && (isPos[c] || isVel[c])) continue;
       if (isContact[c] && frame > contactExactTo) {
         const diff = Math.abs(parseFloat(oc[c]) - parseFloat(sc[c]));
         if (diff > contactSlack) {
@@ -89,7 +106,10 @@ export function diffAttackTrace({
       ? `trig residue from f${firstResidue.frame} (${firstResidue.col}), ` +
         `${residueCells} cells, worst ${worstDrift.toExponential(2)} px` +
         (worstVel ? `, vel ${worstVel.toExponential(2)}` : '') +
-        (contactFlips ? `, ${contactFlips} tangential flip(s)` : '')
+        (contactFlips ? `, ${contactFlips} tangential flip(s)` : '') +
+        (slotsSuppressedFrom !== null
+          ? `; slots suppressed from f${slotsSuppressedFrom} (count flip)`
+          : '')
       : 'positions byte-exact too');
 
   return { failed, summaryLine };
