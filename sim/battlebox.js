@@ -36,6 +36,7 @@ export function settleBox(gt) {
 
 export const battlebox = {
   name: 'obj_growtangle',
+  objIndex: 311, // dump object order
 
   create(e) {
     // obj_growtangle Create, verbatim fields.

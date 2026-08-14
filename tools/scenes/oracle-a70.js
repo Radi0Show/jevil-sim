@@ -26,17 +26,18 @@ import { real, int } from '../../sim/trace.js';
 // `mnfight == 2 && timeron == 1` holds throughout a real attack window).
 const bcLite = {
   name: 'bc_lite',
+  objIndex: 196, // stands in for obj_battlecontroller (dump object order)
   beginStep(e, state) {
     if (state.frame > 0) state.turntimer -= 1;
   },
 };
 
-export function buildAttackScene(state, { type = 70, vel = false } = {}) {
+export function buildAttackScene(state, { type = 70, vel = false, turntimer = 240 } = {}) {
   state.hp = 90;
   state.invTimer = -1;
   state.phase = String(type);
   state.view = { x: 0, y: 0 };
-  state.turntimer = 240;
+  state.turntimer = turntimer;
   state.damageEnabled = false;
   state.gmlRng = gmlCreate(4242);
   state.traceBulletVel = vel; // widened recorder prints b_hs/b_vs per slot
@@ -104,4 +105,25 @@ export function buildOracleA71Scene(state) {
 }
 export function buildOracleA49Scene(state) {
   return buildAttackScene(state, { type: 49, vel: true });
+}
+export function buildOracleA50Scene(state) {
+  return buildAttackScene(state, { type: 50, vel: true, turntimer: 300 });
+}
+export function buildOracleA48Scene(state) {
+  return buildAttackScene(state, { type: 48, vel: true, turntimer: 270 });
+}
+export function buildOracleA46Scene(state) {
+  return buildAttackScene(state, { type: 46, vel: true, turntimer: 330 });
+}
+export function buildOracleA62Scene(state) {
+  return buildAttackScene(state, { type: 62, vel: true });
+}
+export function buildOracleA61Scene(state) {
+  return buildAttackScene(state, { type: 61, vel: true, turntimer: 240 });
+}
+export function buildOracleA75Scene(state) {
+  return buildAttackScene(state, { type: 75, vel: true });
+}
+export function buildOracleA76Scene(state) {
+  return buildAttackScene(state, { type: 76, vel: true });
 }

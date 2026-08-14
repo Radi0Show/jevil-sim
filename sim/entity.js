@@ -173,15 +173,22 @@ export function destroy(e) {
  * The vortex's ordering remains unexplained and stays a per-type knob.
  */
 function phaseList(state) {
-  // CHAPTER 1 ORDER: NEWEST FIRST. Measured via a49 (heart-bomb blast): a
-  // son bullet repositioned past the wall line by its parent SURVIVES the
-  // frame — its own wall-check ran BEFORE the parent's step, which is only
-  // true if newer instances step before older ones (the GM8-legacy order;
-  // chapter 3's runner is oldest-first and knight-sim verified that way).
-  // stepOrder stays available as a per-type override.
+  // CHAPTER 1 EVENT DISPATCH ORDER: BY OBJECT INDEX (resource order), then
+  // instance creation order within an object. Two mutually-constraining
+  // measurements pin it — no single instance-age rule fits both:
+  //   a49: obj_regularbullet (203) sons wall-check BEFORE their
+  //        obj_heartbomb_blast (269) parent repositions them — a son pushed
+  //        past the wall line survives the frame;
+  //   a48: obj_dbulletcontroller (241) draws its f48 spawn randoms BEFORE
+  //        obj_suitbomb (270) draws its burst random on the same frame
+  //        (oracle ring-2 direction = the post-spawn stream draw).
+  // The earlier "newest-first" reading fit a49 alone by accident. Each
+  // translated type carries objIndex from the dump's object order
+  // (gml_dump/_objects.json); scene-only helpers pick indexes that place
+  // them like the objects they stand in for.
   return state.entities
     .filter((e) => e.alive)
-    .sort((a, b) => (a.type.stepOrder ?? 0) - (b.type.stepOrder ?? 0) || b.seq - a.seq);
+    .sort((a, b) => (a.type.objIndex ?? 9999) - (b.type.objIndex ?? 9999) || a.seq - b.seq);
 }
 
 export function runPhase(state, phase) {

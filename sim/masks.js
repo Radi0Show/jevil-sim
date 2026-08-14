@@ -103,6 +103,10 @@ export const SPADEBULLET_MASK = build(raw.spadebullet);
 export const DIAMONDBULLET_MASK = build(raw.diamondbullet);
 export const HEARTBULLET_MASK = build(raw.heartbullet);
 export const CLUBSBULLET_MASK = build(raw.clubsbullet);
+/** spr_joker_scythebody_mask — 46x43, origin (21,20), Precise. The
+ *  centerscythe OBJECT's definition mask, and the mask_index override its
+ *  side scythes carry. */
+export const SCYTHEBODY_MASK = build(raw.scythebody);
 
 /**
  * sprite name -> its precise mask, for the DEFAULT contact test.
@@ -126,6 +130,7 @@ export const SPRITE_MASKS = {
   spr_diamondbullet: DIAMONDBULLET_MASK,
   spr_heartbullet: HEARTBULLET_MASK,
   spr_clubsbullet: CLUBSBULLET_MASK,
+  spr_joker_scythebody_mask: SCYTHEBODY_MASK,
 };
 
 /**
@@ -299,7 +304,9 @@ export function enginePairHit(heart, e, mask) {
 
 /** The default contact test: the bullet's own sprite mask against the soul. */
 export function spriteMaskHit(e, heart) {
-  const m = SPRITE_MASKS[e.sprite_index];
+  // mask_index override first (obj_centerscythe's side scythes set
+  // mask_index = spr_joker_scythebody_mask on a plain collidebullet).
+  const m = SPRITE_MASKS[e.mask_index ?? e.sprite_index];
   if (!m) return null; // no mask registered — caller decides what that means
   return masksOverlap(
     HEART_MASK, heart.x, heart.y,

@@ -19,6 +19,16 @@ export function diffAttackTrace({
   velMax = 1e-3,
   contactExactTo = 214,
   contactSlack = 3,
+  // Attacks whose bullets WALL-DESPAWN (suit-bomb bursts are
+  // regularbullets) compact their slots on every despawn, and a
+  // single-frame despawn flip (mover-residue class) misaligns every later
+  // slot column. slotMatch compares each frame's bullets as a MULTISET:
+  // greedy nearest-neighbour pairing, every pair within driftMax, at most
+  // `contactSlack` unmatched per frame. Stronger than suppression — the
+  // positions keep being verified after a flip — but strict slot order is
+  // stronger still, so suites use slotMatch only when despawn compaction
+  // makes strict order meaningless.
+  slotMatch = false,
   log = console.log,
 }) {
   const header = oracleLines[0].split(',');
@@ -51,9 +61,77 @@ export function diffAttackTrace({
   let contactFlips = 0;
   let slotsSuppressedFrom = null;
 
+  // Column index groups for slotMatch: per-slot [x, y] (and hs/vs ride
+  // along but are checked via the pairing, not by column).
+  const slotCols = [];
+  if (slotMatch) {
+    for (let c = 0; c < header.length; c++) {
+      const m = header[c].match(/^b(\d+)_x$/);
+      if (m) slotCols.push({ x: c, y: c + 1 });
+    }
+  }
+
   for (let i = 1; i <= rows; i++) {
     const oc = oracleLines[i].split(',');
     const sc = simLines[i].split(',');
+
+    if (slotMatch) {
+      const frame = i - 1;
+      const parse = (cells) =>
+        slotCols
+          .filter((s) => cells[s.x] !== '' && cells[s.x] !== undefined)
+          .map((s) => ({ x: parseFloat(cells[s.x]), y: parseFloat(cells[s.y]) }));
+      const ob = parse(oc);
+      const sb = parse(sc);
+      const used = new Set();
+      let unmatched = 0;
+      for (const o of ob) {
+        let best = -1;
+        let bestD = Infinity;
+        for (let k = 0; k < sb.length; k++) {
+          if (used.has(k)) continue;
+          const d = Math.max(Math.abs(sb[k].x - o.x), Math.abs(sb[k].y - o.y));
+          if (d < bestD) {
+            bestD = d;
+            best = k;
+          }
+        }
+        if (best >= 0 && bestD <= driftMax) {
+          used.add(best);
+          residueCells += bestD > 0 ? 1 : 0;
+          worstDrift = Math.max(worstDrift, bestD);
+          if (bestD > 0 && !firstResidue) firstResidue = { frame, col: 'slotMatch' };
+        } else {
+          unmatched++;
+        }
+      }
+      unmatched += sb.length - used.size;
+      if (unmatched > contactSlack) {
+        capLog(`SLOT-MATCH FAIL at frame ${frame}: ${unmatched} bullets unpaired within ${driftMax}px (oracle ${ob.length}, engine ${sb.length})`);
+        failed = true;
+      }
+      // Non-slot columns still compare below; skip the per-column slot
+      // checks by blanking them out of this row's comparison.
+      for (const s of slotCols) {
+        oc[s.x] = sc[s.x] = '';
+        oc[s.y] = sc[s.y] = '';
+        // hs/vs columns sit right after y when present.
+        if (/^b\d+_hs$/.test(header[s.y + 1] ?? '')) {
+          oc[s.y + 1] = sc[s.y + 1] = '';
+          oc[s.y + 2] = sc[s.y + 2] = '';
+        }
+      }
+      // nbul under slotMatch: bounded, not byte-exact (despawn flips).
+      if (nbulCol >= 0 && oc[nbulCol] !== sc[nbulCol]) {
+        const d = Math.abs(parseFloat(oc[nbulCol]) - parseFloat(sc[nbulCol]));
+        if (d > contactSlack) {
+          capLog(`COUNT FAIL at frame ${frame}: nbul oracle=${oc[nbulCol]} engine=${sc[nbulCol]}`);
+          failed = true;
+        }
+        oc[nbulCol] = sc[nbulCol] = '';
+      }
+    }
+
     // KNIGHT'S FULLFIGHT RULE: a count divergence shifts every slot at
     // once. Once nbul differs (a tangential contact flip past the exact
     // window — bounded below), the positional columns compare misaligned

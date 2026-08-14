@@ -37,6 +37,7 @@ const SPRITE_HEIGHT = 20;
 
 export const soul = {
   name: 'obj_heart',
+  objIndex: 313, // dump object order
 
   create(e, state) {
     // global.sp = 4; wspeed = global.sp;

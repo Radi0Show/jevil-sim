@@ -43,6 +43,7 @@ function regularStep(e, state) {
 
 export const regularbullet = {
   name: 'obj_regularbullet',
+  objIndex: 203, // dump object order
   create: regularCreate,
   step: regularStep,
 
@@ -57,6 +58,7 @@ export const regularbullet = {
 
 export const regularbulletPermanent = {
   name: 'obj_regularbullet_permanent',
+  objIndex: 204, // dump object order
   create: regularCreate,
   step: regularStep,
 

@@ -28,6 +28,7 @@ function boxOf(state) {
 
 export const spadering = {
   name: 'obj_spadering',
+  objIndex: 277, // dump object order
 
   create(e, state) {
     e.ringno = 0;

@@ -18,6 +18,8 @@ import { gmlRandom, gmlChoose } from '../rng.js';
 import { jokerTeleport } from './joker-teleport.js';
 import { spadering } from './spadering.js';
 import { suitbomb } from './suitbomb.js';
+import { carouselbullet } from './carousel.js';
+import { centerscythe } from './centerscythe.js';
 import { bulletInherit } from '../bullets/collidebullet.js';
 
 function box(state) {
@@ -27,6 +29,7 @@ function box(state) {
 
 export const dbulletController = {
   name: 'obj_dbulletcontroller',
+  objIndex: 241, // dump object order
 
   create(e, state) {
     e.btimer = 99;
@@ -111,6 +114,91 @@ export const dbulletController = {
         if (e.gmlType === 49) bomb.gmlType = 2;
         if (e.gmlType === 50) bomb.gmlType = 3;
         e.btimer = 0;
+      }
+      return;
+    }
+
+    if (e.gmlType === 62) {
+      if (e.btimer >= 40 && e.made === 0) {
+        e.btimer = 0;
+        e.made = 1;
+        for (let i = 0; i < 3; i += 1) {
+          for (let j = 0; j < 7; j += 1) {
+            const horse1 = spawn(state, carouselbullet, {
+              x: gt.x + 150,
+              y: (gt.y - 80) + i * 80,
+            });
+            horse1.siner = j * 18;
+            horse1.vsin = j * 9;
+            horse1.sinspeed = 1.15;
+            horse1.altmode = 3;
+            bulletInherit(e, horse1);
+          }
+        }
+      }
+      return;
+    }
+
+    if (e.gmlType === 61) {
+      if (e.btimer >= 40 && e.made === 0) {
+        e.btimer = 0;
+        e.made = 1;
+        let horse = 0;
+        const vseed = gmlRandom(r, 300);
+        for (let j = 0; j < 3; j += 1) {
+          for (let i = 0; i < 3; i += 1) {
+            let horse1 = spawn(state, carouselbullet, {
+              x: gt.x + 150,
+              y: (gt.y - 80) + i * 80,
+            });
+            horse1.siner = j * 42;
+            horse1.vsin = 0 + vseed;
+            horse1.image_index = 0;
+            horse1.altmode = 2;
+            horse1.sinspeed = 1.1;
+            bulletInherit(e, horse1);
+            horse1 = spawn(state, carouselbullet, {
+              x: gt.x + 150,
+              y: (gt.y - 80) + i * 80,
+            });
+            horse1.siner = (j * 42) + 21;
+            horse1.vsin = 0 + vseed;
+            horse1.image_index = 1;
+            horse1.altmode = 1;
+            horse1.sinspeed = 1.1;
+            bulletInherit(e, horse1);
+            const chance = Math.floor(gmlRandom(r, 50));
+            if (chance === 1) {
+              horse1.image_index = 2; // Everyman (cosmetic; shared body mask)
+            }
+          }
+          if (horse === 0) {
+            horse = 1;
+          } else {
+            horse = 0;
+          }
+        }
+      }
+      return;
+    }
+
+    if (e.gmlType === 75 || e.gmlType === 76) {
+      if (e.btimer >= 0 && e.special === 0) {
+        state.audio?.cue('snd_spearappear');
+        spawn(state, centerscythe, { x: 0, y: 0 });
+        // obj_centerscythe.field = v assigns to EVERY instance — all four
+        // exist by the time the create returns.
+        for (const s of state.entities) {
+          if (!s.alive || s.type.name !== 'obj_centerscythe') continue;
+          s.damage = e.damage;
+          s.grazepoints = e.grazepoints;
+          s.timepoints = e.timepoints;
+          s.inv = e.inv;
+          s.target = e.target;
+          s.grazed = 0;
+          s.grazetimer = 0;
+        }
+        e.special = 1;
       }
       return;
     }

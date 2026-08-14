@@ -23,6 +23,7 @@ import { destroy } from '../entity.js';
 
 export const collidebullet = {
   name: 'obj_collidebullet',
+  objIndex: 201, // dump object order
 
   create(e) {
     e.isBullet = true;

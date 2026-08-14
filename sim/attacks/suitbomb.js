@@ -28,6 +28,7 @@ import { regularbullet } from '../bullets/regularbullet.js';
 
 export const heartbombBlast = {
   name: 'obj_heartbomb_blast',
+  objIndex: 269, // dump object order
 
   create(e) {
     e.made = 0;
@@ -72,6 +73,7 @@ export const heartbombBlast = {
 
 export const suitbomb = {
   name: 'obj_suitbomb',
+  objIndex: 270, // dump object order
 
   create(e, state) {
     e.visible = 0;

@@ -23,6 +23,7 @@ import { collidebullet, bulletInherit, moveTowardsPoint } from '../bullets/colli
 
 export const jokerTeleport = {
   name: 'obj_joker_teleport',
+  objIndex: 276, // dump object order
 
   create(e, state) {
     e.fire = 0;
