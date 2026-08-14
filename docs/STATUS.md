@@ -35,15 +35,26 @@ Updated 2026-08-14 (second session, continued).
 8. GML `type` on instances translates as `gmlType` (collides with the
    engine's handler ref).
 
-## Next (PLAYBOOK §10 order)
+## Current wave (lifecycle + damage session)
 
-1. Suites for a68/a71 once their traces land (translations done).
-2. Remaining attacks in fight order: 75/76 centerscythe, 62/61 carousel,
-   50 clubs bombs, 73/74 dbullet_vert, 46/48 bomb variants, 72 clubs dash,
-   77 FINAL CHAOS (scripted controller block).
-3. Graze + damage systems with their own suites (recon notes have the
-   semantics; oracle probes per system).
-4. Fight scheduler (jturn/jattack state machine from obj_joker's Step),
-   endings (violence on killing hit; pacify via TIRED).
-5. Presentation: sprites (dims check!), triangle background, fonts, audio
-   index, battle messages. Then the playable page + replay tokens.
+- ALL 16 attacks verified (see VERIFICATION.md). Fight selector + full
+  enemy-turn lifecycle translated (sim/joker.js, sim/fight.js); fight mode
+  on the page with debug FIGHT/PACIFY keys and both endings.
+- Damage system translated (sim/damage.js) with three more original bugs
+  preserved; graze system translated (sim/graze.js) with the measured
+  per-bullet graze-then-damage pair interleave, newest-first.
+- verify-live (damage+graze vs unsterilized recordings): live-70 clean
+  through two hits + i-frames to f116; both residual diffs are grazebox
+  PAIR GEOMETRY (the runner's region sits ~2px off my mask-data model) —
+  grazepair sweep recording now.
+- LATENT ORIGINAL CRASH found (charinstance[3] on wipe-window redirects) —
+  plausibly the PS4 v1.03 fix; see HANDOFF.
+
+## Next
+
+1. Fit the grazepair sweep; verify-live green; register it.
+2. Whole-fight harness (joker drives himself + scripted menu inputs) for
+   lifecycle-level verification; battle messages + enemy-talk draws.
+3. obj_dbullet_vert effective-mask sweep (restore a74's full window).
+4. Presentation: sprites (dims check!), triangle background, fonts, audio
+   index, battle messages. Replay tokens + Pages deploy.
