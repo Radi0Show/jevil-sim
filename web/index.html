@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Jevil Practice</title>
+<style>
+  html, body { margin: 0; background: #0a0a12; color: #cfcfe8; font-family: monospace; }
+  #wrap { display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 12px; }
+  canvas { image-rendering: pixelated; border: 1px solid #333; }
+  #hud { max-width: 640px; font-size: 13px; line-height: 1.5; }
+  .warn { color: #ffb84d; }
+  .ok { color: #6de37b; }
+  kbd { background: #23233a; padding: 0 4px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="game"></canvas>
+  <div id="hud"></div>
+</div>
+<script type="module" src="main.js"></script>
+</body>
+</html>

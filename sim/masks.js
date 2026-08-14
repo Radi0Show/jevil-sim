@@ -118,6 +118,9 @@ export const CLUBSBALL_A_MASK = build(raw.clubsballA);
 export const CLUBSBALL_B_MASK = build(raw.clubsballB);
 export const CLUBSBALL_C_MASK = build(raw.clubsballC);
 export const DIAMONDBULLET_VERT_MASK = build(raw.diamondbulletVert);
+/** spr_tallpx — a 5x640 AxisAlignedRect strip: FINAL CHAOS's light pillar
+ *  body (xscale up to 32) and the fade markers. */
+export const TALLPX_MASK = build(raw.tallpx);
 
 /**
  * sprite name -> its precise mask, for the DEFAULT contact test.
@@ -146,6 +149,7 @@ export const SPRITE_MASKS = {
   spr_clubsball_b: CLUBSBALL_B_MASK,
   spr_clubsball_c: CLUBSBALL_C_MASK,
   spr_diamondbullet_vert: DIAMONDBULLET_VERT_MASK,
+  spr_tallpx: TALLPX_MASK,
 };
 
 /**

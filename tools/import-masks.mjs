@@ -30,6 +30,7 @@ const WANTED = {
   clubsballB: 'spr_clubsball_b',
   clubsballC: 'spr_clubsball_c',
   diamondbulletVert: 'spr_diamondbullet_vert',
+  tallpx: 'spr_tallpx',
 };
 
 function parse(spriteName) {

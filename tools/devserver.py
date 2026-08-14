@@ -116,6 +116,10 @@ class NoCacheHandler(SimpleHTTPRequestHandler):
 
 
 if __name__ == "__main__":
+    # Serve the REPO ROOT regardless of the launcher's cwd (the preview tool
+    # runs from the session's working directory, not this repo).
+    import os
+    os.chdir(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
     port = int(sys.argv[1]) if len(sys.argv) > 1 else 8177
     print(f"serving with no-store + per-load module versioning on http://localhost:{port}", flush=True)
     ThreadingHTTPServer(("", port), NoCacheHandler).serve_forever()
