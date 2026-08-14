@@ -176,3 +176,20 @@ export function scrAnglechange(current, target, limit) {
   const d = angleDifference(target, current);
   return d < -limit ? -limit : d > limit ? limit : d;
 }
+
+/**
+ * GML comparison epsilon. The runner applies math_set_epsilon (default
+ * 0.00001) to real comparisons: a > b is TRUE only when a - b exceeds the
+ * epsilon. MEASURED in this project at the teleport vanish (a70-fan.csv
+ * frame 26→27): image_xscale reaches +6.56e-8 after its f32 down-ramp and
+ * the game takes the `else` of `if (image_xscale > 0)` — a plain JS `>`
+ * destroys one frame late. Use these helpers wherever a translated
+ * comparison can see a fractional residue.
+ */
+export const GML_EPSILON = 0.00001;
+export function gmlGreater(a, b) {
+  return a - b > GML_EPSILON;
+}
+export function gmlLess(a, b) {
+  return b - a > GML_EPSILON;
+}

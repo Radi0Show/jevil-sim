@@ -21,6 +21,8 @@ const WANTED = {
   heart: 'spr_dodgeheartmask',
   battlebg: 'spr_battlebg_0',
   graze: 'spr_grazemask',
+  spadebullet: 'spr_spadebullet',
+  diamondbullet: 'spr_diamondbullet',
 };
 
 function parse(spriteName) {

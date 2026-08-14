@@ -4,6 +4,34 @@ Every session appends what it learned, what is open, and the traps it hit.
 (PLAYBOOK §9: this is the difference between sessions that compound and
 sessions that re-learn.)
 
+## 2026-08-14 (later) — RNG confirmed; attack 1 in progress; THREE new engine facts
+
+**Done:** ch1 RNG probed (WELL512, identical to ch3 — 7/7). Universal attack
+oracle built (oracle_attack.csx, config-driven, one build for all 16 types).
+a70 (teleport five-spade fan) recorded and diffed: spawn cadence, RNG
+consumption, fan geometry, f32 motion, teleport con machine ALL byte-exact;
+14 simultaneous bullet tracks matching.
+
+**Three chapter-1 engine facts, each measured against a70-fan.csv:**
+1. **GML `type` on an instance collides with the engine's `e.type` handler
+   ref.** Convention: translate GML `type` as `gmlType` everywhere.
+2. **The GML VM evaluates function arguments RIGHT-TO-LEFT.** In
+   `choose(a - random(100), b + random(100))` the SECOND argument's random
+   draws first; the choose draw then indexes args in source order. Never
+   mattered in knight-sim (their choose args were constants).
+3. **Real comparisons use math_set_epsilon (default 1e-5).** An f32 residue
+   of +6.6e-8 fails `> 0`. sim/gml.js gmlGreater/gmlLess carry this; use
+   them wherever a fractional value meets a comparison.
+
+**OPEN — the chapter 1 runner's direction->velocity mapping.** One spade
+cell diverges ~3 f32 ulps after 35 identical frames: the runner's effective
+sin at 226.884° differs from JS f64/f32 sin by ~1e-5 ABSOLUTE (hundreds of
+ulps — not rounding). Chapter 1 ships an OLDER runtime than chapter 3
+(where JS trig matched byte-exact). tools/patches/oracle_trig_probe.csx
+measures the mapping (motion derivation + lengthdir + cos/sin at 400
+angles) → traces/trig-probe.csv. Fit the formula from that before touching
+the a70 scene again.
+
 ## 2026-08-14 — recon → skeleton → T3 verified
 
 **Done:** full recon (see STATUS.md), engine skeleton, chapter 1 soul + box

@@ -94,6 +94,13 @@ export const BATTLEBG_MASK = build(raw.battlebg);
 // chapter 1's obj_growtangle has no custom-arena init — the box is always the
 // default 2x2 spr_battlebg_0. Bullet masks are added here per attack, each
 // with its own oracle evidence.)
+/** spr_spadebullet — 36x34, origin (18,17), Precise. The teleport fan's
+ *  bullets collide with their own sprite (mask_index -1) at scale 0.4,
+ *  rotated to their flight direction. */
+export const SPADEBULLET_MASK = build(raw.spadebullet);
+/** spr_diamondbullet — 33x32, origin (16,15), Precise. Single aimed shot
+ *  from dc.type 71 teleports (scale 0.7); also obj_spadering's sprite. */
+export const DIAMONDBULLET_MASK = build(raw.diamondbullet);
 
 /**
  * sprite name -> its precise mask, for the DEFAULT contact test.
@@ -113,6 +120,8 @@ export const BATTLEBG_MASK = build(raw.battlebg);
 export const SPRITE_MASKS = {
   // Populated per translated attack, each mask imported from the chapter 1
   // dump via tools/import-masks.mjs.
+  spr_spadebullet: SPADEBULLET_MASK,
+  spr_diamondbullet: DIAMONDBULLET_MASK,
 };
 
 /**

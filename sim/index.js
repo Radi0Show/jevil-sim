@@ -13,6 +13,7 @@
 
 import { runPhase, runAlarms, reap } from './entity.js';
 import { traceRow } from './trace.js';
+import { spriteMaskHit } from './masks.js';
 
 export { createState } from './state.js';
 export { spawn, destroy, ALARM_COUNT } from './entity.js';
@@ -123,9 +124,16 @@ function runCollisions(state) {
       state.counters.collisionChecks += 1;
       hit = collides(b, heart, state);
     } else {
-      // Chapter 1 sprite-mask fallback arrives with sim/masks.js (T3).
-      state.counters.unmaskedBullets += 1;
-      continue;
+      // GameMaker's default: mask_index = -1, collide with my own sprite.
+      // A bullet with no registered sprite mask is COUNTED rather than
+      // silently skipped, so a verifier can assert the hole is closed
+      // (knight-sim shipped three inert attacks through that hole).
+      hit = spriteMaskHit(b, heart);
+      if (hit === null) {
+        state.counters.unmaskedBullets += 1;
+        continue;
+      }
+      state.counters.collisionChecks += 1;
     }
     if (hit) {
       state.counters.collisionHits += 1;
