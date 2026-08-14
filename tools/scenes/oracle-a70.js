@@ -33,6 +33,7 @@ const bcLite = {
 };
 
 export function buildAttackScene(state, { type = 70, vel = false, turntimer = 240 } = {}) {
+  state.roomHeight = 480; // the oracle resizes room_battletest to the fight room's size
   state.hp = 90;
   state.invTimer = -1;
   state.phase = String(type);
@@ -126,4 +127,16 @@ export function buildOracleA75Scene(state) {
 }
 export function buildOracleA76Scene(state) {
   return buildAttackScene(state, { type: 76, vel: true });
+}
+export function buildOracleA72Scene(state) {
+  return buildAttackScene(state, { type: 72, vel: true });
+}
+export function buildOracleA73Scene(state) {
+  return buildAttackScene(state, { type: 73, vel: true });
+}
+export function buildOracleA74Scene(state) {
+  return buildAttackScene(state, { type: 74, vel: true });
+}
+export function buildOracleA77Scene(state) {
+  return buildAttackScene(state, { type: 77, vel: true, turntimer: 1500 });
 }

@@ -11,7 +11,7 @@ import { dirname } from 'node:path';
 import { createState, stepFrame, traceHeader } from '../sim/index.js';
 import { makeInputTable } from '../input/state.js';
 import { buildStubScene } from './scenes/stub.js';
-import { buildOracleA70Scene, buildOracleA65Scene, buildOracleA68Scene, buildOracleA71Scene, buildOracleA49Scene, buildOracleA50Scene, buildOracleA48Scene, buildOracleA46Scene, buildOracleA62Scene, buildOracleA61Scene, buildOracleA75Scene, buildOracleA76Scene, ORACLE_A70_INPUT } from './scenes/oracle-a70.js';
+import { buildOracleA70Scene, buildOracleA65Scene, buildOracleA68Scene, buildOracleA71Scene, buildOracleA49Scene, buildOracleA50Scene, buildOracleA48Scene, buildOracleA46Scene, buildOracleA62Scene, buildOracleA61Scene, buildOracleA75Scene, buildOracleA76Scene, buildOracleA72Scene, buildOracleA73Scene, buildOracleA74Scene, buildOracleA77Scene, ORACLE_A70_INPUT } from './scenes/oracle-a70.js';
 import {
   buildSoulWallScene,
   buildSoulBoxScene,
@@ -66,6 +66,10 @@ const SCENES = {
   'oracle-a61': { build: buildOracleA61Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
   'oracle-a75': { build: buildOracleA75Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
   'oracle-a76': { build: buildOracleA76Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
+  'oracle-a72': { build: buildOracleA72Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
+  'oracle-a73': { build: buildOracleA73Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
+  'oracle-a74': { build: buildOracleA74Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
+  'oracle-a77': { build: buildOracleA77Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
 };
 
 export function runTraceFull({ seed, frames, scene = 'stub' }) {

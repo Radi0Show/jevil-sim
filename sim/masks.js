@@ -112,6 +112,12 @@ export const CLUBSBULLET_MASK = build(raw.clubsbullet);
  *  centerscythe OBJECT's definition mask, and the mask_index override its
  *  side scythes carry. */
 export const SCYTHEBODY_MASK = build(raw.scythebody);
+/** The Three-Club balls — 4x4 AxisAlignedRect nubs offset from a 34x34
+ *  origin (a/b/c sit at different corners; rotation never moves them). */
+export const CLUBSBALL_A_MASK = build(raw.clubsballA);
+export const CLUBSBALL_B_MASK = build(raw.clubsballB);
+export const CLUBSBALL_C_MASK = build(raw.clubsballC);
+export const DIAMONDBULLET_VERT_MASK = build(raw.diamondbulletVert);
 
 /**
  * sprite name -> its precise mask, for the DEFAULT contact test.
@@ -136,6 +142,10 @@ export const SPRITE_MASKS = {
   spr_heartbullet: HEARTBULLET_MASK,
   spr_clubsbullet: CLUBSBULLET_MASK,
   spr_joker_scythebody_mask: SCYTHEBODY_MASK,
+  spr_clubsball_a: CLUBSBALL_A_MASK,
+  spr_clubsball_b: CLUBSBALL_B_MASK,
+  spr_clubsball_c: CLUBSBALL_C_MASK,
+  spr_diamondbullet_vert: DIAMONDBULLET_VERT_MASK,
 };
 
 /**

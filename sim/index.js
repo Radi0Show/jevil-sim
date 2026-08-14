@@ -144,7 +144,11 @@ function runCollisions(state) {
       state.counters.collisionChecks += 1;
     }
     if (hit) {
-      state.counters.collisionHits += 1;
+      // The hits counter mirrors the sterilized recorders' semantics: only
+      // active == 1 contacts count (the carousel's gray back-face and a
+      // faded pillar overlap without counting). The event itself still
+      // dispatches — Other_15 owns the active gate, as in the original.
+      if (b.active === 1) state.counters.collisionHits += 1;
       b.type.other15(b, state);
     }
   }

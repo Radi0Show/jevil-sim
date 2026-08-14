@@ -26,6 +26,10 @@ const WANTED = {
   heartbullet: 'spr_heartbullet',
   clubsbullet: 'spr_clubsbullet',
   scythebody: 'spr_joker_scythebody_mask',
+  clubsballA: 'spr_clubsball_a',
+  clubsballB: 'spr_clubsball_b',
+  clubsballC: 'spr_clubsball_c',
+  diamondbulletVert: 'spr_diamondbullet_vert',
 };
 
 function parse(spriteName) {

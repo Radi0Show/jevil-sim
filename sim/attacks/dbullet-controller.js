@@ -15,10 +15,14 @@
 
 import { spawn } from '../entity.js';
 import { gmlRandom, gmlChoose } from '../rng.js';
+import { lengthdirX, lengthdirY } from '../gml.js';
 import { jokerTeleport } from './joker-teleport.js';
 import { spadering } from './spadering.js';
 import { suitbomb } from './suitbomb.js';
 import { carouselbullet } from './carousel.js';
+import { dbulletVert } from './dbullet-vert.js';
+import { clubsbulletDark } from './clubs-dark.js';
+import { laserscythe, marker } from './laserscythe.js';
 import { centerscythe } from './centerscythe.js';
 import { bulletInherit } from '../bullets/collidebullet.js';
 
@@ -182,6 +186,85 @@ export const dbulletController = {
       return;
     }
 
+    if (e.gmlType === 72) {
+      if (e.btimer >= 18) {
+        e.btimer = 0;
+        let dir;
+        if (e.side === 1) {
+          dir = gmlChoose(r, [225, 315]);
+        }
+        if (e.side === -1) {
+          dir = gmlChoose(r, [45, 135]);
+        }
+        const radius = 360;
+        const xx = lengthdirX(radius, dir);
+        const yy = lengthdirY(radius, dir);
+        const d = spawn(state, clubsbulletDark, {
+          x: state.soul.x + 8 + xx,
+          y: state.soul.y + 8 + yy,
+        });
+        d.direction = dir + 180;
+        d.speed = 20;
+        d.friction = 1;
+        d.gmlType = 2;
+        d.damage = e.damage;
+        d.target = e.target;
+        d.image_angle = d.direction;
+        if (e.side === 1) {
+          e.side = -1;
+        } else {
+          e.side = 1;
+        }
+      }
+      return;
+    }
+
+    if (e.gmlType === 73) {
+      if (e.btimer >= 4) {
+        e.btimer = 0;
+        const radius = 140 + gmlRandom(r, 40);
+        const yy = radius * e.side;
+        let xx = -100 + gmlRandom(r, 200);
+        const num = gmlChoose(r, [0, 1, 2, 3]);
+        if (num === 3) {
+          xx = -10 + gmlRandom(r, 20);
+        }
+        if (gt) {
+          const db = spawn(state, dbulletVert, {
+            x: state.soul.x + 8 + xx,
+            y: gt.y + 100,
+          });
+          db.gmlType = 1;
+          db.damage = e.damage;
+          db.target = e.target;
+          db.timepoints = 2;
+        }
+      }
+      return;
+    }
+
+    if (e.gmlType === 74) {
+      if (e.btimer >= 9) {
+        e.btimer = 0;
+        const radius = 140 + gmlRandom(r, 40);
+        const yy = radius * e.side;
+        let xx = -100 + gmlRandom(r, 200);
+        const num = gmlChoose(r, [0, 1, 2, 3]);
+        if (num === 3) {
+          xx = -10 + gmlRandom(r, 20);
+        }
+        const d = spawn(state, dbulletVert, {
+          x: state.soul.x + 8 + xx,
+          y: state.soul.y + 8 + yy,
+        });
+        d.grazepoints = 12;
+        d.timepoints = 2;
+        d.damage = e.damage;
+        d.target = e.target;
+      }
+      return;
+    }
+
     if (e.gmlType === 75 || e.gmlType === 76) {
       if (e.btimer >= 0 && e.special === 0) {
         state.audio?.cue('snd_spearappear');
@@ -252,6 +335,169 @@ export const dbulletController = {
         jokern.active = 0;
         e.btimer = 0;
       }
+      return;
+    }
+
+    if (e.gmlType === 77) {
+      state.sp = 10;
+      if (state.soul && state.soul.alive) state.soul.wspeed = 10;
+      if (e.special === 0) {
+        state.audio?.cue('snd_joker_byebye');
+        e.prevmake = 0;
+        e.special = 1;
+        e.rank = 16;
+        e.realtimer = 0;
+        e.chase = 0;
+        e.made = 0;
+        e.amount = 0;
+        e.jokertimer = 0;
+        const darkfader = spawn(state, marker, { x: state.view.x + 320, y: state.view.y - 10 });
+        darkfader.sprite_index = 'spr_tallpx';
+        darkfader.depth = 2;
+        darkfader.image_alpha = 0;
+        darkfader.image_blend = 'c_black';
+        darkfader.image_xscale = 200;
+        darkfader.image_yscale = 2;
+        e.darkfader = darkfader;
+      }
+      if (e.realtimer >= 0 && e.realtimer < 10) {
+        if (e.darkfader.alive) e.darkfader.image_alpha += 0.1;
+        if (gt && gt.alive) gt.image_alpha -= 0.1;
+        if (state.soul && state.soul.alive) {
+          state.soul.y += 16;
+          state.soul.boundaryup = 160;
+        }
+      }
+      if (e.realtimer === 10) {
+        if (gt && gt.alive) {
+          // with (obj_battlesolid) instance_destroy() — the arena leaves.
+          gt.alive = false;
+        }
+      }
+      if (e.realtimer === 20) {
+        spawn(state, laserscythe, { x: state.view.x + 40, y: -60 });
+      }
+      if (e.realtimer === 40) {
+        spawn(state, laserscythe, { x: state.view.x + 570, y: -60 });
+      }
+      if (e.realtimer >= 60 && e.amount < 30) {
+        if (e.btimer >= e.rank) {
+          if (e.rank > 7) {
+            e.rank -= 1;
+          }
+          let which = Math.floor(gmlRandom(r, 5));
+          if (which === e.prevmake) {
+            which = Math.floor(gmlRandom(r, 5));
+          }
+          if (e.chase === 3) {
+            which = Math.floor((state.soul.x + 8) / 90);
+            e.chase = 0;
+          }
+          spawn(state, laserscythe, { x: state.view.x + 40 + 90 * which, y: -60 });
+          if (which === 1) {
+            spawn(state, laserscythe, { x: state.view.x + 40 + 450, y: -60 });
+          }
+          if (which === 0) {
+            spawn(state, laserscythe, { x: state.view.x + 40 + 540, y: -60 });
+          }
+          e.prevmake = which;
+          e.btimer = 0;
+          e.chase += 1;
+          e.amount += 1;
+        }
+      }
+      if (e.amount >= (29 - e.made) && e.special === 1) {
+        e.jokertimer = 0;
+        const jokerin = spawn(state, jokerTeleport, {
+          x: state.view.x + 320,
+          y: state.view.y + 100,
+        });
+        jokerin.gmlType = 66;
+        jokerin.depth = -30;
+        e.special = 2;
+        e.which2 = 0;
+      }
+      if (e.special === 2) {
+        e.jokertimer += 1;
+        if (e.jokertimer === 10) {
+          state.audio?.cue('snd_joker_neochaos');
+        }
+        if (e.jokertimer === 40 || e.jokertimer === 98) {
+          spawn(state, laserscythe, { x: state.view.x + 40, y: -60 });
+          spawn(state, laserscythe, { x: state.view.x + 580, y: -60 });
+        }
+        if (e.jokertimer === 46 || e.jokertimer === 86) {
+          spawn(state, laserscythe, { x: state.view.x + 130, y: -60 });
+          spawn(state, laserscythe, { x: state.view.x + 490, y: -60 });
+        }
+        if (e.jokertimer === 52 || e.jokertimer === 80) {
+          spawn(state, laserscythe, { x: state.view.x + 220, y: -60 });
+          spawn(state, laserscythe, { x: state.view.x + 400, y: -60 });
+        }
+        if (e.jokertimer === 66 || e.jokertimer === 98) {
+          spawn(state, laserscythe, { x: state.view.x + 310, y: -60 });
+        }
+        if (e.jokertimer === 130) {
+          const lastscythe = spawn(state, laserscythe, {
+            x: state.view.x + 320,
+            y: -320,
+          });
+          e.p = 0;
+          e.vol = 0;
+          e.vol2 = 1;
+          state.audio?.cue('snd_rumble');
+          lastscythe.vspeed = 1;
+          lastscythe.gravity = 0.02;
+          lastscythe.image_xscale = 16;
+          lastscythe.image_yscale = 16;
+          lastscythe.scale = 16;
+          lastscythe.rotspeed = 0;
+          lastscythe.remrot = 160;
+          lastscythe.image_angle = 160;
+          e.lastscythe = lastscythe;
+          const fadewhite = spawn(state, marker, {
+            x: state.view.x + 320,
+            y: state.view.y - 40,
+          });
+          fadewhite.sprite_index = 'spr_tallpx';
+          fadewhite.image_xscale = 400;
+          fadewhite.image_yscale = 2;
+          fadewhite.depth = -100;
+          fadewhite.image_alpha = -0.3;
+          e.fadewhite = fadewhite;
+        }
+        if (e.jokertimer >= 131) {
+          if (e.lastscythe.alive) {
+            e.lastscythe.x = e.lastscythe.xstart + gmlRandom(r, 8);
+          }
+          if (e.fadewhite.alive) {
+            e.fadewhite.image_alpha += 0.01;
+          }
+          e.vol += 0.01;
+          if (e.fadewhite.image_alpha >= 1) {
+            if (e.darkfader.alive) e.darkfader.alive = false;
+            if (e.lastscythe.alive) e.lastscythe.alive = false;
+          }
+          if (e.fadewhite.image_alpha >= 1.3) {
+            e.special = 3;
+          }
+        }
+      }
+      if (e.special === 3) {
+        if (state.soul && state.soul.alive) {
+          state.soul.x = state.view.x + 320;
+          state.soul.y = state.view.y + 120;
+        }
+        e.vol -= 0.1;
+        if (e.fadewhite.alive) {
+          e.fadewhite.image_alpha -= 0.1;
+        }
+        if (e.fadewhite.image_alpha <= 0) {
+          state.turntimer = 11;
+          e.special = 4;
+        }
+      }
+      e.realtimer += 1;
       return;
     }
 
