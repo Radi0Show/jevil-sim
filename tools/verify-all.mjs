@@ -36,7 +36,9 @@ function needsOracle(file) {
 
 const SUITES = [
   ['verify-determinism.mjs', 'byte-identical across 10 runs'],
+  ['verify-rng.mjs', "GameMaker's RNG (WELL512) reproduced — chapter 1 probe"],
   ['verify-t3.mjs', 'chapter 1 soul movement — three oracle recordings'],
+  ['verify-a70.mjs', 'attack 1: teleport spade fans (dc.type 70, jattack 0)'],
 ];
 
 // EVERY suite file must be in the table. A suite that exists and is never run

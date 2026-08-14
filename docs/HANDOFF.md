@@ -23,7 +23,23 @@ consumption, fan geometry, f32 motion, teleport con machine ALL byte-exact;
    of +6.6e-8 fails `> 0`. sim/gml.js gmlGreater/gmlLess carry this; use
    them wherever a fractional value meets a comparison.
 
-**OPEN — the chapter 1 runner's direction->velocity mapping.** One spade
+**RESOLVED → documented deviation (docs/VERIFICATION.md).** Attack 1 now
+PASSES two-tier: mechanics byte-exact 600 frames, aimed positions within a
+3.3e-3 px measured residue, both tiers sabotage-tested. The investigation's
+verdict: the ch1 runner's aimed-bullet velocity comes from single-precision
+trig whose bits JS can't reproduce, its own hspeed/vspeed accessor
+disagrees with its mover, and drift is exactly 1 f32 ulp/frame in coarse
+grid zones (visible in a70-wide.csv's constant-delta rows). Probes:
+trig-probe / pointdir-probe / mover-probe CSVs. Next bit-exact step, if
+ever: disassemble the runner's sinf.
+
+**Suite-design fact:** contact columns (nbul/hits) can flip at TANGENTIAL
+passes once residue crosses a mask edge — the a70 suite pins them
+byte-exact through f214 (past the real spawn window) and bounds them after.
+Slots 0-15 stay aligned regardless (ch1 bullets never despawn; the oldest
+16 are long offscreen).
+
+**Original open note (kept for the record) — the chapter 1 runner's direction->velocity mapping.** One spade
 cell diverges ~3 f32 ulps after 35 identical frames: the runner's effective
 sin at 226.884° differs from JS f64/f32 sin by ~1e-5 ABSOLUTE (hundreds of
 ulps — not rounding). Chapter 1 ships an OLDER runtime than chapter 3
