@@ -145,3 +145,30 @@ byte-exact against three real-game recordings on the first attempt.
   fight).
 - The pre-fight spade volley (jokerbattleevent bulcon chain) — port
   driver-side with the intro cutscene, not as sim entities.
+
+## 2026-08-14 (second session) — 14 of 16 attacks verified; the epsilon harvest
+
+**State:** verify-all 18/18. Verified: 70, 65, 49, 75, 62(pending), 50, 73,
+68, 61, 48, 72, 76, 71, 46, 74(pending), 77. FINAL CHAOS byte-exact through
+its whole scripted arc. Playable practice page live (web/, mask-rendered,
+honestly labeled) — dev server via the jevil-sim entry in ~/.claude/launch.json
+(port 8214; devserver anchors itself to the repo root).
+
+**The epsilon class keeps paying:** math_set_epsilon applies to EVERY real
+comparison in the runner. Sites measured this session: teleport vanish
+(xscale > 0), fadewhite thresholds (>= 1, >= 1.3, <= 0 — a77's f581 soul
+recentre), fade-alpha gates (< 1 with f32 0.1-steps summing to 0.99999994),
+the insanity ramp cap (dirspeed < 3 with f64 0.01-steps). RULE: any
+computed real meeting a bound in a translation gets gmlGreater/-Less/-Eq.
+
+**Ordering close-out:** object-index dispatch (a49+a48 pin it); the
+recorder's `with` windows iterate newest-first (slot semantics for
+teleports). Two probe generations calibrate contact: contact-probe.csv
+(2,400 pts) + contact-probe2.csv (4,800 pts incl. NEGATIVE xscale carousel,
+vert diamond, heartbullet) — a62/a74's single hit-flips pend that fit.
+
+**Batch trap:** back-to-back run-oracle launches can mislabel traces when a
+run crashes (a75's crash shifted two names; check the `phase` column of
+every fresh trace against its expected dc.type before diffing). And ALWAYS
+rebuild the attack oracle after a probe build — a probe bundle records no
+oracle_trace.csv and burns a whole batch in timeouts.

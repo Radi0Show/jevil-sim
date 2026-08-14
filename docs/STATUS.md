@@ -1,6 +1,6 @@
 # STATUS
 
-Updated 2026-08-14 (end of first build session).
+Updated 2026-08-14 (second session, continued).
 
 ## Done, verified
 
