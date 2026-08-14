@@ -53,8 +53,8 @@ const SUITES = [
   ['verify-a72.mjs', 'attack 11: Three-Club Attack (dc.type 72, jattack 10)'],
   ['verify-a73.mjs', 'attack 7: Diamond Release (dc.type 73, jattack 6)'],
   ['verify-a77.mjs', 'attack 16: FINAL CHAOS (dc.type 77, jattack 15)'],
-  // verify-a62 / verify-a74 pend the negative-scale contact probe
-  // (single hit-flip each; see HANDOFF).
+  ['verify-a62.mjs', 'attack 5: Carousel (dc.type 62, jattack 4)'],
+  ['verify-a74.mjs', 'attack 15: Diamond Release II (dc.type 74, jattack 14) — narrowed, see suite header'],
 ];
 
 // EVERY suite file must be in the table. A suite that exists and is never run

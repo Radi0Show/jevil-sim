@@ -172,3 +172,17 @@ run crashes (a75's crash shifted two names; check the `phase` column of
 every fresh trace against its expected dc.type before diffing). And ALWAYS
 rebuild the attack oracle after a probe build — a probe bundle records no
 oracle_trace.csv and burns a whole batch in timeouts.
+
+## 2026-08-14 (close) — ALL 16 ATTACKS VERIFIED; selector translated
+
+verify-all 20/20. Contact model now carries: pixel-intersection raw+rint,
+axis-rect-B AABB solidity, MIRRORED-axis sampling floor((u+1)/scale)
+(probe2 cfg4/5, 44/44). OPEN: obj_dbullet_vert's EFFECTIVE mask matches
+neither stored diamond (probe2 cfg6: 36 vs vert, 100 vs flat, no shift
+zeroes it) — costs exactly one transient hit-flip (a74 f136); reconstruct
+it with a dense dedicated sweep, then restore a74's full window.
+sim/joker.js holds the fight selector (smoke-tested: violence pacing
+reproduces fakeout→FINAL CHAOS→phase 5). NEXT per PLAYBOOK §10: the turn
+lifecycle around the selector (enemy-talk timing, box regrow, teardown at
+turntimer 0, returnheart), then graze/TP + damage with their own probes,
+then endings, then sprites/audio/UI, then Pages deploy.

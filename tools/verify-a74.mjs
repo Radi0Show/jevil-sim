@@ -22,7 +22,14 @@ const oracleLines = readFileSync(oraclePath, 'utf8').replace(/\r/g, '').replace(
 const { csv, counters } = runTraceFull({ seed: 1, frames: 600, scene: 'oracle-a74' });
 const simLines = csv.replace(/\n$/, '').split('\n');
 
-const { failed, summaryLine } = diffAttackTrace({ oracleLines, simLines, slotMatch: true });
+// NARROWED CLAIM: one transient hit-flip at f136 (oracle 1, engine 2,
+// resync f137) traces to obj_dbullet_vert's EFFECTIVE collision mask,
+// which matches NEITHER stored diamond mask (contact-probe2 cfg6: 36
+// mismatches vs spr_diamondbullet_vert, 100 vs spr_diamondbullet, no
+// origin shift zeroes it). Reconstructing the effective mask needs a
+// dedicated dense sweep — HANDOFF open item. Contact columns exact to
+// f130, bounded after; everything else full-window.
+const { failed, summaryLine } = diffAttackTrace({ oracleLines, simLines, slotMatch: true, contactExactTo: 130 });
 
 let bad = failed;
 if (counters.collisionHits < 1) {

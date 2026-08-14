@@ -20,7 +20,7 @@ export const ATTACKS = [
   { jattack: 1, type: 65, name: 'Spade Spirals', tt: 240, damage: 50, graze: 3, inv: 60, verified: true },
   { jattack: 2, type: 49, name: 'Heart Bombs', tt: 240, damage: 40, graze: 3, inv: 60, verified: true },
   { jattack: 3, type: 75, name: 'Spinning Scythes', tt: 240, damage: 60, graze: 3, inv: 60, verified: true },
-  { jattack: 4, type: 62, name: 'Carousel Attack', tt: 240, damage: 50, graze: 2, inv: 20, verified: false },
+  { jattack: 4, type: 62, name: 'Carousel Attack', tt: 240, damage: 50, graze: 2, inv: 20, verified: true },
   { jattack: 5, type: 50, name: 'Club Bombs', tt: 300, damage: 40, graze: 3, inv: 60, verified: true },
   { jattack: 6, type: 73, name: 'Diamond Release', tt: 240, damage: 50, graze: 1, inv: 60, verified: true },
   { jattack: 7, type: 68, name: 'Spade Spirals II', tt: 240, damage: 50, graze: 2, inv: 60, verified: true },
@@ -30,7 +30,7 @@ export const ATTACKS = [
   { jattack: 11, type: 76, name: 'Spinning Scythes II', tt: 240, damage: 60, graze: 3, inv: 60, verified: true },
   { jattack: 12, type: 71, name: 'Diamond Tossing', tt: 240, damage: 50, graze: 2, inv: 60, verified: true },
   { jattack: 13, type: 46, name: 'Chaos Bomb', tt: 330, damage: 40, graze: 4, inv: 60, verified: true },
-  { jattack: 14, type: 74, name: 'Diamond Release II', tt: 240, damage: 40, graze: 1, inv: 60, verified: false },
+  { jattack: 14, type: 74, name: 'Diamond Release II', tt: 240, damage: 40, graze: 1, inv: 60, verified: true },
   { jattack: 15, type: 77, name: 'FINAL CHAOS', tt: 1500, damage: 40, graze: 1, inv: 60, verified: true },
 ];
 

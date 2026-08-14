@@ -50,3 +50,15 @@ The probes and wide traces are preserved for that hunt.
 | verify-rng | WELL512 + seeding + all five call mappings vs 131 in-game values |
 | verify-t3 | soul movement: 3 recordings x 600 frames, ALL columns byte-exact |
 | verify-a70 | teleport spade fans: 600 frames two-tier, sabotage-tested both tiers |
+| verify-a65/-a68 | spade rings both variants |
+| verify-a49/-a50/-a48/-a46 | all four suit-bomb attacks incl. Chaos Bomb |
+| verify-a71 | single-diamond teleports |
+| verify-a62/-a61 | both carousels (negative-xscale mirror rule; a61 byte-exact incl. the Everyman roll) |
+| verify-a75/-a76 | Devilsknife both variants (epsilon dirspeed cap) |
+| verify-a72 | Three-Club Attack |
+| verify-a73 | Diamond Release (byte-exact positions) |
+| verify-a74 | Diamond Release II — NARROWED: one f136 hit-flip documented (vert-diamond effective mask open) |
+| verify-a77 | FINAL CHAOS: full scripted arc byte-exact |
+
+All 16 live attack types of the fight are covered — 15 at the full
+two-tier standard, one narrowed with its cause recorded.

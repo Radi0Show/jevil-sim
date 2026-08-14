@@ -481,9 +481,16 @@ function masksOverlapRectA(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle = 0) {
       const dy = py - by;
       const u = dx * cos - dy * sin;
       const v = dx * sin + dy * cos;
-      const sx = Math.floor(u / bsx + maskB.originX);
+      // MIRRORED AXES (negative scale): the world pixel's RIGHT edge maps
+      // through the mirror — sample floor((u+1)/scale) instead of
+      // floor(u/scale). Calibrated by contact-probe2 cfg4/cfg5 (carousel at
+      // xscale -2 and fractional negatives): 44/44 under this rule, 44
+      // mismatches without it. The shape itself never rotates a mirrored
+      // axis in this fight (carousel angle 0), so mirror+rotation remains
+      // outside the validated envelope.
+      const sx = Math.floor((bsx > 0 ? u : u + 1) / bsx + maskB.originX);
       if (sx < 0 || sx >= maskB.w) continue;
-      const sy = Math.floor(v / bsy + maskB.originY);
+      const sy = Math.floor((bsy > 0 ? v : v + 1) / bsy + maskB.originY);
       if (sy < 0 || sy >= maskB.h) continue;
       if (maskB.px[sy][sx]) return true;
     }
