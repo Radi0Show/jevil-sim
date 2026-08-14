@@ -36,6 +36,7 @@ function needsOracle(file) {
 
 const SUITES = [
   ['verify-determinism.mjs', 'byte-identical across 10 runs'],
+  ['verify-t3.mjs', 'chapter 1 soul movement — three oracle recordings'],
 ];
 
 // EVERY suite file must be in the table. A suite that exists and is never run

@@ -11,6 +11,13 @@ import { dirname } from 'node:path';
 import { createState, stepFrame, traceHeader } from '../sim/index.js';
 import { makeInputTable } from '../input/state.js';
 import { buildStubScene } from './scenes/stub.js';
+import {
+  buildSoulWallScene,
+  buildSoulBoxScene,
+  HOLD_RIGHT,
+  HOLD_RIGHT_THEN_FOCUS,
+  DIAGONAL_INTO_CORNER,
+} from './scenes/soul-wall.js';
 
 function parseArgs(argv) {
   const args = { seed: 12345, frames: 600, out: null, scene: 'stub' };
@@ -40,6 +47,12 @@ const INPUT_PROGRAM = [
 // oracle patches; see docs/PLAYBOOK.md §3-§4).
 const SCENES = {
   stub: { build: buildStubScene, input: INPUT_PROGRAM, bulletSlots: 4 },
+  'soul-wall': { build: buildSoulWallScene, input: HOLD_RIGHT, bulletSlots: 0 },
+  'soul-focus': { build: buildSoulWallScene, input: HOLD_RIGHT_THEN_FOCUS, bulletSlots: 0 },
+  'soul-corner': { build: buildSoulWallScene, input: DIAGONAL_INTO_CORNER, bulletSlots: 0 },
+  'soul-box': { build: buildSoulBoxScene, input: HOLD_RIGHT, bulletSlots: 0 },
+  'soul-box-focus': { build: buildSoulBoxScene, input: HOLD_RIGHT_THEN_FOCUS, bulletSlots: 0 },
+  'soul-box-corner': { build: buildSoulBoxScene, input: DIAGONAL_INTO_CORNER, bulletSlots: 0 },
 };
 
 export function runTraceFull({ seed, frames, scene = 'stub' }) {

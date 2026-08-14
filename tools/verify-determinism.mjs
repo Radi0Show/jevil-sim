@@ -14,9 +14,7 @@ import { runTrace } from './run-trace.mjs';
 const RUNS = 10;
 const SEED = 12345;
 const FRAMES = 600;
-// Grows as scenes are translated (knight-sim's version also runs its
-// soul-wall trio; those return here with the chapter 1 soul in T3).
-const SCENES = ['stub'];
+const SCENES = ['stub', 'soul-wall', 'soul-focus', 'soul-corner', 'soul-box', 'soul-box-focus', 'soul-box-corner'];
 
 const hash = (s) => createHash('sha256').update(s).digest('hex');
 
