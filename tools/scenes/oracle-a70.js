@@ -60,10 +60,15 @@ export function buildAttackScene(state, { type = 70, vel = false } = {}) {
     'tt', 'nbul', 'hits',
   ];
   state.traceExtra = (s) => {
+    // Mirror the recorder exactly: its `with (obj_joker_teleport)` iterates
+    // NEWEST FIRST and keeps the first two found, THEN sorts that pair by
+    // id ascending. With 3+ clones alive (type 71's 9-frame cadence) that
+    // is the two newest — not the two oldest.
     const tps = s.entities
       .filter((e) => e.alive && e.type.name === 'obj_joker_teleport')
-      .sort((a, b) => a.seq - b.seq)
-      .slice(0, 2);
+      .sort((a, b) => b.seq - a.seq)
+      .slice(0, 2)
+      .sort((a, b) => a.seq - b.seq);
     const cells = [];
     for (let i = 0; i < 2; i++) {
       const t = tps[i];

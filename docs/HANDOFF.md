@@ -4,6 +4,50 @@ Every session appends what it learned, what is open, and the traps it hit.
 (PLAYBOOK §9: this is the difference between sessions that compound and
 sessions that re-learn.)
 
+## 2026-08-14 (final) — three attacks verified; TWO more runtime facts
+
+**Done since the entry below:** attacks 70/65/49 verified two-tier and
+sabotage-tested; types 68/71 translated (suites cloned, recordings queued);
+suit bombs + heart blasts + regularbullet base in; attack-diff library with
+knight's count-flip slot suppression.
+
+**Fact 4 — chapter 1 iterates instances NEWEST-FIRST** (a49's heart-bomb
+blast: a son repositioned past the wall line by its parent survives the
+frame — only possible if the son's wall-check ran before the parent's
+step). entity.js phaseList sorts seq DESCENDING now; every earlier suite
+stays green under the flip because nothing before a49 had cross-instance
+repositioning.
+
+**Fact 5 — ONE collision routine for everything**: raw positions,
+round-half-even bbox integerisation, pixel-intersection sampling (the rule
+ch3's graze probe calibrated for rect-A). Selected by two boundary cases
+pulling opposite directions (a65 f79 must hit, a70 f74 must miss) and
+validated over all recordings including T3's walls. ch3's floored-corner
+precise-A rule is a LATER runtime's behaviour.
+
+**Recording protocol note:** the attack recorder now prints hspeed/vspeed
+accessor columns per slot (b*_hs/b*_vs) — scenes recorded with it set
+state.traceBulletVel. The accessor disagrees with the mover at the ~1e-5
+level (trig residue), so attack-diff bounds those columns at 1e-3.
+
+**a71 OPEN (suite parked, deliberately unregistered so the runner nags).**
+Type 71 (9-frame cadence, 3+ clones alive) exposes an RNG-stream desync the
+other attacks masked: teleport CON MACHINES match frame-by-frame but spawn
+POSITIONS differ from around the 2nd-3rd spawn (sim clone at x 136.06 where
+the oracle has 216.71 — different jokerx draws). Two traps already
+eliminated: the recorder's `with` window keeps the two NEWEST clones
+(newest-first iteration — the sim scene now mirrors that), and the
+motion-step floor was retuned. Suspects for the desync, in order: (1) an
+extra/missing draw somewhere in the single-diamond volley path that only
+matters when spawns overlap; (2) nbul differs at f74 (sim 2, oracle 1) —
+the aimed diamonds always hit the stationary soul, so a hit-frame
+difference removes a bullet a frame apart and may interact with spawn
+timing; (3) something in the type-71 block's conditional-random path.
+Next session: dump both sides' spawn positions for the first 10 spawns
+(the sim can print its gmlRng draw log; the oracle needs a spawn-log
+column) and find the first diverging draw. Recording: traces/a71-teleport.csv
+(wide format).
+
 ## 2026-08-14 (later) — RNG confirmed; attack 1 in progress; THREE new engine facts
 
 **Done:** ch1 RNG probed (WELL512, identical to ch3 — 7/7). Universal attack
