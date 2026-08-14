@@ -20,6 +20,7 @@
 
 import { destroy } from '../entity.js';
 import { gmlRandom } from '../rng.js';
+import { scrDamageAll } from '../damage.js';
 
 export const laserscythe = {
   name: 'obj_laserscythe',
@@ -111,13 +112,35 @@ export const laserscythe = {
   other15(b, state) {
     if (b.active !== 1) return;
     if (state.damageEnabled) {
-      // Bespoke pillar damage — lands with the damage system:
-      // inv = invc*40; average party HP >= 10 -> each standing member to
-      // ceil(hp * 0.7); else scr_damage_all().
-      throw new Error('laserscythe pillar damage not yet translated');
+      // Bespoke pillar damage (gml_Object_obj_laserscythe_Other_15):
+      // 30% HP cut for everyone standing while the party average is
+      // healthy, scr_damage_all as the finisher below it.
+      if (state.invTimer < 0) {
+        state.shake = 8;
+        if (state.soul && state.soul.alive) state.soul.dmgnoise = 1;
+        state.audio?.cue('snd_hurt1');
+        state.invTimer = state.invc * 40;
+        const p = state.party;
+        const temphp = [];
+        for (let i = 0; i < 3; i += 1) {
+          temphp[i] = p.hp[p.char[i]];
+          if (temphp[i] < 0) temphp[i] = 0;
+        }
+        if (Math.ceil(temphp[0] + temphp[1] + temphp[2]) / 3 >= 10) {
+          for (let i = 0; i < 3; i += 1) {
+            if (temphp[i] > 0) {
+              p.hp[p.char[i]] = Math.ceil(p.hp[p.char[i]] * 0.7);
+            }
+          }
+        } else {
+          // ORIGINAL BUG (preserved): inv was set positive three lines up,
+          // and scr_damage_all's own `global.inv < 0` gate makes this call
+          // a NO-OP — the pillar deals no damage to a nearly-downed party.
+          scrDamageAll(state, b);
+        }
+      }
     }
-    // Sterilized recorder counts without destroying (laserscythe has no
-    // destroy-on-hit).
+    // No destroy — the pillar persists.
   },
 };
 

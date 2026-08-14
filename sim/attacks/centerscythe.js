@@ -28,6 +28,7 @@ import { gmlRandom, gmlChoose } from '../rng.js';
 import { gmlGreater, gmlLess } from '../gml.js';
 import { lengthdirX, lengthdirY } from '../gml.js';
 import { bulletInherit } from '../bullets/collidebullet.js';
+import { scrDamage, scrDamageAll } from '../damage.js';
 import { collidebullet } from '../bullets/collidebullet.js';
 
 function scytheCreate(e, state) {
@@ -232,7 +233,11 @@ export const centerscythe = {
   other15(b, state) {
     if (b.active !== 1) return;
     if (state.damageEnabled) {
-      throw new Error('chapter 1 damage path not yet translated');
+      if (b.target !== 3) {
+        scrDamage(state, b);
+      } else {
+        scrDamageAll(state, b);
+      }
     }
     // regularbullet_permanent: no destroy.
   },

@@ -22,6 +22,7 @@
 // bodies have hitboxes", confirmed from the data file.
 
 import { gmlGreater, gmlLess, gmlGreaterEq } from '../gml.js';
+import { scrDamage, scrDamageAll } from '../damage.js';
 
 export const carouselbullet = {
   name: 'obj_carouselbullet',
@@ -117,7 +118,11 @@ export const carouselbullet = {
   other15(b, state) {
     if (b.active !== 1) return;
     if (state.damageEnabled) {
-      throw new Error('chapter 1 damage path not yet translated');
+      if (b.target !== 3) {
+        scrDamage(state, b);
+      } else {
+        scrDamageAll(state, b);
+      }
     }
     // regularbullet_permanent: no destroy.
   },

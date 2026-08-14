@@ -80,6 +80,9 @@ export function int(v) {
 }
 
 export function traceHeader(state) {
+  // Fully custom formats (the live damage/graze probe) bypass the narrow
+  // and wide layouts entirely.
+  if (state.traceCustom) return state.traceCustom.header.join(',');
   if (state.traceWide) {
     const cols = [...WIDE_FIELDS];
     for (let i = 0; i < state.traceBulletSlots; i++) {
@@ -110,6 +113,7 @@ export function traceHeader(state) {
  */
 export function traceRow(state) {
   const soul = state.soul;
+  if (state.traceCustom) return state.traceCustom.row(state).join(',');
   if (state.traceWide) return wideRow(state);
 
   const cells = [

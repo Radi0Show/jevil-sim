@@ -12,6 +12,7 @@
 // -> obj_regularbullet_permanent.
 
 import { destroy } from '../entity.js';
+import { scrDamage, scrDamageAll } from '../damage.js';
 
 function regularCreate(e, state) {
   e.isBullet = true;
@@ -50,7 +51,11 @@ export const regularbullet = {
   other15(b, state) {
     if (b.active !== 1) return;
     if (state.damageEnabled) {
-      throw new Error('chapter 1 damage path not yet translated');
+      if (b.target !== 3) {
+        scrDamage(state, b);
+      } else {
+        scrDamageAll(state, b);
+      }
     }
     destroy(b);
   },
@@ -65,7 +70,11 @@ export const regularbulletPermanent = {
   other15(b, state) {
     if (b.active !== 1) return;
     if (state.damageEnabled) {
-      throw new Error('chapter 1 damage path not yet translated');
+      if (b.target !== 3) {
+        scrDamage(state, b);
+      } else {
+        scrDamageAll(state, b);
+      }
     }
     // No destroy — permanent.
   },

@@ -14,6 +14,7 @@
 import { runPhase, runAlarms, reap } from './entity.js';
 import { traceRow } from './trace.js';
 import { spriteMaskHit } from './masks.js';
+import { stepGraze } from './graze.js';
 
 export { createState } from './state.js';
 export { spawn, destroy, ALARM_COUNT } from './entity.js';
@@ -197,6 +198,10 @@ export function stepFrame(state, input) {
   runPhase(state, 'step');
   runMotion(state);
   runCollisions(state);
+  // DAMAGE BEFORE GRAZE (knight-measured order, same event layout here):
+  // a hit resolves first, sets inv positive, and the graze gate
+  // `global.inv < 0` then skips this frame's trickle.
+  stepGraze(state);
   runPhase(state, 'endStep');
 
   // obj_grazebox's End Step: the box moves to the heart NOW, after this

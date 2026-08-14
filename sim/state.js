@@ -15,6 +15,7 @@
 // arrives with its own translation from the chapter 1 dump and its own suite.
 
 import { createRng, gmlCreate } from './rng.js';
+import { freshParty } from './damage.js';
 
 export function createState({ seed, traceBulletSlots = 0 } = {}) {
   if (!Number.isInteger(seed)) {
@@ -44,7 +45,16 @@ export function createState({ seed, traceBulletSlots = 0 } = {}) {
     heartx: 0, // global.heartx
     hearty: 0, // global.hearty
     turntimer: 999, // global.turntimer — obj_battlecontroller decrements
-    invc: 1, // global.invc — invincibility multiplier (Jevil: dc.inv overrides per attack)
+    invc: 1, // global.invc — i-frames are ALWAYS invc * 40 (bullet inv fields are write-only)
+
+    // The chapter 1 party (slot->char map, HP, DF, down state). See damage.js.
+    party: freshParty(),
+    tension: 0, // global.tension
+    maxtension: 250, // global.maxtension (chapter 1)
+    grazeEnabled: false, // scenes that mirror sterilized recordings keep this off
+    grazeFlash: 0, // obj_grazebox grazetimer (visual)
+    gameOver: false,
+    shake: 0,
 
     // Oracle parity switch. Some oracle patches replace the damage event with
     // a pure recorder, because letting the party die ends the run and loses

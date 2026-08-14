@@ -20,6 +20,7 @@
 // (hit counter + destroy, no party effects).
 
 import { destroy } from '../entity.js';
+import { scrDamage, scrDamageAll } from '../damage.js';
 
 export const collidebullet = {
   name: 'obj_collidebullet',
@@ -36,9 +37,11 @@ export const collidebullet = {
   other15(b, state) {
     if (b.active !== 1) return;
     if (state.damageEnabled) {
-      // scr_damage / scr_damage_all — translated with the damage suite.
-      // Nothing reaches here while damageEnabled is false.
-      throw new Error('chapter 1 damage path not yet translated');
+      if (b.target !== 3) {
+        scrDamage(state, b);
+      } else {
+        scrDamageAll(state, b);
+      }
     }
     destroy(b);
   },
