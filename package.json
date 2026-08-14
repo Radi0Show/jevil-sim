@@ -1,0 +1,16 @@
+{
+  "name": "jevil-sim",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Frame-accurate browser practice tool for the Jevil fight (DELTARUNE Chapter 1)",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "verify": "node tools/verify-all.mjs",
+    "trace": "node tools/run-trace.mjs",
+    "diff": "node tools/diff-trace.mjs",
+    "serve": "python3 tools/devserver.py"
+  }
+}
