@@ -92,6 +92,10 @@ export function traceHeader(state) {
   const cols = [...BASE_FIELDS];
   for (let i = 0; i < state.traceBulletSlots; i++) {
     cols.push(`b${i}_x`, `b${i}_y`);
+    // The widened attack recorder also prints the hspeed/vspeed accessors
+    // (added mid-project for the trig-residue hunt). Scenes recorded with
+    // it set traceBulletVel.
+    if (state.traceBulletVel) cols.push(`b${i}_hs`, `b${i}_vs`);
   }
   // Scene-defined extra columns (state.traceExtraHeader / state.traceExtra),
   // for mirroring oracle traces that carry attack state.
@@ -124,6 +128,25 @@ export function traceRow(state) {
   for (let i = 0; i < state.traceBulletSlots; i++) {
     const b = bullets[i];
     cells.push(b ? real(b.x) : '', b ? real(b.y) : '');
+    if (state.traceBulletVel) {
+      if (!b) {
+        cells.push('', '');
+      } else {
+        // GameMaker's hspeed/vspeed accessors: derived from speed/direction
+        // (or the components themselves for componentMotion entities).
+        let hs;
+        let vs;
+        if (b.componentMotion) {
+          hs = b.hspeed ?? 0;
+          vs = b.vspeed ?? 0;
+        } else {
+          const r = ((b.direction ?? 0) * Math.PI) / 180;
+          hs = (b.speed ?? 0) * Math.cos(r);
+          vs = -(b.speed ?? 0) * Math.sin(r);
+        }
+        cells.push(real(hs), real(vs));
+      }
+    }
   }
 
   if (state.traceExtra) cells.push(...state.traceExtra(state));

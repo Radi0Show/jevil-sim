@@ -11,7 +11,7 @@ import { dirname } from 'node:path';
 import { createState, stepFrame, traceHeader } from '../sim/index.js';
 import { makeInputTable } from '../input/state.js';
 import { buildStubScene } from './scenes/stub.js';
-import { buildOracleA70Scene, ORACLE_A70_INPUT } from './scenes/oracle-a70.js';
+import { buildOracleA70Scene, buildOracleA65Scene, buildOracleA68Scene, buildOracleA71Scene, ORACLE_A70_INPUT } from './scenes/oracle-a70.js';
 import {
   buildSoulWallScene,
   buildSoulBoxScene,
@@ -55,6 +55,9 @@ const SCENES = {
   'soul-box-focus': { build: buildSoulBoxScene, input: HOLD_RIGHT_THEN_FOCUS, bulletSlots: 0 },
   'soul-box-corner': { build: buildSoulBoxScene, input: DIAGONAL_INTO_CORNER, bulletSlots: 0 },
   'oracle-a70': { build: buildOracleA70Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
+  'oracle-a65': { build: buildOracleA65Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
+  'oracle-a68': { build: buildOracleA68Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
+  'oracle-a71': { build: buildOracleA71Scene, input: ORACLE_A70_INPUT, bulletSlots: 16 },
 };
 
 export function runTraceFull({ seed, frames, scene = 'stub' }) {

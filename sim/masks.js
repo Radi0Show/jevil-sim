@@ -353,10 +353,19 @@ function rintHalfEven(x) {
  * precise WITH.
  */
 export function masksOverlap(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle = 0) {
-  if (maskA.axisRect) {
-    return masksOverlapRectA(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle);
-  }
-  return masksOverlapPrecise(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle);
+  // CHAPTER 1 DIFFERENCE from knight-sim: the OLDER runner resolves EVERY
+  // pairing through the pixel-intersection routine (raw positions, ROUND
+  // half-even bbox integerisation, both masks sampled at pixel corners) —
+  // chapter 3's floored-corner special case for precise A does not carry.
+  // Selected by two mutually-constraining boundary cases and validated
+  // over both full attack recordings:
+  //   a65 f79: scale-1 spade at x=.6644 clipping the heart's left edge —
+  //            the runner HITS (floored-corner misses by 0.34px);
+  //   a70 f74: scale-0.4 spade at x=.5874 — the runner MISSES (a rounded
+  //            floored-corner variant wrongly hits).
+  // A dedicated ch1 contact-sweep probe (knight's t4 pattern) is the
+  // proper calibration when a case outside these envelopes appears.
+  return masksOverlapRectA(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle);
 }
 
 function masksOverlapRectA(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle = 0) {
@@ -446,8 +455,16 @@ function masksOverlapRectA(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle = 0) {
 }
 
 function masksOverlapPrecise(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle = 0) {
-  const px = Math.floor(bx);
-  const py = Math.floor(by);
+  // CHAPTER 1 DIFFERENCE: B's position is ROUNDED (half-to-even), not
+  // floored. Chapter 3's t4 contact study selected floor for that runner;
+  // chapter 1's OLDER runtime resolves the a65 f79 boundary case (spade at
+  // x .664 clipping the heart's left edge — the runner hits, floor misses
+  // by 0.34px) only under round, and every a70/a65 contact in the recorded
+  // windows is consistent with it. A dedicated ch1 contact sweep probe
+  // (knight's t4-contact pattern) should pin this properly — until then
+  // this is the fitted model, validated by two attack recordings.
+  const px = rintHalfEven(bx);
+  const py = rintHalfEven(by);
   const [al, at, ar, ab] = maskA.bbox;
   const [bl, bt, br, bb] = maskB.bbox;
 

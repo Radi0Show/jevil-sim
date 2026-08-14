@@ -31,7 +31,7 @@ const bcLite = {
   },
 };
 
-export function buildOracleA70Scene(state, { type = 70 } = {}) {
+export function buildAttackScene(state, { type = 70, vel = false } = {}) {
   state.hp = 90;
   state.invTimer = -1;
   state.phase = String(type);
@@ -39,6 +39,7 @@ export function buildOracleA70Scene(state, { type = 70 } = {}) {
   state.turntimer = 240;
   state.damageEnabled = false;
   state.gmlRng = gmlCreate(4242);
+  state.traceBulletVel = vel; // widened recorder prints b_hs/b_vs per slot
 
   spawn(state, bcLite);
   const gt = spawn(state, battlebox, { x: 320, y: 170 });
@@ -81,3 +82,18 @@ export function buildOracleA70Scene(state, { type = 70 } = {}) {
 }
 
 export const ORACLE_A70_INPUT = [{ from: 0 }];
+
+
+// Named builders for the scene registry.
+export function buildOracleA70Scene(state) {
+  return buildAttackScene(state, { type: 70, vel: false });
+}
+export function buildOracleA65Scene(state) {
+  return buildAttackScene(state, { type: 65, vel: true });
+}
+export function buildOracleA68Scene(state) {
+  return buildAttackScene(state, { type: 68, vel: true });
+}
+export function buildOracleA71Scene(state) {
+  return buildAttackScene(state, { type: 71, vel: true });
+}

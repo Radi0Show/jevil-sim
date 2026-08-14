@@ -16,6 +16,7 @@
 import { spawn } from '../entity.js';
 import { gmlRandom, gmlChoose } from '../rng.js';
 import { jokerTeleport } from './joker-teleport.js';
+import { spadering } from './spadering.js';
 import { bulletInherit } from '../bullets/collidebullet.js';
 
 function box(state) {
@@ -80,6 +81,34 @@ export const dbulletController = {
         jokern.gmlType = 1;
         bulletInherit(e, jokern);
         jokern.active = 0;
+        e.btimer = 0;
+      }
+      return;
+    }
+
+    if (e.gmlType === 65) {
+      if (e.btimer >= 60) {
+        const ring = spawn(state, spadering, { x: gt.x, y: gt.y });
+        // Fields assigned AFTER instance_create, exactly as the original —
+        // the ring's Create has already drawn startang; its first Step
+        // (next frame) reads the overridden maxspade/grav.
+        ring.maxspade = 10;
+        ring.grav = 0.4;
+        bulletInherit(e, ring);
+        e.btimer = 0;
+      }
+      return;
+    }
+
+    if (e.gmlType === 68) {
+      // with (obj_heart) wspeed = 5 — EVERY frame of the attack.
+      if (state.soul && state.soul.alive) state.soul.wspeed = 5;
+      if (e.btimer >= 54) {
+        const ring = spawn(state, spadering, { x: gt.x, y: gt.y });
+        ring.side = gmlChoose(state.gmlRng, [0, 1]);
+        ring.grav = 0.45;
+        ring.maxspade = 10;
+        bulletInherit(e, ring);
         e.btimer = 0;
       }
       return;

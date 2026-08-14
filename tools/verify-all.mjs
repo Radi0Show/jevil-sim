@@ -39,6 +39,7 @@ const SUITES = [
   ['verify-rng.mjs', "GameMaker's RNG (WELL512) reproduced — chapter 1 probe"],
   ['verify-t3.mjs', 'chapter 1 soul movement — three oracle recordings'],
   ['verify-a70.mjs', 'attack 1: teleport spade fans (dc.type 70, jattack 0)'],
+  ['verify-a65.mjs', 'attack 2: spade rings (dc.type 65, jattack 1)'],
 ];
 
 // EVERY suite file must be in the table. A suite that exists and is never run
