@@ -56,6 +56,14 @@ function runMotion(state) {
     // COMPONENT MOTION. GameMaker's real state is hspeed/vspeed; speed and
     // direction are derived views of them.
     if (e.componentMotion) {
+      // GRAVITY applies to components too (obj_dbullet_vert: direct vspeed
+      // writes + gravity along the default 270). Same vector formula as the
+      // speed/direction branch below.
+      if (e.gravity) {
+        const gr = (e.gravity_direction * Math.PI) / 180;
+        e.hspeed = (e.hspeed ?? 0) + e.gravity * Math.cos(gr);
+        e.vspeed = (e.vspeed ?? 0) - e.gravity * Math.sin(gr);
+      }
       if (!e.hspeed && !e.vspeed) continue;
       state.counters.motionSteps += 1;
       e.x = e.x + e.hspeed;

@@ -38,9 +38,13 @@ const SUITES = [
   ['verify-determinism.mjs', 'byte-identical across 10 runs'],
   ['verify-rng.mjs', "GameMaker's RNG (WELL512) reproduced — chapter 1 probe"],
   ['verify-t3.mjs', 'chapter 1 soul movement — three oracle recordings'],
+  ['verify-contact.mjs', 'collision model — 2,400 recorded pair-test verdicts'],
   ['verify-a70.mjs', 'attack 1: teleport spade fans (dc.type 70, jattack 0)'],
   ['verify-a65.mjs', 'attack 2: spade rings (dc.type 65, jattack 1)'],
   ['verify-a49.mjs', 'attack 3: heart suit bombs (dc.type 49, jattack 2)'],
+  ['verify-a50.mjs', 'attack 6: club suit bombs (dc.type 50, jattack 5)'],
+  ['verify-a48.mjs', 'attack 10: spade suit bombs (dc.type 48, jattack 9)'],
+  ['verify-a46.mjs', 'attack 14: Chaos Bomb (dc.type 46, jattack 13)'],
   ['verify-a68.mjs', 'attack 8: side spade rings + speedup (dc.type 68, jattack 7)'],
   ['verify-a71.mjs', 'attack 13: single-diamond teleports (dc.type 71, jattack 12)'],
 ];

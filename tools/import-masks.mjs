@@ -43,7 +43,9 @@ function parse(spriteName) {
   // sepmasks=AxisAlignedRect with maskcount=0 stores NO pixel data: the mask
   // is the bbox rectangle itself (spr_grazemask is one). Synthesize it so the
   // downstream model has one representation for every mask.
+  let axisRect = false;
   if (rows.length === 0 && /AxisAlignedRect/.test(lines[3] ?? '')) {
+    axisRect = true;
     const [bl, bt, br, bb] = meta.bbox.split(',').map(Number);
     rows = Array.from({ length: h }, (_, y) =>
       Array.from({ length: w }, (_, x) =>
@@ -70,6 +72,7 @@ function parse(spriteName) {
     originX: Number(meta.ox), originY: Number(meta.oy),
     bbox: meta.bbox.split(',').map(Number),
     rows: first,
+    ...(axisRect ? { axisRect: true } : {}),
   };
 }
 

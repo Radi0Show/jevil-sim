@@ -53,6 +53,11 @@ function build(m) {
     bbox: m.bbox, // [left, top, right, bottom], inclusive
     // rows of '0'/'1' chars -> arrays of booleans, indexed [y][x]
     px: m.rows.map((r) => Array.from(r, (c) => c === '1')),
+    // AxisAlignedRect sprites (maskcount 0) collide as the AXIS-ALIGNED
+    // bounding box of their rotated scaled bbox — the shape does NOT rotate
+    // with the sprite (contact probe cfg0: a rotated club hits across its
+    // whole AABB, 137 corner points the rotated-bar model missed).
+    axisRect: m.axisRect === true,
   };
 }
 
@@ -450,6 +455,10 @@ function masksOverlapRectA(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle = 0) {
       if (acy < 0 || acy >= maskA.h) continue;
       if (!maskA.px[acy][acx]) continue;
 
+      // AXIS-ALIGNED-RECT B: the collision region IS the AABB the window
+      // was clipped to — every surviving pixel is solid B (measured:
+      // contact-probe cfg0, 600/600 under this rule).
+      if (maskB.axisRect) return true;
       const dx = px - bx;
       const dy = py - by;
       const u = dx * cos - dy * sin;
