@@ -147,11 +147,17 @@ export const dbulletController = {
       if (e.btimer >= 9 && state.turntimer >= 20) {
         const basexX = gt ? gt.x : state.view.x + 320;
         const basexY = gt ? gt.y : state.view.y + 170;
-        const xa = basexX - 100 - gmlRandom(r, 100);
+        // RIGHT-TO-LEFT arg evaluation, same as type 70 (the a71 recording's
+        // stream mapping confirms: first draw of each pair = the second
+        // argument). This block MISSED the original RTL fix — the replace-all
+        // keyed on a comment that only existed in the type-70 block, and the
+        // desync surfaced as spawn-1 position mismatch, misread for a session
+        // as an f80 event because only the differ's TAIL was ever inspected.
         const xb = basexX + 100 + gmlRandom(r, 100);
+        const xa = basexX - 100 - gmlRandom(r, 100);
         const jokerx = gmlChoose(r, [xa, xb]);
-        const ya = basexY - gmlRandom(r, 100);
         const yb = basexY + gmlRandom(r, 100);
+        const ya = basexY - gmlRandom(r, 100);
         const jokery = gmlChoose(r, [ya, yb]);
         const jokern = spawn(state, jokerTeleport, { x: jokerx, y: jokery });
         bulletInherit(e, jokern);

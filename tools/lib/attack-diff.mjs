@@ -33,6 +33,16 @@ export function diffAttackTrace({
 
   const rows = Math.min(oracleLines.length, simLines.length) - 1;
   const nbulCol = header.indexOf('nbul');
+  // Cap failure logging: hundreds of lines get tail-truncated by callers
+  // and the EARLIEST failures are the diagnostic ones — a session was lost
+  // to reading an f80 tail line as "first divergence" when frame 0 failed.
+  const LOG_CAP = 12;
+  let logged = 0;
+  const capLog = (msg) => {
+    if (logged < LOG_CAP) log(msg);
+    if (logged === LOG_CAP) log(`... further failures suppressed (earliest are above)`);
+    logged++;
+  };
   let failed = false;
   let firstResidue = null;
   let residueCells = 0;
@@ -65,7 +75,7 @@ export function diffAttackTrace({
       if (isContact[c] && frame > contactExactTo) {
         const diff = Math.abs(parseFloat(oc[c]) - parseFloat(sc[c]));
         if (diff > contactSlack) {
-          log(`CONTACT FAIL at frame ${frame}, ${header[c]}: oracle=${oc[c]} engine=${sc[c]}`);
+          capLog(`CONTACT FAIL at frame ${frame}, ${header[c]}: oracle=${oc[c]} engine=${sc[c]}`);
           failed = true;
         } else if (header[c] === 'hits') {
           contactFlips = Math.max(contactFlips, diff);
@@ -75,7 +85,7 @@ export function diffAttackTrace({
       if (isVel[c]) {
         const diff = Math.abs(parseFloat(oc[c]) - parseFloat(sc[c]));
         if (Number.isNaN(diff) || diff > velMax) {
-          log(`VEL FAIL at frame ${frame}, ${header[c]}: oracle=${oc[c]} engine=${sc[c]}`);
+          capLog(`VEL FAIL at frame ${frame}, ${header[c]}: oracle=${oc[c]} engine=${sc[c]}`);
           failed = true;
         } else {
           worstVel = Math.max(worstVel, diff);
@@ -83,13 +93,13 @@ export function diffAttackTrace({
         continue;
       }
       if (!isPos[c]) {
-        log(`TIER-1 FAIL at frame ${frame}, ${header[c]}: oracle=${oc[c]} engine=${sc[c]}`);
+        capLog(`TIER-1 FAIL at frame ${frame}, ${header[c]}: oracle=${oc[c]} engine=${sc[c]}`);
         failed = true;
         continue;
       }
       const drift = Math.abs(parseFloat(oc[c]) - parseFloat(sc[c]));
       if (Number.isNaN(drift) || drift > driftMax) {
-        log(`TIER-2 FAIL at frame ${frame}, ${header[c]}: oracle=${oc[c]} engine=${sc[c]} (drift ${drift})`);
+        capLog(`TIER-2 FAIL at frame ${frame}, ${header[c]}: oracle=${oc[c]} engine=${sc[c]} (drift ${drift})`);
         failed = true;
         continue;
       }

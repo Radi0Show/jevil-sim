@@ -30,7 +30,20 @@ accessor columns per slot (b*_hs/b*_vs) — scenes recorded with it set
 state.traceBulletVel. The accessor disagrees with the mover at the ~1e-5
 level (trig residue), so attack-diff bounds those columns at 1e-3.
 
-**a71 OPEN (suite parked, deliberately unregistered so the runner nags).**
+**a71 RESOLVED — and the previous entry's theory was WRONG.** The "desync
+at the 2nd-3rd spawn" never existed: the sim failed from FRAME 0 because
+the type-71 block missed the right-to-left fix (the replace-all keyed on a
+comment that only the type-70 block had). The "f80 first divergence" was a
+misreading: the differ printed hundreds of failures and every view used
+(`tail -2`, verify-all's last-6-lines) showed only the LAST lines near the
+loop's break point. TWO fixes: RTL applied to type 71 (suite passes, 600
+rows, 25 hits, sabotage-tested), and attack-diff now caps failure logging
+at 12 lines so the EARLIEST failures are what any truncated view shows.
+LESSON FOR EVERY FUTURE DIFF: read failures from the HEAD. The oracle-side
+stream mapping that solved it (map each spawn's implied randoms onto the
+seed's stream) is the right first move for any future consumption bug.
+
+**Superseded entry kept for the record:**
 Type 71 (9-frame cadence, 3+ clones alive) exposes an RNG-stream desync the
 other attacks masked: teleport CON MACHINES match frame-by-frame but spawn
 POSITIONS differ from around the 2nd-3rd spawn (sim clone at x 136.06 where
