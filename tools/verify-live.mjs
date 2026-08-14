@@ -37,7 +37,14 @@ for (const [trace, scene] of PAIRS) {
     failed = true;
     continue;
   }
-  const rows = Math.min(oracleLines.length, simLines.length) - 1;
+  // The claim window ends at the party wipe: past it the original CRASHES
+  // (charinstance[3] — latent bug the probe absorbs with a stand-in) and
+  // the runner's post-wipe behaviour is not gameplay.
+  let rows = Math.min(oracleLines.length, simLines.length) - 1;
+  const goCol = oracleLines[0].split(',').indexOf('gameover');
+  for (let i = 1; i <= rows; i++) {
+    if (oracleLines[i].split(',')[goCol] === '1') { rows = i; break; }
+  }
   let bad = null;
   for (let i = 1; i <= rows; i++) {
     if (oracleLines[i] !== simLines[i]) { bad = i - 1; break; }
@@ -51,7 +58,7 @@ for (const [trace, scene] of PAIRS) {
     console.log(`FAIL  ${scene}: positive assertion — only ${counters.collisionHits} hits`);
     failed = true;
   } else {
-    console.log(`PASS  ${scene.padEnd(8)} ${rows} rows byte-exact (hits=${counters.collisionHits})`);
+    console.log(`PASS  ${scene.padEnd(8)} ${rows} rows byte-exact to the wipe (hits=${counters.collisionHits})`);
   }
 }
 process.exit(failed ? 1 : 0);

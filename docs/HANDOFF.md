@@ -186,3 +186,23 @@ reproduces fakeout→FINAL CHAOS→phase 5). NEXT per PLAYBOOK §10: the turn
 lifecycle around the selector (enemy-talk timing, box regrow, teardown at
 turntimer 0, returnheart), then graze/TP + damage with their own probes,
 then endings, then sprites/audio/UI, then Pages deploy.
+
+## 2026-08-14 (lifecycle session) — damage/graze/turn-cycle; a LATENT ORIGINAL CRASH
+
+Damage + graze + the full enemy-turn lifecycle translated and wired
+(fight mode on the page, menu phase = labeled pause). Live-probe findings,
+both caught from the game window mid-run:
+1. scr_damage needs obj_battlecontroller's arrays (battledf etc.) — any
+   stage without a bc must initialize them (fresh-file values: df 2).
+2. **LATENT CRASH IN THE ORIGINAL**: hit on a downed target + whole party
+   untargetable -> scr_randomtarget returns 3 -> scr_damage indexes
+   charinstance[3] -> out of range. Unreachable in normal play only
+   because the wipe's scr_gameover leaves the room first; the probe's
+   soft gameover exposed it. Plausibly the crash the PS4/PS5 v1.03 note
+   fixed ("fighting Jevil could occasionally crash the game") — a hit
+   landing in the wipe's frame window. The sim's translation happens to
+   be crash-free (the with is a no-op); verify-live's claim window ends
+   at the wipe.
+Also: bullet inv fields confirmed WRITE-ONLY (i-frames always invc*40) —
+dc.inv 20 on jattack 4/8 does nothing; three more original bugs preserved
+in damage.js (AOE downs at hp 0 sans scr_dead; pillar low-HP no-op).
