@@ -13,6 +13,7 @@ import { drawBattleUI } from './battleui.js';
 import { drawHero } from './heroes-draw.js';
 import { drawJokerbg } from './jokerbg.js';
 import { drawJokerBody } from './jokerbody.js';
+import { drawBattleMsg } from './battlemsg.js';
 
 const VIEW_W = 640;
 const VIEW_H = 480;

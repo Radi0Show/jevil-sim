@@ -277,7 +277,14 @@ export const jokerFight = {
         // the dispatch flavor line: rr = choose(0,1,2,3,4) AFTER
         // event_user(5) — one draw per enemy turn (Step_0:281); no nested
         // draws in any branch (lines 283-322 are fixed lang strings).
-        gmlChoose(state.gmlRng, [0, 1, 2, 3, 4]);
+        // The pick is ANNOTATED for the renderer's battle message.
+        state.enemyFlavor = {
+          frame: state.frame,
+          rr: gmlChoose(state.gmlRng, [0, 1, 2, 3, 4]),
+          jturn: j.jturn,
+          dancelv: j.dancelv ?? 0,
+          tired: j.monsterstatus === 1,
+        };
         j.pfactor = 1;
         j.turns += 1;
         j.chaosdance += 1;
