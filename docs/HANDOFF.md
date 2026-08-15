@@ -238,3 +238,31 @@ graze geometry:
 TRAP FOR LATER SESSIONS: sabotage-testing by editing sim files then
 `git checkout` restores the COMMITTED version — commit first or re-apply;
 this session lost and re-applied the dmgwriter fix that way.
+
+### Vert-diamond effective mask — dense census recorded, hypothesis space narrowed
+
+New instrument: jevil-research tools/patches/oracle_vertmask_probe.csx ->
+traces/vertmask-probe.csv — 1,800 place_meeting verdicts for
+spr_diamondbullet_vert vs the heart, whole perimeter, sub-pixel grids
+(pm and collision-event verdicts agree 1800/1800 for a static probe, so
+the earlier event-based cfg6 data was geometry-faithful after all).
+RULED OUT by this data plus the existing suite pins:
+- ANY static pixel set under the current raw+corner+floor sampler (the
+  free-pixel solver hits 82 hit/miss contradictions — verdicts flip
+  WITHIN a floor-equivalence class, so the runner is frac-sensitive at a
+  non-integer threshold for this sprite);
+- rint/center sampling or rounded-B-position as UNIVERSAL rules (each
+  fixes the census 0/1800 but breaks contact-probe cfg3, grazepair,
+  live-65, or the wall/despawn pins in t3 (spr_heartsmall origin 0,0),
+  a71 (spr_diamondbullet oy 15 != h/2 16), a61 (spr_carousel oy 20);
+  those three pin ORIGIN-anchored sampling for sprite-derived masks);
+- an analytic diamond inscribed in the scaled bbox (96 corner / 44
+  center mismatches).
+Best current guess: the sprite's collision KIND is a baked GMS2
+diamond/ellipse evaluated analytically at runtime with some other
+extent — fit the census's per-row sub-pixel thresholds (left/right
+flank transitions as a function of y) before trying more rules. Cost of
+leaving it: exactly the one documented transient hit-flip (a74 f136).
+Parsing traps that burned this session: probe CSVs are CRLF (awk
+$N==\"1\" silently fails on the last column); the contact CSVs have SEVEN
+columns (cfg,i,x,y,angle,scale,hit).
