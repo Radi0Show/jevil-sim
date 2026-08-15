@@ -266,3 +266,56 @@ leaving it: exactly the one documented transient hit-flip (a74 f136).
 Parsing traps that burned this session: probe CSVs are CRLF (awk
 $N==\"1\" silently fails on the last column); the contact CSVs have SEVEN
 columns (cfg,i,x,y,angle,scale,hit).
+
+## 2026-08-14 (whole-fight session) — the harness is GREEN; random(0) CONSUMES
+
+verify-fullfight: a defend-only whole fight — real encounter pipeline,
+real menus, real turns — byte-green for 1,020 rows to the party wipe
+(bullet slots included, within the documented f32 residue; 3 one-sided
+graze-surplus steps absorbed). The pieces, in discovery order:
+
+1. **The ch1 battle menu translated** (sim/menu.js): the five-button row
+   with CROSSED input buffers (left checks lbuffer, sets rbuffer),
+   DEFEND (+40 TP, charaction 10), scr_nexthero/prevhero/endturn/
+   attackphase, and obj_attackpress's no-fighter path (timermax 3,
+   TWO boltorder chooses ALWAYS — an RNG draw pair per turn). Menus
+   consume no RNG themselves. Defend-only scripting is 6 sparse inputs
+   per turn: cursor 0 wraps LEFT to DEFEND; buffers need a 2-frame gap.
+2. **The iterative recording driver** (jevil-research
+   tools/record-fullfight.mjs): each turn's menu-ready frame is only
+   visible in the previous recording, so the script grows one burst per
+   round; all-down turns auto-skip (scr_mnendturn) and need no input.
+3. **obj_moveheart**: the heart FLIES IN over 8 frames to (view+310,
+   view+160) — the probe stages' instant (314,162) spawn was both late
+   and 4px off; inv/graze arm only on landing.
+4. **The dispatch flavor line** rr = choose(0,1,2,3,4) draws once per
+   enemy turn AFTER event_user(5) (obj_joker Step_0:281).
+5. **random(0) CONSUMES WELL512 STATE.** The whole-fight streams only
+   align at offset 5,618: obj_writer draws random(shake) per revealed
+   character per frame with shake == 0, and obj_astream — created by
+   EVERY snd_init, one per active music stream — draws random(20) twice
+   per frame forever. Two streams (room music + joker.ogg) = a constant
+   4/frame. These are visually inert but stream-advancing.
+   **Model: the presentation-draw side-channel** — the recorder wraps
+   the sites in a counting oracle_r0() (the real draws still run, so the
+   recorded stream is the real game's) and logs a per-frame count (txt
+   column); the sim replays the counts at the draw phase (knight's
+   shuffle precedent: logged, not stripped). A native writer/astream
+   reveal-engine translation can replace the channel without touching
+   anything else. The recorder must ZERO the counter at the seed moment
+   (it otherwise accumulates from game boot — a 128-draw ghost).
+6. **The differ's envelope** (verify-fullfight): tension/tt one-sided
+   bounded steps (the G-skip + corner-band classes); baselines resync at
+   turn-timer RE-ARMS (tt assignment erases the shortfall) and at the
+   MAXTENSION CAP (250 saturates both sides).
+7. Diagnostic that cracked it: a THROWAWAY per-frame probe draw
+   (string_format(random(1))) recovers the runner's per-frame stream
+   position exactly against the known WELL512 sequence.
+
+TRAP (hit AGAIN this session): sabotage-testing via edit +
+`git checkout` reverts to the COMMITTED file — fight.js lost every
+uncommitted change and had to be reapplied. COMMIT BEFORE SABOTAGING.
+
+NEXT: FIGHT-path scripting (attack bar, damage rolls, HP-gate
+progression, ACTs) for a full-roster fullfight; presentation (task #8);
+replay tokens + deploy (task #9).

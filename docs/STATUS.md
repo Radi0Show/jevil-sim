@@ -58,9 +58,15 @@ Updated 2026-08-14 (second session, continued).
 - LATENT ORIGINAL CRASH found (charinstance[3] on wipe-window redirects) —
   plausibly the PS4 v1.03 fix; see HANDOFF.
 
+- WHOLE-FIGHT HARNESS GREEN (verify-fullfight): defend-only fight through
+  real menus to the wipe, 1,020 rows byte-exact (slots within the f32
+  residue; 3 one-sided graze-surplus steps absorbed). Chapter 1 menu
+  translated (sim/menu.js); obj_moveheart flight; random(0) CONSUMES —
+  writer/astream presentation draws replayed via a logged side-channel.
+
 ## Next
 
-1. Whole-fight harness prerequisites (below).
+1. FIGHT-path fullfight (attack bar, damage rolls, HP gates, ACTs).
 2. Whole-fight harness (joker drives himself + scripted menu inputs) for
    lifecycle-level verification; battle messages + enemy-talk draws.
 3. obj_dbullet_vert effective-mask sweep (restore a74's full window).
