@@ -61,7 +61,10 @@ let replay = null;
   }
 }
 let recorder = null;
-let mode = params.get('mode') === 'fight' ? 'fight' : 'practice';
+// THE LANDING PAGE IS THE FIGHT. Practice (one attack on loop, no
+// menus) is opt-in via ?mode=practice or the F key — defaulting to it
+// read as "Jevil attacks first and loops forever" to a fresh player.
+let mode = params.get('mode') === 'practice' ? 'practice' : 'fight';
 let attackIndex = Math.min(15, Math.max(0, Number(params.get('attack') ?? 0)));
 let seed = Number(params.get('seed') ?? (Math.random() * 1e9 | 0));
 if (replay) {
