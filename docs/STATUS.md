@@ -94,12 +94,21 @@ whole-fight endings replay byte-exact (23 suites green).
   (hurt head-swing, shadow dance), darkener, two-layer battle box,
   startup music, the charbox layering fix, and the battleat freeze fix.
 
+## SHIPPED — https://radi0show.github.io/jevil-sim/web/
+
+Live since 2026-08-15, deploys on every push to main, gated on the 25
+suites. Deploy-time module stamping busts the Pages cache (max-age 600
+had players running stale builds). Replay tokens: B copies the run as a
+?replay= URL (J1 header, RLE input stream); the original 9-task plan is
+complete. Interactive extras beyond the verified scenarios: ch1 items
+(Top Cake / ReviveMints / Darkburgers loadout), real hero stagger,
+battle opens at the menu.
+
 ## Next
 
-1. Replay tokens (?seed= exists; add input recording/replay in the URL).
-2. Deploy (Pages) — BLOCKED on user authorization: this repo's standing
-   rule is commits local, never pushed.
-3. (If a scenario ever pirouettes) obj_healanim star sprays — the one
+1. Player feedback loop (playbook §10.10): verify every report against
+   the dump before fixing.
+2. (If a scenario ever pirouettes) obj_healanim star sprays — the one
    unmodeled RNG consumer, currently avoided by the pacify route.
 
 ## Whole-fight verification (2026-08-15)
