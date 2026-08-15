@@ -70,12 +70,27 @@ whole-fight endings replay byte-exact (23 suites green).
   the i-clobber handoff bug, turn-aligned differ. Both whole-fight
   oracles in one suite.
 
+## Presentation progress (2026-08-15, same session)
+
+- **Sprite pack shipped**: 103 sprites / 369 frames with origins manifest,
+  dims-checked (tools/pack-sprites.mjs); sprite-first renderer with mask
+  fallback, GML string colour tints. Verified: Carousel gray back-faces,
+  FINAL CHAOS scythes/pillars, fight-mode Jevil.
+- **Fonts shipped**: fnt_mainbig/main/dotumche (glyph advance tables);
+  menu lists render in real glyphs (JEVIL target row + monster HP bar,
+  ACT list, spell list with the Pacify aqua glow, TP "N %"/"MAX").
+- **Battle UI first pass**: band + charboxes (mmy rise), buttons, heads,
+  nameplates, hpfont readouts, HP bars, tension bar chase, attack-bar
+  lanes/bolts, damage numbers.
+
 ## Next
 
-1. Presentation (task #8): sprites (dims check!), triangle background,
-   fonts, audio index, battle messages, menu/bar UI.
-2. Replay tokens + deploy (task #9).
-3. (If a scenario ever pirouettes) obj_healanim star sprays — the one
+1. Audio (extraction running): SFX pack + joker.ogg/prejoker.ogg copies,
+   index suite, render/audio.js for the sim's state.audio cues.
+2. Battle messages / enemy dialogue bubbles (writer strings per jturn
+   from lang_en.json), hero act/spell poses in fight scenes.
+3. Replay tokens + deploy (task #9).
+4. (If a scenario ever pirouettes) obj_healanim star sprays — the one
    unmodeled RNG consumer, currently avoided by the pacify route.
 
 ## Whole-fight verification (2026-08-15)
