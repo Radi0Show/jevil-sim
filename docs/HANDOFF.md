@@ -4,6 +4,52 @@ Every session appends what it learned, what is open, and the traps it hit.
 (PLAYBOOK §9: this is the difference between sessions that compound and
 sessions that re-learn.)
 
+## 2026-08-15 (later) — SHIPPED: presentation, items, deploy, replay tokens
+
+**Live at https://radi0show.github.io/jevil-sim/web/** — suite-gated
+deploys on push, BUILD stamp per commit. The presentation layer went in
+over one long session: sprite pack (103 sprites, dims-checked), fonts
+(mainbig/main/dotumche with advance tables), audio (35 samples + the
+joker.ogg loop; TWO new suites — audibility/stacking and dump-derived
+cue coverage), battle UI (charboxes/TP/attack bar/damage numbers), menu
+text, hero pose machine, jokerbg + obj_joker_body ports, darkener,
+battle text (balloon + flavor), ch1 items (Top Cake / ReviveMints /
+Darkburgers loadout), replay tokens (B → ?replay= URL, J1 header).
+
+**Traps this session hit, in the order they bit:**
+1. **The renderer runs on the display's clock.** Every renderer-local
+   ramp (background spin, pose timers, TP chase) ran per rAF — double
+   speed on 60Hz. Presentation state advances ONLY when state.frame
+   changes.
+2. **Battle sprites draw at 2x** (draw_sprite_ext ..., 2, 2) and the
+   heroes' Jevil-fight placement is encounter-SPECIFIC
+   (scr_encountersetup case 25: (80,100)/(90,150)/(100,210)) — the
+   generic column is wrong for this fight.
+3. **scr_charbox draws buttons FIRST at a FIXED y** and covers them
+   with the box fill; the rise reveals them. Drawing them last/moving
+   = the stacked-menus mess.
+4. **freshParty carried no battleat** — the scenario scenes always
+   override it, so 25 green suites never executed the swing formula
+   with defaults. The interactive page found it in a minute (exception
+   killed rAF; music kept playing = "paused but the song continues").
+5. **Pages serves max-age=600 with an unstamped module graph** — a fix
+   can be LIVE and every returning player still runs the old build for
+   ten minutes. pages.yml now stamps every relative import with the
+   commit. (First diagnosed as this; see 6.)
+6. **The landing page defaulted to PRACTICE mode** — one attack looping
+   forever, no menus — which a fresh player reads as "Jevil attacks
+   first and never stops". The base URL is the FIGHT now. When a report
+   contradicts a fix you can prove is live, check WHICH MODE the
+   reporter is in before blaming caches.
+7. The oracle recorder's presentation channel does not carry item/menu
+   interactivity: everything added for play (items, bmenuno 4/7) gates
+   on state the scenarios never set (tempitem[0] == 0), which is what
+   kept all three fullfight pairs byte-exact through the whole session.
+
+**Open:** player-feedback loop (reports arrive as replay URLs; verify
+against the dump first — knight's reporters were consistently right).
+Pirouette healanim sprays still unmodeled, still unreachable.
+
 ## 2026-08-15 — PACIFY FULLFIGHT GREEN; a74 mystery CLOSED; verification COMPLETE
 
 **All three whole-fight pairs now verify to the end** (defend 1,020 /
