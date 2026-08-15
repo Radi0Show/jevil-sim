@@ -10,6 +10,8 @@ import { HEART_MASK, BATTLEBG_MASK, SPRITE_MASKS } from '../sim/masks.js';
 import { spriteFor } from './sprites.js';
 import { tinted } from './draw/gm.js';
 import { drawBattleUI } from './battleui.js';
+import { drawHero } from './heroes-draw.js';
+import { drawJokerbg } from './jokerbg.js';
 
 const VIEW_W = 640;
 const VIEW_H = 480;
@@ -67,6 +69,8 @@ function colorFor(e) {
 }
 
 export function createRenderer(canvas, sprites = null) {
+  let darkAmt = 0;
+  let jokerAnim = 0;
   canvas.width = VIEW_W;
   canvas.height = VIEW_H;
   const ctx = canvas.getContext('2d');
@@ -103,15 +107,47 @@ export function createRenderer(canvas, sprites = null) {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, VIEW_W, VIEW_H);
 
+    // obj_jokerbg_triangle_real — the carousel background, behind all.
+    if (sprites && state.joker) drawJokerbg(ctx, sprites, state);
+
     // Depth: GameMaker draws high depth first. Sort a copy.
     const ents = state.entities
       .filter((e) => e.alive)
       .sort((a, b) => (b.depth ?? 0) - (a.depth ?? 0));
 
+    // obj_darkener — created at enemy-turn entry, black at darkamt/20
+    // ramping 1/frame to 15, fading back in menus; heroes/joker/bg sit
+    // below it, the box/bullets/soul above.
+    const darkTarget = (state.mnfight !== 0 || state.myfight === -1) ? 15 : 0;
+    if (darkAmt < darkTarget) darkAmt += 1;
+    if (darkAmt > darkTarget) darkAmt -= 1;
+
+    const fieldPass = [];
+    const abovePass = [];
     for (const e of ents) {
+      const oi = e.type.objIndex ?? 0;
+      if ((oi >= 213 && oi <= 215) || e.type.name === 'obj_joker') fieldPass.push(e);
+      else abovePass.push(e);
+    }
+
+    for (const e of [...fieldPass, null, ...abovePass]) {
+      if (e === null) {
+        if (darkAmt > 0) {
+          ctx.save();
+          ctx.globalAlpha = darkAmt / 20;
+          ctx.fillStyle = '#000';
+          ctx.fillRect(0, 0, VIEW_W, VIEW_H);
+          ctx.restore();
+        }
+        continue;
+      }
       const t = e.type.name;
       if (t === 'obj_growtangle') {
-        if (!blitSprite(e)) drawMasked(ctx, BATTLEBG_MASK, e, '#39c556');
+        // obj_growtangle Draw_0: frame 1 (the black interior) first, then
+        // draw_self (frame 0, the tinted border).
+        const drew = blitSprite({ ...e, type: e.type, image_index: 1 })
+          && blitSprite({ ...e, type: e.type, image_index: 0 });
+        if (!drew) drawMasked(ctx, BATTLEBG_MASK, e, '#39c556');
         continue;
       }
       if (t === 'obj_heart') continue; // soul drawn last, above everything
@@ -147,6 +183,31 @@ export function createRenderer(canvas, sprites = null) {
           ctx.fillRect(e.x - w / 2, e.y, w, h);
           ctx.restore();
         }
+        continue;
+      }
+      if (e.type.name === 'obj_joker') {
+        // obj_joker_body, reduced: the dance sheet at a dancelv-scaled
+        // rate, spr_joker_tired once TIRED, spr_joker_main frames while
+        // idle. LABELLED — the real body assembles chains/wings.
+        const j = state.joker;
+        const dancing = (j?.dancelv ?? 0) > 0 || state.mnfight !== 0;
+        jokerAnim += dancing ? 0.2 + (j?.dancelv ?? 0) * 0.05 : 0.08;
+        const spr = j?.monsterstatus === 1 ? 'spr_joker_tired'
+          : dancing ? 'spr_joker_dance' : 'spr_joker_main';
+        const entry = sprites?.get(spr);
+        if (entry && entry.frames.length) {
+          const img = entry.frames[Math.floor(jokerAnim) % entry.frames.length];
+          if (img) ctx.drawImage(img, e.x - entry.meta.ox, e.y - entry.meta.oy);
+          continue;
+        }
+      }
+      if (e.type.objIndex >= 213 && e.type.objIndex <= 215 && state.party) {
+        drawHero(e, state, (name, idx, x, y) => {
+          const entry = sprites?.get(name);
+          if (!entry || !entry.frames.length) return;
+          const img = entry.frames[Math.abs(Math.floor(idx)) % entry.frames.length];
+          if (img) ctx.drawImage(img, x - entry.meta.ox, y - entry.meta.oy);
+        });
         continue;
       }
       if (blitSprite(e)) continue;

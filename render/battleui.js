@@ -131,18 +131,17 @@ export function drawBattleUI(ctx, sprites, state) {
       ctx.fillRect(xchunk, 480 - bp, 210, 3);
     }
 
-    // box outline + black fill
-    ctx.fillStyle = selected ? charcolor : BCOLOR;
-    ctx.fillRect(xchunk, 480 - bp - 2 + mmy, 212, (480 - bp) - (480 - bp - 2 + mmy) + 1);
-    ctx.fillStyle = '#000';
-    ctx.fillRect(xchunk + 2, 480 - bp + mmy, 208, 33);
-
-    // buttons (fighting == 1): frame 1 on the hovered button.
+    // GML DRAW ORDER (scr_charbox:80-150): the buttons draw FIRST, at a
+    // FIXED y (485 - bp, no mmy) — then the box outline and the black
+    // inner fill draw OVER them. An unrisen box hides its buttons behind
+    // the fill; the rise (mmy) lifts the fill away and reveals them.
+    // Drawing buttons last/moving made every box show its buttons over
+    // the head row — the "menus stacked on each other" mess.
     const btc = [0, 0, 0, 0, 0];
     if (selected && state.bmenuno === 0) {
       btc[state.bmenucoord0?.[c] ?? 0] = 1;
     }
-    const by = 485 - bp + mmy;
+    const by = 485 - bp;
     blit(ctx, sprites, 'spr_btfight', btc[0], xchunk + 15, by);
     blit(ctx, sprites, c === 0 ? 'spr_btact' : 'spr_bttech', btc[1], xchunk + 50, by);
     blit(ctx, sprites, 'spr_btitem', btc[2], xchunk + 85, by);
@@ -153,6 +152,12 @@ export function drawBattleUI(ctx, sprites, state) {
       const a = 0.4 + Math.sin(state.frame / 6) * 0.4;
       blit(ctx, sprites, 'spr_bttech', 1, xchunk + 50, by, Math.max(0, a));
     }
+
+    // box outline + black fill AFTER the buttons (they cover them).
+    ctx.fillStyle = selected ? charcolor : BCOLOR;
+    ctx.fillRect(xchunk, 480 - bp - 2 + mmy, 212, (480 - bp) - (480 - bp - 2 + mmy) + 1);
+    ctx.fillStyle = '#000';
+    ctx.fillRect(xchunk + 2, 480 - bp + mmy, 208, 33);
 
     // head + nameplate + HP block (b_offset 336, fighting == 1)
     const bo = 336 + mmy;

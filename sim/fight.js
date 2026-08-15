@@ -28,6 +28,7 @@ import { spawn, destroy } from './entity.js';
 import { soul } from './soul.js';
 import { battlebox } from './battlebox.js';
 import { dbulletController } from './attacks/dbullet-controller.js';
+import { HEROES } from './heroes.js';
 import { createJoker, selectTurn, selectGates, DISPATCH } from './joker.js';
 import { endTurnAutoheal } from './damage.js';
 import { menuStep, menuBuffers, mnendturnMenu, scrAttackphase } from './menu.js';
@@ -407,6 +408,9 @@ export function buildFightScene(state, { menuPause = 60 } = {}) {
   state.joker = createJoker();
 
   spawn(state, battlecontroller);
+  // heroes ahead of the attackpress in the drawStep walk (runner depth
+  // order) — same creation order the verified fullfight scene uses.
+  for (const h of HEROES) spawn(state, h, { x: 80, y: 100 });
   spawn(state, jokerFight, { x: 500, y: 160 });
   return state;
 }
