@@ -9,6 +9,7 @@
 import { HEART_MASK, BATTLEBG_MASK, SPRITE_MASKS } from '../sim/masks.js';
 import { spriteFor } from './sprites.js';
 import { tinted } from './draw/gm.js';
+import { drawBattleUI } from './battleui.js';
 
 const VIEW_W = 640;
 const VIEW_H = 480;
@@ -160,6 +161,10 @@ export function createRenderer(canvas, sprites = null) {
         ctx.restore();
       }
     }
+
+    // Battle UI (band, charboxes, TP bar, damage numbers) — fight scenes
+    // only (they carry a party); practice scenes have no party object.
+    if (state.party) drawBattleUI(ctx, sprites, state);
 
     // The soul: spr_dodgeheart when the pack is loaded (i-frame flicker via
     // alpha, as the game's image_speed strobe reads), mask fallback.
