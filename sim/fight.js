@@ -30,6 +30,7 @@ import { battlebox } from './battlebox.js';
 import { dbulletController } from './attacks/dbullet-controller.js';
 import { createJoker, selectTurn, DISPATCH } from './joker.js';
 import { endTurnAutoheal } from './damage.js';
+import { menuStep, menuBuffers, mnendturnMenu } from './menu.js';
 import { gmlChoose } from './rng.js';
 
 export const darkener = {
@@ -142,6 +143,7 @@ export const jokerFight = {
         } else {
           t = 3;
         }
+        state.lastMytarget = t;
         e.mytarget = t;
       }
 
@@ -152,10 +154,11 @@ export const jokerFight = {
       e.talktimer = 0;
     }
 
-    // scr_blconskip(15): the talk bubble runs to talkmax, confirm-skippable.
+    // scr_blconskip(15): the talk bubble runs to talkmax, skippable past
+    // frame 15 on the CONFIRM EDGE (button1_p, not the held level).
     if (e.talked === 1 && state.mnfight === 1) {
       e.rtimer = 0;
-      if (state.input?.confirm && e.talktimer > 15) {
+      if (state.menuEdges?.confirm && e.talktimer > 15) {
         e.talktimer = e.talkmax;
       }
       e.talktimer += 1;
@@ -163,13 +166,18 @@ export const jokerFight = {
         state.mnfight = 2;
       }
       if (state.mnfight === 2) {
+        // scr_moveheart: the heart FLIES IN from Kris's chest — an
+        // 8-frame obj_moveheart transit to (view+310, view+160), the
+        // heart born there by its alarm. The soul therefore does not
+        // exist (no inv countdown, no graze pair) for the first ~9
+        // frames of the bullet phase — the fullfight diff caught the
+        // probe stages' instant (314,162) spawn both late and 4px off.
+        if (!state.entities.some((o) => o.alive && o.type.name === 'obj_moveheart')
+            && (!state.soul || !state.soul.alive)) {
+          spawn(state, moveheart, { x: 80 + 10, y: 100 + 40 });
+        }
         if (!state.entities.some((o) => o.alive && o.type.name === 'obj_growtangle')) {
           spawn(state, battlebox, { x: state.view.x + 320, y: state.view.y + 170 });
-        }
-        if (!state.soul || !state.soul.alive) {
-          // scr_moveheart: the heart re-enters for the bullet phase.
-          state.soul = spawn(state, soul, { x: 314, y: 162 });
-          state.grazeEnabled = true;
         }
       }
     }
@@ -189,6 +197,10 @@ export const jokerFight = {
         dc.grazepoints = d.graze ?? 1;
         dc.joker = 1;
         if (d.turntimer) state.turntimer = d.turntimer;
+        // the dispatch flavor line: rr = choose(0,1,2,3,4) AFTER
+        // event_user(5) — one draw per enemy turn (Step_0:281); no nested
+        // draws in any branch (lines 283-322 are fixed lang strings).
+        gmlChoose(state.gmlRng, [0, 1, 2, 3, 4]);
         j.pfactor = 1;
         j.turns += 1;
         j.chaosdance += 1;
@@ -201,18 +213,64 @@ export const jokerFight = {
   },
 };
 
+/**
+ * obj_moveheart — the heart's flight from Kris to the box. flytime 8,
+ * move_towards_point(dist/8); the alarm snaps to the destination, creates
+ * obj_heart there, and dies. No heartmarker on this stage, so the
+ * destination is the default (view+310, view+160).
+ */
+export const moveheart = {
+  name: 'obj_moveheart',
+  objIndex: 219,
+  builtinMotion: true,
+  create(e, state) {
+    e.flytime = 8;
+    e.distx = state.view.x + 310;
+    e.disty = state.view.y + 160;
+    const dist = Math.hypot(e.distx - e.x, e.disty - e.y);
+    e.speed = dist / e.flytime;
+    let dir = (Math.atan2(-(e.disty - e.y), e.distx - e.x) * 180) / Math.PI;
+    if (dir < 0) dir += 360;
+    e.direction = dir;
+    e.alarm[0] = e.flytime;
+  },
+  alarm: {
+    0: (e, state) => {
+      e.x = e.distx;
+      e.y = e.disty;
+      state.soul = spawn(state, soul, { x: e.distx, y: e.disty });
+      state.grazeEnabled = true;
+      destroy(e);
+    },
+  },
+};
+
 /** obj_battlecontroller, dodge scope: timer, teardown, turn reset. */
 export const battlecontroller = {
   name: 'obj_battlecontroller',
   objIndex: 196,
 
-  create(e) {
+  create(e, state) {
     e.timeron = 1;
     e.reset = 0;
-    e.menuPauseLeft = 0;
+    // menu input buffers (obj_battlecontroller Create lines 11-14).
+    e.lbuffer = 0;
+    e.rbuffer = 0;
+    e.onebuffer = 0;
+    e.twobuffer = 0;
+    // the menu globals bc's Create resets (myfight/mnfight/charturn/cursors).
+    state.myfight = 0;
+    state.mnfight = 0;
+    state.bmenuno = 0;
+    state.charturn = 0;
+    state.bmenucoord0 = [0, 0, 0];
+    state.acting = [0, 0, 0];
+    state.temptension = [0, 0, 0];
   },
 
   step(e, state) {
+    // The button row sits ABOVE the turn timer in the original Step.
+    menuStep(e, state);
     if (state.mnfight === 2 && e.timeron === 1) {
       state.turntimer -= 1;
       if (state.turntimer <= 0 && e.reset === 0) {
@@ -236,37 +294,23 @@ export const battlecontroller = {
         e.alarm[2] = 15;
       }
     }
+    // Step-bottom buffer decrements (lines 849-852).
+    menuBuffers(e);
   },
 
   alarm: {
     2: (e, state) => {
-      // scr_mnendturn, dodge scope: flags reset, down autoheal, then the
-      // LABELED menu pause standing in for the party phase.
+      // scr_mnendturn: cursor/phase resets and the REAL menu (sim/menu.js),
+      // down autoheal with its writer draws, monster flags cleared.
       e.reset = 0;
       endTurnAutoheal(state);
-      const p = state.party;
-      for (let i = 0; i < 3; i += 1) {
-        p.targeted[i] = 0;
-        p.charaction[i] = 0;
-        p.charspecial[i] = 0;
-      }
+      mnendturnMenu(state);
       const joker = state.entities.find((o) => o.alive && o.type.name === 'obj_joker');
       if (joker) {
         joker.attacked = 0;
         joker.talked = 0;
       }
-      state.mnfight = 0;
-      e.menuPauseLeft = state.menuPause ?? 60;
     },
-  },
-
-  endStep(e, state) {
-    if (state.mnfight === 0 && e.menuPauseLeft > 0) {
-      e.menuPauseLeft -= 1;
-      if (e.menuPauseLeft === 0) {
-        state.mnfight = 1;
-      }
-    }
   },
 };
 

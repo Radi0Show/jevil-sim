@@ -91,7 +91,11 @@ export function scrRandomtarget(state) {
   } else {
     mytarget = 3;
   }
-  p.targeted[mytarget === 3 ? 0 : mytarget] = 1;
+  // ORIGINAL: `global.targeted[mytarget] = 1` UNGUARDED — a whole-party-
+  // untargetable roll writes targeted[3] (the array grows; no reader uses
+  // index 3). Faithful, not redirected.
+  p.targeted[mytarget] = 1;
+  state.lastMytarget = mytarget;
   return mytarget;
 }
 
@@ -199,12 +203,20 @@ export function scrDamageAll(state, b) {
   b.target = temptarget;
 }
 
-/** scr_mnendturn's down-autoheal: every downed member gets ceil(maxhp/8). */
+/**
+ * scr_mnendturn's down-autoheal: every downed member gets ceil(maxhp/8),
+ * announced by a REAL obj_dmgwriter (delay 1, type 3) — created BEFORE
+ * scr_heal runs, so its round(random(600)) draw precedes any heal effect,
+ * and its -5 - random(2) draw lands in the same frame's draw phase.
+ */
 export function endTurnAutoheal(state) {
   const p = state.party;
   for (let i = 0; i < 3; i += 1) {
     const t = p.char[i];
     if (t !== 0 && p.hp[t] <= 0) {
+      gmlRandom(state.gmlRng, 600);
+      if (!state.dmgwriters) state.dmgwriters = [];
+      state.dmgwriters.push({ delaytimer: 0, delay: 1 });
       scrHeal(state, i, Math.ceil(p.maxhp[t] / 8));
     }
   }

@@ -214,6 +214,21 @@ export function stepFrame(state, input) {
   }
 
   runAnimation(state);
+  // Menu-edge inputs: global.input_pressed is a 0->1 transition against
+  // last frame's held state (obj_time's Begin Step poll). The soul reads
+  // held state directly; the battle menu runs on these edges.
+  {
+    const cur = state.input ?? {};
+    const prev = state.inputPrev ?? {};
+    state.menuEdges = {
+      left: !!cur.left && !prev.left,
+      right: !!cur.right && !prev.right,
+      up: !!cur.up && !prev.up,
+      down: !!cur.down && !prev.down,
+      confirm: !!cur.confirm && !prev.confirm,
+      cancel: !!cur.cancel && !prev.cancel,
+    };
+  }
   runPhase(state, 'beginStep');
   runAlarms(state);
   runPhase(state, 'step');
@@ -231,14 +246,30 @@ export function stepFrame(state, input) {
     state.grazePrev = null;
   }
 
-  // Draw phase: obj_dmgwriter's Draw draws -5 - random(2) on its second
-  // draw frame (delaytimer reaching delay=2; the first tick happens on the
-  // creation frame). The writer keeps drawing ~50 frames but never touches
-  // the stream again, so it retires here once the draw is consumed.
+  // Draw phase. Entities with a drawStep (obj_attackpress) run their Draw
+  // events here, in creation order.
+  for (const e of state.entities) {
+    if (e.alive && e.type.drawStep) e.type.drawStep(e, state);
+  }
+
+  // Replayed text-jitter draws (see tools/scenes/fullfight.js): the
+  // writers (depth 3) draw before obj_dmgwriter (depth 0), so these
+  // consume ahead of the writers' random(2) below.
+  if (state.txtDraws) {
+    const n = state.txtDraws.get(state.frame) ?? 0;
+    for (let i = 0; i < n; i++) gmlRandom(state.gmlRng, 0);
+  }
+
+  // obj_dmgwriter's Draw draws -5 - random(2) once its delaytimer reaches
+  // `delay` (2 from scr_damage's writers — the first tick happens on the
+  // creation frame; 1 from scr_mnendturn's heal writers, whose draw lands
+  // the same frame they are created). The writer keeps drawing ~50 frames
+  // but never touches the stream again, so it retires here once the draw
+  // is consumed.
   if (state.dmgwriters && state.dmgwriters.length > 0) {
     for (const w of state.dmgwriters) {
       w.delaytimer += 1;
-      if (w.delaytimer === 2) {
+      if (w.delaytimer === (w.delay ?? 2)) {
         gmlRandom(state.gmlRng, 2);
         w.done = true;
       }
@@ -251,6 +282,7 @@ export function stepFrame(state, input) {
   reap(state);
 
   state.trace.push(traceRow(state));
+  state.inputPrev = state.input;
   state.frame += 1;
 
   return state;

@@ -41,6 +41,7 @@ const SUITES = [
   ['verify-contact.mjs', 'collision model — 2,400 recorded pair-test verdicts'],
   ['verify-grazepair.mjs', 'grazebox pair model — 3,600 recorded sweep verdicts'],
   ['verify-live.mjs', 'LIVE damage + graze vs unsterilized recordings (two-tier)'],
+  ['verify-fullfight.mjs', 'WHOLE FIGHT — defend-only, menus + turns to the wipe'],
   ['verify-a70.mjs', 'attack 1: teleport spade fans (dc.type 70, jattack 0)'],
   ['verify-a65.mjs', 'attack 2: spade rings (dc.type 65, jattack 1)'],
   ['verify-a49.mjs', 'attack 3: heart suit bombs (dc.type 49, jattack 2)'],

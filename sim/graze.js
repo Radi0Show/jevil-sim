@@ -20,7 +20,7 @@
 
 import { GRAZE_MASK, SPRITE_MASKS, masksOverlap } from './masks.js';
 
-function scrTensionheal(state, amount) {
+export function scrTensionheal(state, amount) {
   state.tension += amount;
   if (state.tension > state.maxtension) {
     state.tension = state.maxtension;
