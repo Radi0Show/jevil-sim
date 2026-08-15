@@ -319,3 +319,51 @@ uncommitted change and had to be reapplied. COMMIT BEFORE SABOTAGING.
 NEXT: FIGHT-path scripting (attack bar, damage rolls, HP-gate
 progression, ACTs) for a full-roster fullfight; presentation (task #8);
 replay tokens + deploy (task #9).
+
+## 2026-08-14 (FIGHT-path session) — the fight can be WON, verified
+
+verify-fullfight now runs TWO whole fights: defend-only to the wipe
+(1,020 rows) and FIGHT-path to the KILL (3,442 rows — every HP gate,
+holds releasing turn by turn, the <=15% skip into phase 5, Diamond
+Release II at jturn 18, the killing swing at f3441). The scenario is the
+knight-sim immortality trick, applied on BOTH sides: hp pinned to max
+after each row (hit frames stay visible; the wipe cannot happen), with
+AT boosted to 30 so the kill lands in ten turns.
+
+New translations (sim/heroes.js + menu.js fighter path):
+- FIGHT target column (bmenuno 1): single-monster cursor pin, confirm
+  gated on ONEBUFFER (not twobuffer like the row).
+- The attack bar's fighter path: boltorder pair + the mymethod-1
+  rejection-sampled boltchar chooses + the lastbolt walk seeded at -1
+  (first bolt lands at frame 29 — original quirk); the one-button
+  boltcheck (window -5..+15, 150/120/110/100-2p points, dual on exact
+  ties).
+- **ORIGINAL BUG preserved — the Other_11 i-clobber**: the handoff
+  loop's event_user(1) reuses `i` in the ap's scope, so only ONE hero
+  handoff resolves per draw frame; dual-press swings stagger by a frame
+  (hs columns f1018/f1019, damages f1029/f1030).
+- The swing: first state-1 draw sets alarm[1] = 10 — damage lands at
+  handoff + 11, formula round(battleat*points/20 - monsterdf*3), NO RNG
+  in the roll. The enemy dmgwriter uses delay 8 (2 on a miss). TP on a
+  landed hit: round(points/15) for Jevil (monstertype 20) — the wiki's
+  "2/3rds" claim, now dump-verified (normal enemies get /10).
+- obj_basicattack spawn jitter: random(6) x2 per landed hit, y before x
+  (RTL instance_create args).
+- Jevil hurt entry (Draw state-3): dancelv gates by mhpratio,
+  laughnoise choose rides the presentation channel, defeat at hp <= 0.
+
+Differ v3 (turn-aligned): anchors at every structural transition
+(tt re-arms, soul appear/vanish, myfight changes); menu windows compare
+ABSOLUTELY (inputs re-sync both sides at scripted frames), enemy-turn
+windows RELATIVELY (spawn-anchored) — because the ±1-frame graze
+timepoint flips shift each turn's end. Envelope: |tension offset| <= 12,
+|tt| <= 6, per-step bounds, cap/re-arm resyncs; inv tolerates the ±3
+boundary drift; slots compare as position MULTISETS on residue-rounded
+sort keys (the recorder's with() order flips between newest- and
+oldest-first per object list — runner-internal, no gameplay claim).
+
+Recorder v2 (mode=1): immortal pin after the row write, at=30, bolt
+schedule columns (bf/bc), points and hero-state columns, kill-stop with
+a 30-row tail. Driver v2 (record-fullfight-fight.mjs): FIGHT bursts are
+six confirms; bar presses scheduled from the previous round's logged
+boltframes at create+boltframe+1 (one press can dual-consume ties).

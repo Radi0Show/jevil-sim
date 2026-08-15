@@ -64,9 +64,16 @@ Updated 2026-08-14 (second session, continued).
   translated (sim/menu.js); obj_moveheart flight; random(0) CONSUMES —
   writer/astream presentation draws replayed via a logged side-channel.
 
+- FIGHT-PATH FULLFIGHT GREEN: 3,442 rows to the KILL (immortal-party
+  scenario, AT 30) — attack bar, swing damage, TP/15, HP gates, phase 5,
+  the i-clobber handoff bug, turn-aligned differ. Both whole-fight
+  oracles in one suite.
+
 ## Next
 
-1. FIGHT-path fullfight (attack bar, damage rolls, HP gates, ACTs).
+1. ACT path (Pirouette/Hypnosis) + the Pacify ending fullfight.
+2. Presentation (task #8): sprites, fonts, audio, menu/bar UI.
+3. Replay tokens + deploy (task #9).
 2. Whole-fight harness (joker drives himself + scripted menu inputs) for
    lifecycle-level verification; battle messages + enemy-talk draws.
 3. obj_dbullet_vert effective-mask sweep (restore a74's full window).
