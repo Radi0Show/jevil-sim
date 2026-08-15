@@ -36,6 +36,7 @@ if (existsSync(inputsPath)) {
 // the text-jitter side-channel rides in the oracle trace's txt column
 const txtFrom = opt('--txtfrom', join(homedir(), 'jevil-research', 'traces', 'fullfight-defend.csv'));
 let txtDraws = null;
+let wrDraws = null;
 if (existsSync(txtFrom)) {
   const lines = readFileSync(txtFrom, 'utf8').replace(/\r/g, '').trim().split('\n');
   const hdr = lines[0].split(',');
@@ -48,11 +49,19 @@ if (existsSync(txtFrom)) {
       txtDraws.set(+c[fi], +c[ti]);
     }
   }
+  const wi = hdr.indexOf('wr');
+  if (wi >= 0) {
+    wrDraws = new Map();
+    for (let i = 1; i < lines.length; i++) {
+      const c = lines[i].split(',');
+      wrDraws.set(+c[fi], +c[wi]);
+    }
+  }
 }
 
 const mode = opt('--mode', 'defend');
 const state = createState({ seed: 1, traceBulletSlots: 0 });
-buildFullFightScene(state, { seed: 4242, txtDraws, mode });
+buildFullFightScene(state, { seed: 4242, txtDraws, wrDraws, mode });
 
 let rows = frames;
 for (let i = 0; i < frames; i++) {

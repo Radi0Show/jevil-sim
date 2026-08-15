@@ -27,6 +27,7 @@ import { execFileSync } from 'node:child_process';
 const PAIRS = [
   ['fullfight-defend', 'defend'],
   ['fullfight-fight', 'fight'],
+  ['fullfight-pacify', 'fight'], // same scene mode; the route differs
 ];
 
 let anyFail = false;
@@ -63,13 +64,15 @@ if (simLines[0] !== oracleLines[0]) {
   return;
 }
 
-// claim window: the wipe (gameover) or the kill (jhp <= 0), inclusive.
+// claim window: the wipe (gameover), the kill (jhp <= 0), or the PACIFY
+// (obj_joker destroyed with hp intact — jturn echoes -1), inclusive.
 const goCol = col('gameover');
 const jhpCol = col('jhp');
+const jtCol = col('jturn');
 let rows = Math.min(oracleLines.length, simLines.length) - 1;
 for (let i = 1; i <= rows; i++) {
   const rc = oracleLines[i].split(',');
-  if (rc[goCol] === '1' || parseFloat(rc[jhpCol]) <= 0) { rows = i; break; }
+  if (rc[goCol] === '1' || parseFloat(rc[jhpCol]) <= 0 || rc[jtCol] === '-1') { rows = i; break; }
 }
 
 // causal column groups

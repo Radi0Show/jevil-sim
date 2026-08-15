@@ -30,7 +30,7 @@ import { battlebox } from './battlebox.js';
 import { dbulletController } from './attacks/dbullet-controller.js';
 import { createJoker, selectTurn, DISPATCH } from './joker.js';
 import { endTurnAutoheal } from './damage.js';
-import { menuStep, menuBuffers, mnendturnMenu } from './menu.js';
+import { menuStep, menuBuffers, mnendturnMenu, scrAttackphase } from './menu.js';
 import { gmlChoose } from './rng.js';
 
 export const darkener = {
@@ -206,6 +206,36 @@ export const jokerFight = {
       }
     }
 
+    // ---- myfight 3: the ACT resolution machine (Step_0:227-616) ----
+    // VERIFIED SCOPE: Check (acting 1) and Hypnosis (acting 3) — the
+    // pacifist route. Pirouette's chaos-dance wheel (acting 2) is
+    // translated for its draw pattern but its heal slots spawn
+    // obj_healanim star sprays (step-phase RNG) that stay UNMODELED —
+    // the pacify script never pirouettes; the differ flags any drift.
+    if (state.myfight === 3) {
+      if (e.acting === 1 && e.actcon === undefined) e.actcon = 0;
+      if (e.acting === 1 && e.actcon === 0) {
+        e.actcon = 1; // Check: message only
+      }
+      if (e.acting === 3 && (e.actcon ?? 0) === 0) {
+        const j = state.joker;
+        if (j.at > 10) j.at -= 0.5;
+        // obj_hypnofx: its Draw's initsiner random(400) rides the
+        // presentation channel (wrapped in the recorder).
+        gmlChoose(state.gmlRng, [0, 1, 2]); // aaa — the line pick
+        j.pfactor = 0.7;
+        j.hypnosis = 1;
+        j.hypnosiscounter += 1;
+        if (j.hypnosiscounter >= 9) j.monsterstatus = 1;
+        e.actcon = 1;
+      }
+      if ((e.actcon ?? 0) === 1 && !(state.writerBusy?.(state.frame))) {
+        e.actcon = 0;
+        e.acting = 0;
+        scrAttackphase(state);
+      }
+    }
+
     // ---- mnfight 2: rtimer -> dispatch (Step_0:272-328) ----
     if (state.mnfight === 2 && e.attacked === 0) {
       e.rtimer += 1;
@@ -333,6 +363,7 @@ export const battlecontroller = {
       if (joker) {
         joker.attacked = 0;
         joker.talked = 0;
+        joker.acting = 0;
       }
     },
   },

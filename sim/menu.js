@@ -105,6 +105,17 @@ export function scrPrevhero(state) {
   }
 }
 
+/** scr_spellconsumeb — pay, mark the caster, advance. */
+export function scrSpellconsumeb(state) {
+  const p = state.party;
+  state.tension -= state.pendingSpellCost ?? 0;
+  p.charaction[state.charturn] = 2;
+  const coord2 = state.bmenucoord2 ?? [0, 0, 0];
+  const SPELLS = { 1: 0, 2: 4, 3: [3, 2][coord2[state.charturn]] ?? 0 };
+  p.charspecial[state.charturn] = SPELLS[p.char[state.charturn]] ?? 0;
+  scrNexthero(state);
+}
+
 /** scr_endturn — commit the chosen actions and enter the attack phase. */
 export function scrEndturn(state) {
   const p = state.party;
@@ -134,9 +145,55 @@ export function scrAttackphase(state) {
     state.myfight = 1;
     spawn(state, attackpress, { x: 2, y: 365 });
   } else {
-    state.myfight = 4; // obj_spellphase — outside the defend path
+    state.myfight = 4;
+    spawn(state, spellphase, { x: 0, y: 0 });
   }
 }
+
+/**
+ * obj_spellphase — the spell resolution queue. The pacify scope: one
+ * caster (Ralsei), one spell. scr_spell case 3 on a TIRED monster runs
+ * event_user(10) + scr_monsterdefeat — the PACIFY ENDING; on a lively
+ * one it spawns the fail anim. spelltimer counts against spelldelay and
+ * the spell writer must clear (the wr channel) before scr_attackphase.
+ */
+export const spellphase = {
+  name: 'obj_spellphase',
+  objIndex: 191,
+  create(e, state) {
+    e.spelltimer = 0;
+    e.cast = false;
+    state.spelldelay = 0;
+  },
+  step(e, state) {
+    if (!e.cast) {
+      e.cast = true;
+      // scr_spell for the (single) caster — pacify scope.
+      const p = state.party;
+      let caster = -1;
+      for (let i = 0; i < 3; i += 1) if (p.charaction[i] === 2) caster = i;
+      const spellId = caster >= 0 ? p.charspecial[caster] : 0;
+      if (spellId === 3) {
+        if (state.joker.monsterstatus === 1) {
+          // flag[51] = 3; event_user(10): Other_20 — the spare anim,
+          // scr_monsterdefeat, obj_joker destroyed with hp intact.
+          state.jokerDefeated = true;
+          state.jokerPacified = true;
+        }
+        // else: obj_pacifyspell fail anim (cosmetic)
+        state.spelldelay = 20;
+      } else {
+        state.spelldelay = 15; // other spells: outside the pacify scope
+      }
+      return;
+    }
+    e.spelltimer += 1;
+    if (e.spelltimer >= state.spelldelay && !(state.writerBusy?.(state.frame))) {
+      scrAttackphase(state);
+      destroy(e);
+    }
+  },
+};
 
 /**
  * obj_attackpress, no-fighter path. Runs in the DRAW event (stepFrame's
@@ -323,6 +380,112 @@ export function menuStep(e, state) {
   if (!inp) return;
   const coord = state.bmenucoord0;
 
+  // ---- bmenuno 11: the ACT target column (single monster) ----
+  // confirm -> bmenuno 9 with the actcoord snap-down; cancel -> row.
+  if (state.bmenuno === 11) {
+    if (inp.cancel && e.onebuffer < 0) {
+      e.twobuffer = 1;
+      state.bmenuno = 0;
+      return;
+    }
+    if (inp.confirm && e.twobuffer < 0) {
+      e.onebuffer = 1;
+      state.bmenuno = 9;
+      // actcoord snap: walk the cursor down past disabled acts (all of
+      // Jevil's three acts are canact, so this is a no-op here).
+      return;
+    }
+    return;
+  }
+
+  // ---- bmenuno 9: the ACT list (Jevil: Check 0 / Pirouette 1 / Hypnosis 2) ----
+  if (state.bmenuno === 9) {
+    const coord9 = state.bmenucoord9 ?? (state.bmenucoord9 = [0, 0, 0]);
+    const canact = [1, 1, 1]; // scr_monstersetup type 20
+    const actcost = [0, 50, 125];
+    const actactor = [1, 1, 4]; // [check n/a] pirouette Kris, hypnosis both
+    const c = () => coord9[state.charturn];
+    if (inp.right) {
+      // grid: even coord moves +1 if the odd neighbour exists
+      if (c() % 2 === 0 && c() < 5 && canact[c() + 1]) coord9[state.charturn] += 1;
+      else if (c() % 2 === 1) coord9[state.charturn] -= 1;
+    }
+    if (inp.left) {
+      if (c() % 2 === 0 && canact[c() + 1]) coord9[state.charturn] += 1;
+      else if (c() % 2 === 1) coord9[state.charturn] -= 1;
+    }
+    if (inp.down) {
+      if (c() < 4 && canact[c() + 2]) coord9[state.charturn] += 2;
+    }
+    if (inp.up) {
+      if (c() > 1) coord9[state.charturn] -= 2;
+    }
+    if (inp.confirm && canact[c()] === 1 && state.tension >= actcost[c()] && e.onebuffer < 0) {
+      e.onebuffer = 2;
+      state.bmenuno = 0;
+      state.tension -= actcost[c()];
+      const j = state.entities.find((o) => o.alive && o.type.name === 'obj_joker');
+      if (j) j.acting = c() + 1; // 1 Check, 2 Pirouette, 3 Hypnosis
+      state.acting[0] = 1;
+      if (actactor[c()] === 4) {
+        state.acting[1] = 1;
+        state.acting[2] = 1;
+      }
+      for (let i = 0; i < 3; i += 1) {
+        if (state.acting[i] === 1) p.charaction[i] = 9;
+      }
+      scrNexthero(state);
+      return;
+    }
+    if (inp.cancel && e.onebuffer < 0) {
+      e.twobuffer = 1;
+      state.bmenuno = 11;
+      return;
+    }
+    return;
+  }
+
+  // ---- bmenuno 2: the spell list (Ralsei: 0 Pacify c40 / 1 Heal c32) ----
+  if (state.bmenuno === 2) {
+    const coord2 = state.bmenucoord2 ?? (state.bmenucoord2 = [0, 0, 0]);
+    // navigation elided: the pacify script confirms slot 0 directly.
+    const spellId = p.char[state.charturn] === 3 ? [3, 2][coord2[state.charturn]] : 0;
+    const SPELL_COST = { 3: 40, 2: 32 };
+    const SPELL_TARGET = { 3: 2, 2: 1 };
+    if (inp.confirm && spellId !== 0 && e.onebuffer < 0) {
+      if ((SPELL_COST[spellId] ?? 0) <= state.tension) {
+        e.onebuffer = 2;
+        state.bmenuno = 0;
+        state.pendingSpellCost = SPELL_COST[spellId] ?? 0;
+        if (SPELL_TARGET[spellId] === 2) state.bmenuno = 3; // enemy target
+        else if (SPELL_TARGET[spellId] === 1) state.bmenuno = 8; // ally
+        else scrSpellconsumeb(state);
+      }
+      return;
+    }
+    if (inp.cancel && e.onebuffer < 0) {
+      e.twobuffer = 1;
+      state.bmenuno = 0;
+      return;
+    }
+    return;
+  }
+
+  // ---- bmenuno 3: the spell's enemy target ----
+  if (state.bmenuno === 3) {
+    if (inp.cancel && e.onebuffer < 0) {
+      e.twobuffer = 1;
+      state.bmenuno = 2;
+      return;
+    }
+    if (inp.confirm && e.onebuffer < 0) {
+      e.onebuffer = 1;
+      p.chartarget && (p.chartarget[state.charturn] = 0);
+      scrSpellconsumeb(state);
+    }
+    return;
+  }
+
   // ---- bmenuno 1: the FIGHT target column ----
   // (Step_0's grouped 7/1/8/3/11/12 block, single-monster scope: the
   // cursor pins to slot 0 — Jevil is the only monster — so up/down are
@@ -383,6 +546,8 @@ export function mnendturnMenu(state) {
   const p = state.party;
   // scr_battlecursor_memory_reset — flag[14] is 0 in the scenario.
   state.bmenucoord0 = [0, 0, 0];
+  state.bmenucoord9 = [0, 0, 0];
+  state.bmenucoord2 = [0, 0, 0];
   state.mnfight = 0;
   state.myfight = 0;
   state.bmenuno = 0;

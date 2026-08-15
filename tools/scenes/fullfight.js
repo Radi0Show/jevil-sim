@@ -32,7 +32,7 @@ export function maskToInput(m) {
   };
 }
 
-export function buildFullFightScene(state, { seed = 4242, txtDraws = null, mode = 'defend', at = 30 } = {}) {
+export function buildFullFightScene(state, { seed = 4242, txtDraws = null, wrDraws = null, mode = 'defend', at = 30 } = {}) {
   state.phase = 'fullfight';
   state.view = { x: 0, y: 0 };
   state.roomHeight = 480;
@@ -56,6 +56,12 @@ export function buildFullFightScene(state, { seed = 4242, txtDraws = null, mode 
   // is only the writers' reveal pacing. A native reveal-engine
   // translation can replace this later without touching anything else.
   state.txtDraws = txtDraws;
+  // writer-lifetime side-channel (the wr column): phase gates in the ACT
+  // and spell machines wait on obj_writer's existence — replayed like the
+  // text-jitter counts. Gates read last frame's population (writers die
+  // in their own Draw, after the step that reads them).
+  state.wrChannel = wrDraws;
+  state.writerBusy = (f) => (state.wrChannel ? (state.wrChannel.get(f - 1) ?? 0) > 0 : false);
   // seed-frame boundary: draws between random_set_seed and trace row 0
   // (the seed lands mid-draw-phase) — fitted constant, see verify notes.
   for (let k = 0; k < (globalThis.BOOT_TAIL ?? 0); k++) gmlRandom(state.gmlRng, 0);
@@ -83,7 +89,7 @@ export function buildFullFightScene(state, { seed = 4242, txtDraws = null, mode 
     header: ['frame', 'soul_x', 'soul_y', 'hp1', 'hp2', 'hp3', 'inv', 'tension', 'tt',
       'jturn', 'jattack', 'myfight', 'mnfight', 'bmenuno', 'charturn',
       'ca0', 'ca1', 'ca2', 'jhp', 'nbul', 'gameover', 'mt', 'txt',
-      ...(barCols ? ['bf0', 'bc0', 'bf1', 'bc1', 'bf2', 'bc2', 'p0', 'p1', 'p2'] : []),
+      ...(barCols ? ['bf0', 'bc0', 'bf1', 'bc1', 'bf2', 'bc2', 'p0', 'p1', 'p2', 'hs0', 'hs1', 'hs2', 'wr', 'ms'] : []),
       'b0x', 'b0y', 'b1x', 'b1y', 'b2x', 'b2y', 'b3x', 'b3y', 'b4x', 'b4y', 'b5x', 'b5y'],
     row: (s) => {
       const p = s.party;
@@ -116,10 +122,11 @@ export function buildFullFightScene(state, { seed = 4242, txtDraws = null, mode 
             if (bd && bd.boltframe[k] !== undefined) cells.push(int(bd.boltframe[k]), int(bd.boltchar[k]));
             else cells.push(int(-1), int(-1));
           }
-          for (let k = 0; k < 3; k++) {
-            const hero = s.entities.find((h) => h.alive && h.slot === k && h.type.alarm?.[1]);
-            cells.push(int(hero && hero.points !== undefined ? hero.points : -1));
-          }
+          const heroes = [0, 1, 2].map((k) => s.entities.find((h) => h.alive && h.slot === k && h.type.alarm?.[1]));
+          for (const hero of heroes) cells.push(int(hero && hero.points !== undefined ? hero.points : -1));
+          for (const hero of heroes) cells.push(int(hero ? (hero.state ?? 0) : -1));
+          cells.push(int(s.wrChannel?.get(s.frame) ?? 0));
+          cells.push(int(s.joker.monsterstatus ?? 0));
           return cells;
         })() : []),
         // six bullet slots in `with` order (newest first), blank when
