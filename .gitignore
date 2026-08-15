@@ -9,6 +9,8 @@ gml_dump/
 # pack under assets/sprites ships (the carve-out below).
 *.png
 !assets/sprites/*.png
+# Real font assets (fnt_mainbig etc.) — same posture as the sprites.
+!assets/fonts/*.png
 
 # Audio ships per the project's permission posture; raw extraction scratch
 # does not.

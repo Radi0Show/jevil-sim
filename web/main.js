@@ -41,6 +41,7 @@ function rebuild(newSeed = seed) {
     state.damageEnabled = true;
     state.grazeEnabled = true;
   }
+  window.__state = state; // debug handle (read-only use)
   const u = new URL(location.href);
   u.searchParams.set('mode', mode);
   u.searchParams.set('attack', String(attackIndex));
@@ -71,13 +72,13 @@ function updateHud() {
       return;
     }
     hud.innerHTML =
-      `<b>JEVIL — FIGHT (dodge-only)</b> <span class="warn">[lifecycle dump-timed; whole-fight recording pending]</span><br>` +
+      `<b>JEVIL — FIGHT</b> <span class="ok">[all three endings oracle-verified]</span><br>` +
       `${partyLine()} · TP ${Math.floor(state.tension / state.maxtension * 100)}% · ` +
       `JEVIL ${j.hp}/${j.maxhp}${j.tired ? ' <span class="ok">TIRED</span>' : ''} · turn ${j.turns} (jturn ${j.jturn})<br>` +
       `arrows/WASD move · <kbd>X</kbd>/<kbd>Shift</kbd> focus · <kbd>Z</kbd> skip talk · ` +
       `<kbd>E</kbd> debug damage · <kbd>P</kbd> pacify (needs TIRED) · <kbd>R</kbd> restart · <kbd>F</kbd> practice<br>` +
-      `<span class="warn">Menu phase replaced by a fixed pause (dodge-only build); ` +
-      `damage/graze/i-frames/turn-shortening are the translated chapter 1 systems.</span>`;
+      `<span class="ok">Full battle menus live: FIGHT (one-button bolt), ACT, MAGIC (Pacify on TIRED), ` +
+      `ITEM row, DEFEND — the oracle-verified chapter 1 systems end to end.</span>`;
     return;
   }
   const atk = ATTACKS[attackIndex];

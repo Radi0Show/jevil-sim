@@ -8,15 +8,25 @@
 // Approximations, LABELLED:
 //   - bp is pinned at bpy (152): the intro slide of the band is not run
 //     (the fight scenes start mid-battle).
-//   - The TP percentage renders with spr_numbersfontsmall; the game uses
-//     the "mainbig" text font (task: fonts). "%"/"MAX" glyphs are skipped
-//     until then.
+//   - Menu strings are the fight's own (JEVIL, act/spell names) resolved
+//     through lang_en.json at port time; monstercomment is omitted.
 //   - faceaction (head expressions) stays 0 outside hurt frames; the
 //     sim does not carry the faceaction presentation variable.
 //   - scr_selectionmatrix's breathing side-lines are reduced to its top
 //     strip; the sine sweep is cosmetic and stays renderer-local.
 
+import { loadFont, drawText, textWidth } from './font.js';
+
 const BPY = 152;
+const FNT = loadFont('../assets/fonts', 'fnt_mainbig');
+
+// Fight-static display strings (scr_monstersetup type 20 + scr_spellinfo,
+// resolved through the game's own lang_en.json).
+const MONSTER_NAME = 'JEVIL';
+const ACT_NAMES = ['Check', 'Pirouette', 'Hypnosis'];
+const ACT_COSTS = [0, 50, 125];
+const SPELL_NAMES = { 2: 'Heal Prayer', 3: 'Pacify' };
+const AQUA_BLUE = 'rgb(0,179,255)'; // merge(c_aqua, c_blue, 0.3)
 const HP_COLORS = ['#00ffff', '#ff00ff', '#00ff00']; // c_aqua, c_fuchsia, c_lime
 // merge(merge(c_purple, c_black, 0.7), c_dkgray, 0.5) from bc's Create.
 const BCOLOR = 'rgb(45,19,45)';
@@ -228,8 +238,68 @@ export function drawBattleUI(ctx, sprites, state) {
       blit(ctx, sprites, 'spr_tensionmarker', 0, x + 3, y + H - (cur / maxt) * H);
     }
     blit(ctx, sprites, 'spr_tensionbar', 0, x, y);
-    // TP percent — spr_numbersfontsmall stand-in until the text fonts land.
-    drawHpNumber(ctx, sprites, Math.floor((ap / maxt) * 100), x - 8, y + 70);
+    // TP percent (mainbig, per obj_tensionbar Draw_0:9-20).
+    const tamt = Math.floor((ap / maxt) * 100);
+    if (tamt < 100) {
+      drawText(ctx, FNT, String(tamt), x - 30, y + 70, { color: '#ffffff' });
+      drawText(ctx, FNT, '%', x - 25, y + 95, { color: '#ffffff' });
+    } else {
+      drawText(ctx, FNT, 'M', x - 28, y + 70, { color: '#ffff00' });
+      drawText(ctx, FNT, 'A', x - 24, y + 90, { color: '#ffff00' });
+      drawText(ctx, FNT, 'X', x - 20, y + 110, { color: '#ffff00' });
+    }
+  }
+
+  // ---- menu text lists (bc Draw_0:57-330, mainbig) ----
+  if (inMenu) {
+    const bm = state.bmenuno;
+    // monster target list (bmenuno 1 FIGHT / 3 spell target / 11 ACT target)
+    if (bm === 1 || bm === 3 || bm === 11) {
+      blit(ctx, sprites, 'spr_heart', 0, 55, 385); // one monster: coord 0
+      const tired = state.joker?.monsterstatus === 1;
+      const nameColor = tired ? AQUA_BLUE : '#ffffff';
+      drawText(ctx, FNT, MONSTER_NAME, 80, 375, { color: nameColor });
+      const nw = textWidth(FNT, MONSTER_NAME);
+      if (tired) blit(ctx, sprites, 'spr_tiredmark', 0, 80 + nw + 40, 385);
+      ctx.fillStyle = '#800000';
+      ctx.fillRect(510, 380, 80, 15);
+      const jr = state.joker ? state.joker.hp / state.joker.maxhp : 1;
+      ctx.fillStyle = '#00ff00';
+      ctx.fillRect(510, 380, Math.max(0, jr) * 80, 15);
+    }
+    // ACT list (bmenuno 9): two-column layout, gray when TP < cost.
+    if (bm === 9) {
+      const coord = state.bmenucoord9?.[state.charturn] ?? 0;
+      const icx = (coord % 2 === 1) ? 240 : 10;
+      const icy = 385 + Math.floor(coord / 2) * 30;
+      blit(ctx, sprites, 'spr_heart', 0, icx, icy);
+      for (let i = 0; i < ACT_NAMES.length; i += 1) {
+        const col = i % 2;
+        const row = Math.floor(i / 2);
+        const affordable = state.tension >= ACT_COSTS[i];
+        drawText(ctx, FNT, ACT_NAMES[i], col ? 260 : 30, 375 + row * 30,
+          { color: affordable ? '#ffffff' : '#808080' });
+      }
+    }
+    // spell list (bmenuno 2): Ralsei's slots; Pacify glows aqua on TIRED.
+    if (bm === 2) {
+      const coord = state.bmenucoord2?.[state.charturn] ?? 0;
+      const icx = (coord % 2 === 1) ? 230 : 10;
+      const icy = 385 + Math.floor(coord / 2) * 30;
+      blit(ctx, sprites, 'spr_heart', 0, icx, icy);
+      const spells = p.char[state.charturn] === 3 ? [3, 2] : [2];
+      const costs = { 3: 40, 2: 32 };
+      for (let i = 0; i < spells.length; i += 1) {
+        const id = spells[i];
+        let color = '#ffffff';
+        if (state.tension < costs[id]) color = '#808080';
+        else if (id === 3 && state.joker?.monsterstatus === 1) color = AQUA_BLUE;
+        drawText(ctx, FNT, SPELL_NAMES[id], (i % 2) ? 260 : 30, 375 + Math.floor(i / 2) * 30, { color });
+      }
+      const selId = spells[coord] ?? spells[0];
+      const pct = Math.round(((costs[selId] ?? 0) / 250) * 100);
+      drawText(ctx, FNT, `${pct}% TP`, 500, 440, { color: '#ffa000' });
+    }
   }
 
   // ---- attack bar (obj_attackpress Draw_0, one-button flag[13]=0) ----
