@@ -37,11 +37,17 @@ function tintedBg(img, rgb) {
     c.height = img.height;
     const g = c.getContext('2d');
     g.drawImage(img, 0, 0);
-    g.globalCompositeOperation = 'multiply';
-    g.fillStyle = `rgb(${key})`;
-    g.fillRect(0, 0, c.width, c.height);
-    g.globalCompositeOperation = 'destination-in';
-    g.drawImage(img, 0, 0);
+    // explicit per-pixel multiply — draw_sprite_part_ext's colour arg.
+    // (The 'multiply' composite path rendered the texture nearly raw in
+    // the pane's canvas; ImageData never lies.)
+    const d = g.getImageData(0, 0, c.width, c.height);
+    const px = d.data;
+    for (let i = 0; i < px.length; i += 4) {
+      px[i] = (px[i] * rgb[0]) / 255;
+      px[i + 1] = (px[i + 1] * rgb[1]) / 255;
+      px[i + 2] = (px[i + 2] * rgb[2]) / 255;
+    }
+    g.putImageData(d, 0, 0);
     tintCache.set(key, c);
   }
   return c;
@@ -51,7 +57,7 @@ export function resetJokerbg() {
   Object.assign(P, { siner: 0, rot: 0, bgx: 0, rotcounter: 0, rotspeed: 0, bgalpha: 0, on: 1 });
 }
 
-export function drawJokerbg(ctx, sprites, state) {
+export function drawJokerbg(ctx, sprites, state, simAdvanced = true) {
   const entry = sprites?.get('spr_carouselbg');
   const img = entry?.frames?.[0];
   const trimax = 8;
@@ -59,8 +65,10 @@ export function drawJokerbg(ctx, sprites, state) {
   const ycen = 240;
   const radius = 360;
 
-  if (P.on === 1 && P.bgalpha < 1) P.bgalpha += 0.02;
-  if (P.on === 0 && P.bgalpha > 0) P.bgalpha -= 0.02;
+  if (simAdvanced) {
+    if (P.on === 1 && P.bgalpha < 1) P.bgalpha += 0.02;
+    if (P.on === 0 && P.bgalpha > 0) P.bgalpha -= 0.02;
+  }
   if (P.bgx >= 640) P.bgx -= 640;
 
   // ---- carouselbg column strips, two perspective passes ----
@@ -140,7 +148,8 @@ export function drawJokerbg(ctx, sprites, state) {
     ctx.restore();
   }
 
-  // ---- scroll/rot advance (Draw_0 tail) ----
+  // ---- scroll/rot advance (Draw_0 tail) — 30Hz, once per sim frame ----
+  if (!simAdvanced) return;
   P.siner += 2;
   if (P.on === 1) P.rotcounter += 1;
   if (P.rotcounter >= P.rotfps && P.on === 1) {

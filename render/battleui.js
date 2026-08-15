@@ -88,7 +88,7 @@ function drawDmgNumber(ctx, sprites, text, xCenter, yTop, alpha) {
   ctx.restore();
 }
 
-export function drawBattleUI(ctx, sprites, state) {
+export function drawBattleUI(ctx, sprites, state, simAdvanced = true) {
   if (!sprites) return;
   const bp = BPY;
   const p = state.party;
@@ -108,9 +108,11 @@ export function drawBattleUI(ctx, sprites, state) {
     const xchunk = [0, 212, 424][c];
     const selected = state.charturn === c && inMenu;
 
-    // mmy rise ramp (charbox lines 50-77), renderer-local.
+    // mmy rise ramp (charbox lines 50-77), renderer-local, 30Hz.
     const m = state2.mmy;
-    if (selected) {
+    if (!simAdvanced) {
+      // hold — ramps advance once per sim frame
+    } else if (selected) {
       if (m[c] > -32) m[c] -= 2;
       if (m[c] > -24) m[c] -= 4;
       if (m[c] > -16) m[c] -= 6;
@@ -194,10 +196,11 @@ export function drawBattleUI(ctx, sprites, state) {
     let ap = state2.tpApparent;
     let cur = state2.tpCurrent;
     const t = state.tension ?? 0;
-    if (Math.abs(ap - t) < 20) ap = t;
-    if (ap < t) ap += 20;
-    if (ap > t) ap -= 20;
-    if (ap !== cur) {
+    if (!simAdvanced) { ap = state2.tpApparent; cur = state2.tpCurrent; }
+    else if (Math.abs(ap - t) < 20) ap = t;
+    if (simAdvanced && ap < t) ap += 20;
+    if (simAdvanced && ap > t) ap -= 20;
+    if (simAdvanced && ap !== cur) {
       state2.tpChangetimer += 1;
       if (state2.tpChangetimer > 15) {
         const d = ap - cur;

@@ -50,7 +50,7 @@ export function heroY(slot) { return 50 + 80 * slot; }
  * Draw one hero entity. Returns true (always handles them).
  * blitFn(name, idx, x, y) is the caller's origin-aware sprite blit.
  */
-export function drawHero(e, state, blitFn) {
+export function drawHero(e, state, blitFn, simAdvanced = true) {
   const slot = e.slot ?? 0;
   const t = TABLES[slot];
   const a = anim[slot];
@@ -67,11 +67,11 @@ export function drawHero(e, state, blitFn) {
     // (Draw_0:87-98), attackspeed per hero.
     sprite = t.attack;
     index = Math.min(a.attacktimer, t.attackframes);
-    a.attacktimer += t.attackspeed;
+    if (simAdvanced) a.attacktimer += t.attackspeed;
   } else if (st === 2) {
     sprite = t.spell;
     index = Math.min(a.attacktimer * 0.5, 7);
-    a.attacktimer += 1;
+    if (simAdvanced) a.attacktimer += 1;
   } else {
     a.attacktimer = 0;
     // state 0: pose by the chosen action while the round resolves
@@ -83,7 +83,7 @@ export function drawHero(e, state, blitFn) {
     if (ca === 2) sprite = t.spellready;
     if (ca === 10) sprite = t.defend;
     index = a.siner / 5;
-    a.siner += 1;
+    if (simAdvanced) a.siner += 1;
   }
   blitFn(sprite, index, x, y);
   return true;

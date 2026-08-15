@@ -71,6 +71,7 @@ function colorFor(e) {
 export function createRenderer(canvas, sprites = null) {
   let darkAmt = 0;
   let jokerAnim = 0;
+  let lastSimFrame = -1;
   canvas.width = VIEW_W;
   canvas.height = VIEW_H;
   const ctx = canvas.getContext('2d');
@@ -104,11 +105,17 @@ export function createRenderer(canvas, sprites = null) {
   }
 
   function draw(state) {
+    // Renderer-local animations advance per SIM frame (30Hz), never per
+    // rAF — a 60Hz monitor was running every presentation ramp (the
+    // background spin, poses, mmy, TP chase) at double speed.
+    const simAdvanced = state.frame !== lastSimFrame;
+    lastSimFrame = state.frame;
+
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, VIEW_W, VIEW_H);
 
     // obj_jokerbg_triangle_real — the carousel background, behind all.
-    if (sprites && state.joker) drawJokerbg(ctx, sprites, state);
+    if (sprites && state.joker) drawJokerbg(ctx, sprites, state, simAdvanced);
 
     // Depth: GameMaker draws high depth first. Sort a copy.
     const ents = state.entities
@@ -119,8 +126,8 @@ export function createRenderer(canvas, sprites = null) {
     // ramping 1/frame to 15, fading back in menus; heroes/joker/bg sit
     // below it, the box/bullets/soul above.
     const darkTarget = (state.mnfight !== 0 || state.myfight === -1) ? 15 : 0;
-    if (darkAmt < darkTarget) darkAmt += 1;
-    if (darkAmt > darkTarget) darkAmt -= 1;
+    if (simAdvanced && darkAmt < darkTarget) darkAmt += 1;
+    if (simAdvanced && darkAmt > darkTarget) darkAmt -= 1;
 
     const fieldPass = [];
     const abovePass = [];
@@ -191,13 +198,14 @@ export function createRenderer(canvas, sprites = null) {
         // idle. LABELLED — the real body assembles chains/wings.
         const j = state.joker;
         const dancing = (j?.dancelv ?? 0) > 0 || state.mnfight !== 0;
-        jokerAnim += dancing ? 0.2 + (j?.dancelv ?? 0) * 0.05 : 0.08;
+        if (simAdvanced) jokerAnim += dancing ? 0.2 + (j?.dancelv ?? 0) * 0.05 : 0.08;
         const spr = j?.monsterstatus === 1 ? 'spr_joker_tired'
           : dancing ? 'spr_joker_dance' : 'spr_joker_main';
         const entry = sprites?.get(spr);
         if (entry && entry.frames.length) {
           const img = entry.frames[Math.floor(jokerAnim) % entry.frames.length];
-          if (img) ctx.drawImage(img, e.x - entry.meta.ox, e.y - entry.meta.oy);
+          // the body draws at image_xscale 2 (obj_joker_body Create).
+          if (img) ctx.drawImage(img, e.x - entry.meta.ox * 2, e.y - entry.meta.oy * 2, img.width * 2, img.height * 2);
           continue;
         }
       }
@@ -206,8 +214,10 @@ export function createRenderer(canvas, sprites = null) {
           const entry = sprites?.get(name);
           if (!entry || !entry.frames.length) return;
           const img = entry.frames[Math.abs(Math.floor(idx)) % entry.frames.length];
-          if (img) ctx.drawImage(img, x - entry.meta.ox, y - entry.meta.oy);
-        });
+          // draw_sprite_ext(..., 2, 2, ...) — battle heroes are 2x
+          // (obj_heroparent Draw_0:239), scaled about the origin.
+          if (img) ctx.drawImage(img, x - entry.meta.ox * 2, y - entry.meta.oy * 2, img.width * 2, img.height * 2);
+        }, simAdvanced);
         continue;
       }
       if (blitSprite(e)) continue;
@@ -225,7 +235,7 @@ export function createRenderer(canvas, sprites = null) {
 
     // Battle UI (band, charboxes, TP bar, damage numbers) — fight scenes
     // only (they carry a party); practice scenes have no party object.
-    if (state.party) drawBattleUI(ctx, sprites, state);
+    if (state.party) drawBattleUI(ctx, sprites, state, simAdvanced);
 
     // The soul: spr_dodgeheart when the pack is loaded (i-frame flicker via
     // alpha, as the game's image_speed strobe reads), mask fallback.
