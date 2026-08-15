@@ -5,6 +5,7 @@
 // and `?seed=N` reproduce any moment deterministically.
 
 import { createState, stepFrame } from '../sim/index.js';
+import { createRecorder, recordInput, encodeReplay, decodeReplay } from '../sim/replay.js';
 import { drain } from '../sim/clock.js';
 import { buildPracticeScene, ATTACKS } from '../sim/scenes/practice.js';
 import { buildFightScene } from '../sim/fight.js';
@@ -46,9 +47,28 @@ window.addEventListener('keydown', startMusic, { passive: true });
 const keys = bindKeyboard(window);
 
 const params = new URLSearchParams(location.search);
+// ?replay=<J1 token> reruns a recorded session, inputs and all — the
+// bug-report format (playbook: seed + mode + inputs IS the report).
+let replay = null;
+{
+  const t = params.get('replay');
+  if (t) {
+    try {
+      replay = decodeReplay(t);
+    } catch (err) {
+      console.error(`bad replay token: ${err.message}`);
+    }
+  }
+}
+let recorder = null;
 let mode = params.get('mode') === 'fight' ? 'fight' : 'practice';
 let attackIndex = Math.min(15, Math.max(0, Number(params.get('attack') ?? 0)));
 let seed = Number(params.get('seed') ?? (Math.random() * 1e9 | 0));
+if (replay) {
+  mode = replay.meta.mode === 'fight' ? 'fight' : 'practice';
+  attackIndex = Math.min(15, Math.max(0, Number(replay.meta.attack || 0)));
+  seed = replay.meta.seed;
+}
 
 let state;
 function rebuild(newSeed = seed) {
@@ -62,6 +82,7 @@ function rebuild(newSeed = seed) {
     state.grazeEnabled = true;
   }
   state.audio = audioSink;
+  recorder = createRecorder({ seed, mode, attack: String(attackIndex) });
   window.__state = state; // debug handle (read-only use)
   const u = new URL(location.href);
   u.searchParams.set('mode', mode);
@@ -164,7 +185,11 @@ rebuild(seed);
 
 // ?frames=N fast-forwards deterministically before the first paint.
 const ff = Number(params.get('frames') ?? 0);
-for (let i = 0; i < ff; i++) stepFrame(state, keys.read());
+for (let i = 0; i < ff; i++) {
+  const input = replay ? replay.inputAt(state.frame) : keys.read();
+  recordInput(recorder, input);
+  stepFrame(state, input);
+}
 
 let acc = 0;
 let last = performance.now();
@@ -175,7 +200,9 @@ function frame(now) {
   last = now;
   acc = res.accumulator;
   for (let i = 0; i < res.steps; i++) {
-    stepFrame(state, keys.read());
+    const input = replay ? replay.inputAt(state.frame) : keys.read();
+    recordInput(recorder, input);
+    stepFrame(state, input);
     if (state.gameOver) {
       rebuild((Math.random() * 1e9) | 0);
       break;
@@ -198,5 +225,20 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
+
+// B — copy this run as a replay URL (clipboard, console fallback).
+window.addEventListener('keydown', async (e) => {
+  if (e.code !== 'KeyB' || !recorder) return;
+  const token = encodeReplay(recorder);
+  const u = new URL(location.href);
+  u.searchParams.set('replay', token);
+  const url = u.toString();
+  try {
+    await navigator.clipboard.writeText(url);
+    console.log('replay URL copied:', url);
+  } catch {
+    console.log('replay URL (copy manually):', url);
+  }
+});
 
 window.__sim = { get state() { return state; }, stepFrame };

@@ -65,6 +65,15 @@ jobs:
           <p><a href="./web/">Open the simulator</a></p>
           HTML
           sed -i 's/^          //' _site/index.html
+          # BUST THE MODULE GRAPH per deploy. Pages serves max-age=600 and
+          # ES module graphs cache per URL — without this, a player who
+          # loaded the previous build keeps RUNNING it for up to 10
+          # minutes after a deploy (the devserver's trap, production
+          # edition). Stamp every relative module import and the entry
+          # script with the commit.
+          V="${GITHUB_SHA::7}"
+          find _site -name '*.js' -print0 | xargs -0 sed -i "s|from '\(\.[^']*\.js\)'|from '\1?v=$V'|g"
+          sed -i "s|src=\"main.js\"|src=\"main.js?v=$V\"|" _site/web/index.html
           # Stamp the commit so a bug report can say which build it came from.
           echo "${GITHUB_SHA::7}" > _site/BUILD
           du -sh _site
