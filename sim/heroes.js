@@ -21,6 +21,7 @@
 // which reproduces exactly that.
 
 import { gmlRandom } from './rng.js';
+import { scrTensionheal } from './graze.js';
 
 function jokerEntity(state) {
   return state.entities.find((o) => o.alive && o.type.name === 'obj_joker');
@@ -45,7 +46,7 @@ function makeHero(slot, objIndex, name) {
       e.slot = slot;
       e.state = 0;
       e.attacked = 0;
-      e.points = undefined; // oracle echoes -1 until the first handoff
+      e.points = 0; // heroparent Create line 3
       e.cancelattack = 0;
     },
     drawStep(e, state) {
@@ -70,9 +71,20 @@ function makeHero(slot, objIndex, name) {
           if (!state.dmgwriters) state.dmgwriters = [];
           state.dmgwriters.push({ delaytimer: 0, delay: damage === 0 ? 2 : 8 });
           state.joker.hp -= damage;
-          if (damage > 0) hurtJoker(state, damage);
-          const jk = jokerEntity(state);
-          if (jk) jk.hurttimer = 30;
+          if (damage > 0) {
+            // TP on a landed hit: monstertype 20 (Jevil) pays
+            // round(points / 15) — two-thirds of the normal /10 (the
+            // wiki's claim, now dump-verified).
+            scrTensionheal(state, Math.round(e.points / 15));
+            // obj_basicattack spawn jitter: instance_create's args are
+            // evaluated RIGHT-TO-LEFT, so the y random(6) draws before
+            // the x one. The sprite itself is RNG-free.
+            gmlRandom(state.gmlRng, 6);
+            gmlRandom(state.gmlRng, 6);
+            hurtJoker(state, damage);
+            const jk = jokerEntity(state);
+            if (jk) jk.hurttimer = 30;
+          }
         }
         e.state = 0;
         e.attacked = 0;

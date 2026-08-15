@@ -244,6 +244,12 @@ export const attackpress = {
             hero.attacked = 0;
           }
         }
+        // ORIGINAL BUG (preserved): Other_11's own `for (i = 0; i < 3...)`
+        // runs in the ap's scope and CLOBBERS this loop's i to 3 — only
+        // ONE handoff resolves per draw frame, so two heroes whose bolts
+        // die together (the dual press) swing on CONSECUTIVE frames
+        // (measured: hs columns f1018/f1019, damage f1029/f1030).
+        break;
       }
     }
 

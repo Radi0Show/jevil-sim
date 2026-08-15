@@ -100,7 +100,8 @@ export function buildFullFightScene(state, { seed = 4242, txtDraws = null, mode 
         int(s.invTimer),
         real(s.tension),
         real(s.turntimer),
-        int(j.jturn), int(j.jattack),
+        // scr_monsterdefeat destroys obj_joker — the recorder echoes -1.
+        int(s.jokerDefeated ? -1 : j.jturn), int(s.jokerDefeated ? -1 : j.jattack),
         int(s.myfight), int(s.mnfight), int(s.bmenuno), int(s.charturn),
         int(p.charaction[0]), int(p.charaction[1]), int(p.charaction[2]),
         int(j.hp),
@@ -124,8 +125,13 @@ export function buildFullFightScene(state, { seed = 4242, txtDraws = null, mode 
         // six bullet slots in `with` order (newest first), blank when
         // absent — the recorder's iteration order.
         ...(() => {
+          // the recorder's with(obj_collidebullet) walk: object-index
+          // buckets ascending, newest-first within each (measured: the
+          // type-74 mix lists the regularbullet spades before the newer
+          // vert diamonds; same-type volleys list newest first).
           const bs = s.entities.filter((e) => e.alive && e.isBullet)
-            .sort((a, z) => z.seq - a.seq).slice(0, 6);
+            .sort((a, z) => (a.type.objIndex ?? 999) - (z.type.objIndex ?? 999) || z.seq - a.seq)
+            .slice(0, 6);
           const cells = [];
           for (let k = 0; k < 6; k++) {
             if (bs[k]) cells.push(real(bs[k].x), real(bs[k].y));
