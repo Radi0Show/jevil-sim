@@ -37,6 +37,9 @@ export function freshParty() {
     hp: [0, 90, 110, 70], // CHARACTER-indexed (hp[0] unused, = 0)
     maxhp: [0, 90, 110, 70],
     battledf: [2, 2, 2], // slot-indexed
+    // bc Create:115 — at[char] + itemat sums; fresh ch1 file: itemat 0.
+    battleat: [10, 14, 8],
+    battlemag: [0, 1, 7],
     charaction: [0, 0, 0], // 10 = DEFEND
     charcantarget: [1, 1, 1],
     charmove: [1, 1, 1],

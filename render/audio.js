@@ -62,6 +62,8 @@ export function createAudio() {
   // `index.json` maps CUE NAME -> FILE, because the game stores some of these
   // as WAV and some as OGG and the loader must not guess: all 19 of the
   // knight's cues come out as .wav, so a hardcoded .ogg found none of them.
+  let readyResolve;
+  const ready = new Promise((res) => { readyResolve = res; });
   fetch(`${BASE}index.json`)
     .then((r) => (r.ok ? r.json() : null))
     .then((list) => {
@@ -74,9 +76,11 @@ export function createAudio() {
         available = new Map();
       }
       preloadAll();
+      readyResolve();
     })
     .catch(() => {
       available = new Map();
+      readyResolve();
     });
 
   /**
@@ -245,6 +249,8 @@ export function createAudio() {
   return {
     play,
     stopAll,
+    /** Resolves once the manifest probe finished (either way). */
+    ready,
     // Exposed so the Q key can silence the MUSIC without touching the SFX —
     // the effects are feedback and muting them makes the fight harder to read.
     stopLoop,

@@ -31,12 +31,18 @@ const audioSink = { cue: (name) => audio.play([{ name }]) };
 // global.batmusic: the fight loops joker.ogg. Cue on the FIRST input —
 // before a user gesture the context is suspended AND the manifest may not
 // have resolved, so a load-time cue is silently dropped (knight pattern).
+// Start the fight's music at LOAD, not on first input: the cue waits for
+// the manifest probe, then starts inside the (possibly suspended) context
+// — it becomes audible immediately where the browser allows autoplay, or
+// the instant the audio layer's own gesture-resume hooks fire otherwise.
 let musicStarted = false;
-window.addEventListener('keydown', () => {
+function startMusic() {
   if (musicStarted) return;
   musicStarted = true;
   audio.play([{ name: 'mus_joker', pitch: 1, gain: 1, loop: true }]);
-}, { passive: true });
+}
+audio.ready.then(startMusic);
+window.addEventListener('keydown', startMusic, { passive: true });
 const keys = bindKeyboard(window);
 
 const params = new URLSearchParams(location.search);

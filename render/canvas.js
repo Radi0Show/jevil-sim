@@ -12,6 +12,7 @@ import { tinted } from './draw/gm.js';
 import { drawBattleUI } from './battleui.js';
 import { drawHero } from './heroes-draw.js';
 import { drawJokerbg } from './jokerbg.js';
+import { drawJokerBody } from './jokerbody.js';
 
 const VIEW_W = 640;
 const VIEW_H = 480;
@@ -70,7 +71,6 @@ function colorFor(e) {
 
 export function createRenderer(canvas, sprites = null) {
   let darkAmt = 0;
-  let jokerAnim = 0;
   let lastSimFrame = -1;
   canvas.width = VIEW_W;
   canvas.height = VIEW_H;
@@ -158,26 +158,8 @@ export function createRenderer(canvas, sprites = null) {
         continue;
       }
       if (t === 'obj_heart') continue; // soul drawn last, above everything
-      if (t === 'obj_joker_teleport') {
-        // No mask (never collides). Outline diamond marker sized by scale.
-        const a = Math.max(0, Math.min(1, e.image_alpha ?? 1));
-        const s = 14 * Math.abs(e.image_xscale ?? 1);
-        if (a > 0 && s > 0.5) {
-          ctx.save();
-          ctx.globalAlpha = a;
-          ctx.strokeStyle = '#b070ff';
-          ctx.lineWidth = 2;
-          ctx.beginPath();
-          ctx.moveTo(e.x, e.y - s);
-          ctx.lineTo(e.x + s * 0.7, e.y);
-          ctx.lineTo(e.x, e.y + s);
-          ctx.lineTo(e.x - s * 0.7, e.y);
-          ctx.closePath();
-          ctx.stroke();
-          ctx.restore();
-        }
-        continue;
-      }
+      // obj_joker_teleport has no custom Draw — the clone IS Jevil's
+      // sprite growing in (xscale 0 -> 2); the generic blit handles it.
       if (t === 'obj_marker') {
         // FINAL CHAOS fade strips.
         const a = Math.max(0, Math.min(1, e.image_alpha ?? 0));
@@ -193,21 +175,8 @@ export function createRenderer(canvas, sprites = null) {
         continue;
       }
       if (e.type.name === 'obj_joker') {
-        // obj_joker_body, reduced: the dance sheet at a dancelv-scaled
-        // rate, spr_joker_tired once TIRED, spr_joker_main frames while
-        // idle. LABELLED — the real body assembles chains/wings.
-        const j = state.joker;
-        const dancing = (j?.dancelv ?? 0) > 0 || state.mnfight !== 0;
-        if (simAdvanced) jokerAnim += dancing ? 0.2 + (j?.dancelv ?? 0) * 0.05 : 0.08;
-        const spr = j?.monsterstatus === 1 ? 'spr_joker_tired'
-          : dancing ? 'spr_joker_dance' : 'spr_joker_main';
-        const entry = sprites?.get(spr);
-        if (entry && entry.frames.length) {
-          const img = entry.frames[Math.floor(jokerAnim) % entry.frames.length];
-          // the body draws at image_xscale 2 (obj_joker_body Create).
-          if (img) ctx.drawImage(img, e.x - entry.meta.ox * 2, e.y - entry.meta.oy * 2, img.width * 2, img.height * 2);
-          continue;
-        }
+        drawJokerBody(ctx, sprites ?? new Map(), state, e, simAdvanced);
+        continue;
       }
       if (e.type.objIndex >= 213 && e.type.objIndex <= 215 && state.party) {
         drawHero(e, state, (name, idx, x, y) => {

@@ -32,6 +32,9 @@ function jokerEntity(state) {
 
 /** The enemy-side hurt push (scr_damage_enemy's monster half). */
 function hurtJoker(state, amt) {
+  // presentation annotation (no RNG, no logged column): the body's
+  // condition-1 head swing scales with the hit (obj_joker Draw_0:6-11).
+  state.lastHurt = { frame: state.frame, amt };
   const j = state.joker;
   j.hp -= 0; // hp already subtracted by the caller; this is the reaction
   if (amt > 0) {
