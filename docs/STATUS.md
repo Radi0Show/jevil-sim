@@ -83,14 +83,16 @@ whole-fight endings replay byte-exact (23 suites green).
   nameplates, hpfont readouts, HP bars, tension bar chase, attack-bar
   lanes/bolts, damage numbers.
 
+- **Audio shipped**: 35-sample pack + joker.ogg loop, full cue sweep at
+  the GML play sites, two suites (audibility/stacking/index coverage +
+  dump-derived sound coverage with traced excuses). 25 suites total.
+
 ## Next
 
-1. Audio (extraction running): SFX pack + joker.ogg/prejoker.ogg copies,
-   index suite, render/audio.js for the sim's state.audio cues.
-2. Battle messages / enemy dialogue bubbles (writer strings per jturn
+1. Battle messages / enemy dialogue bubbles (writer strings per jturn
    from lang_en.json), hero act/spell poses in fight scenes.
-3. Replay tokens + deploy (task #9).
-4. (If a scenario ever pirouettes) obj_healanim star sprays — the one
+2. Replay tokens + deploy (task #9).
+3. (If a scenario ever pirouettes) obj_healanim star sprays — the one
    unmodeled RNG consumer, currently avoided by the pacify route.
 
 ## Whole-fight verification (2026-08-15)
