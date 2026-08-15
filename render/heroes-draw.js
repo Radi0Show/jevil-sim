@@ -43,8 +43,10 @@ const anim = [
   { siner: 0, attacktimer: 0 },
 ];
 
-export function heroX() { return 80; }
-export function heroY(slot) { return 50 + 80 * slot; }
+// scr_encountersetup case 25 (THE JEVIL FIGHT): a down-right stagger,
+// not the generic column — (80,100), (90,150), (100,210).
+export function heroX(slot) { return [80, 90, 100][slot] ?? 80; }
+export function heroY(slot) { return [100, 150, 210][slot] ?? 100; }
 
 /**
  * Draw one hero entity. Returns true (always handles them).
@@ -55,7 +57,7 @@ export function drawHero(e, state, blitFn, simAdvanced = true) {
   const t = TABLES[slot];
   const a = anim[slot];
   const p = state.party;
-  const x = heroX();
+  const x = heroX(slot);
   const y = heroY(slot);
 
   let sprite = t.idle;
