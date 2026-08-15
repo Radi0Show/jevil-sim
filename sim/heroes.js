@@ -65,8 +65,8 @@ function makeHero(slot, objIndex, name) {
         e.attacked = 1;
         e.alarm[1] = 10;
       }
-      if (e.state === 2 && (e.hurt ?? 0) === 0) {
-        // spell pose (Draw_0:99-121): first draw arms the strike alarm.
+      if ((e.state === 2 || e.state === 4) && (e.hurt ?? 0) === 0) {
+        // spell/item pose (Draw_0:99-143): first draw arms the use alarm.
         if ((e.itemed ?? 0) === 0) {
           e.itemed = 1;
           e.alarm[4] = 15;

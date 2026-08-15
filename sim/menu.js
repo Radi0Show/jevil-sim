@@ -25,6 +25,7 @@
 // accepted from the controller's second step on.
 
 import { spawn, destroy } from './entity.js';
+import { ITEMS, scrItemspell } from './items.js';
 import { gmlChoose } from './rng.js';
 import { scrTensionheal } from './graze.js';
 
@@ -39,6 +40,7 @@ function scrCharcan(state, slot) {
 
 /** scr_nexthero — advance the raised panel, or commit the turn. */
 export function scrNexthero(state) {
+  const prevturn = state.charturn;
   const p = state.party;
   let moveswapped = 0;
   if (state.charturn === 0) {
@@ -70,6 +72,14 @@ export function scrNexthero(state) {
   if (state.charturn > 0) {
     state.temptension[state.charturn] = state.tension;
   }
+  // the bag rides forward: tempitem[i][new] = tempitem[i][prev]
+  // (scr_nexthero:46) — later heroes see earlier consumption.
+  if (state.tempitem && state.charturn !== prevturn) {
+    for (let k = 0; k < 13; k += 1) {
+      state.tempitem[k][state.charturn] = state.tempitem[k][prevturn];
+    }
+  }
+
 }
 
 /** scr_prevhero — cancel back, undoing the previous panel's choice. */
@@ -103,6 +113,15 @@ export function scrPrevhero(state) {
   } else {
     state.tension = state.temptension[state.charturn];
   }
+  // stepping BACK restores the bag view: charturn 0 re-reads the real
+  // bag; later turns re-copy the previous column (scr_prevhero:51-59).
+  if (state.tempitem) {
+    for (let k = 0; k < 13; k += 1) {
+      if (state.charturn === 0) state.tempitem[k][0] = state.inventory?.[k] ?? 0;
+      else state.tempitem[k][state.charturn] = state.tempitem[k][state.charturn - 1];
+    }
+  }
+
 }
 
 /** scr_spellconsumeb — pay, mark the caster, advance. */
@@ -118,6 +137,7 @@ export function scrSpellconsumeb(state) {
 
 /** scr_endturn — commit the chosen actions and enter the attack phase. */
 export function scrEndturn(state) {
+  itemWriteback(state);
   const p = state.party;
   // item write-back: bagless scenario, nothing to move.
   state.attacking = 0;
@@ -248,6 +268,12 @@ export const spellphase = {
  * after the first state-2 draw armed it.
  */
 export function scrSpell(state, spellId) {
+  if (spellId >= 200) {
+    // items: star = chartarget[caster] (bmenuno 7's pick, or the caster).
+    const star = state.party.chartarget?.[state.charturn] ?? 0;
+    scrItemspell(state, spellId - 200, star);
+    return;
+  }
   if (spellId === 3) {
     if (state.joker.monsterstatus === 1) {
       // flag[51] = 3; event_user(10): Other_20 — the spare anim,
@@ -553,6 +579,64 @@ function menuStepInner(e, state) {
     return;
   }
 
+  // ---- bmenuno 4: the item list (bc Step_0:332-470) ----
+  if (state.bmenuno === 4) {
+    const ti = state.tempitem;
+    const col = state.charturn;
+    const coord4 = state.bmenucoord4 ?? (state.bmenucoord4 = [0, 0, 0]);
+    const at = (i) => (ti && ti[i] ? ti[i][col] : 0);
+    if (at(coord4[col]) === 0 && coord4[col] > 0) coord4[col] -= 1;
+    const zig = (delta) => {
+      // the two-column zig-zag cursor (right/left flip within a pair,
+      // up/down move by rows) — Step_0:354-446, condensed to the same
+      // reachable moves for a <= 13-slot bag.
+      const cur = coord4[col];
+      const next = cur + delta;
+      if (next >= 0 && next < 12 && at(next) !== 0) coord4[col] = next;
+    };
+    if (inp.right && e.rbuffer < 0) { if (coord4[col] % 2 === 0) zig(1); e.rbuffer = 1; }
+    if (inp.left && e.lbuffer < 0) { if (coord4[col] % 2 === 1) zig(-1); e.lbuffer = 1; }
+    if (inp.down && e.rbuffer < 0) { zig(2); e.rbuffer = 1; }
+    if (inp.up && e.rbuffer < 0) { zig(-2); e.rbuffer = 1; }
+    if (inp.cancel && e.onebuffer < 0) {
+      e.twobuffer = 1;
+      state.bmenuno = 0;
+      return;
+    }
+    if (inp.confirm && at(coord4[col]) !== 0 && e.onebuffer < 0) {
+      e.onebuffer = 2;
+      const id = at(coord4[col]);
+      const target = (ITEMS[id]?.target ?? 0);
+      if (target === 0 || target === 2) {
+        scrItemconsumeb(state, e);
+      } else {
+        state.bmenuno = 7; // ally select
+        state.bmenucoord7 = state.bmenucoord7 ?? [0, 0, 0];
+      }
+    }
+    return;
+  }
+
+  // ---- bmenuno 7: the item's ally target ----
+  if (state.bmenuno === 7) {
+    const coord7 = state.bmenucoord7 ?? (state.bmenucoord7 = [0, 0, 0]);
+    const col = state.charturn;
+    if (inp.down && e.rbuffer < 0) { if (coord7[col] < 2) coord7[col] += 1; e.rbuffer = 1; }
+    if (inp.up && e.rbuffer < 0) { if (coord7[col] > 0) coord7[col] -= 1; e.rbuffer = 1; }
+    if (inp.cancel && e.onebuffer < 0) {
+      e.twobuffer = 1;
+      state.bmenuno = 4;
+      return;
+    }
+    if (inp.confirm && e.onebuffer < 0) {
+      e.onebuffer = 2;
+      p.chartarget = p.chartarget ?? [0, 0, 0];
+      p.chartarget[state.charturn] = coord7[col];
+      scrItemconsumeb(state, e);
+    }
+    return;
+  }
+
   // ---- bmenuno 3: the spell's enemy target ----
   if (state.bmenuno === 3) {
     if (inp.cancel && e.onebuffer < 0) {
@@ -601,7 +685,11 @@ function menuStepInner(e, state) {
     const c = coord[state.charturn];
     if (c === 0) state.bmenuno = 1; // FIGHT target select
     if (c === 1) state.bmenuno = p.char[state.charturn] === 1 ? 11 : 2; // ACT / MAGIC
-    // c === 2 (ITEM): gated on the bag being non-empty — it is empty.
+    // c === 2 (ITEM): gated on tempitem[0] != 0 (empty bag = no-op —
+    // which is what keeps the bagless oracle scenarios byte-identical).
+    if (c === 2 && state.tempitem && state.tempitem[0][state.charturn] !== 0) {
+      state.bmenuno = 4;
+    }
     if (c === 3) state.bmenuno = 12; // SPARE
     if (c === 4) {
       scrTensionheal(state, 40);
@@ -613,6 +701,29 @@ function menuStepInner(e, state) {
     e.twobuffer = 1;
     scrPrevhero(state);
   }
+}
+
+/** scr_itemconsumeb — lock the item action and advance the hero. */
+/** scr_endturn's item write-back: the LAST list becomes the bag. */
+export function itemWriteback(state) {
+  if (!state.inventory || !state.tempitem) return;
+  for (let i = 0; i < 13; i += 1) state.inventory[i] = state.tempitem[i][2];
+}
+
+function scrItemconsumeb(state, e) {
+  const p = state.party;
+  const col = state.charturn;
+  const coord4 = state.bmenucoord4 ?? [0, 0, 0];
+  const id = state.tempitem[coord4[col]][col];
+  p.charaction[col] = 4;
+  p.charspecial[col] = id + 200;
+  // scr_itemshift_temp: close the gap in THIS character's snapshot.
+  for (let i = coord4[col]; i < 12; i += 1) {
+    state.tempitem[i][col] = state.tempitem[i + 1] ? state.tempitem[i + 1][col] : 0;
+  }
+  state.tempitem[12][col] = 0;
+  state.bmenuno = 0;
+  scrNexthero(state);
 }
 
 /** The Step-bottom buffer decrements (lines 849-852 of the original). */

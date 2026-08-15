@@ -29,6 +29,7 @@ import { soul } from './soul.js';
 import { battlebox } from './battlebox.js';
 import { dbulletController } from './attacks/dbullet-controller.js';
 import { HEROES } from './heroes.js';
+import { freshInventory } from './items.js';
 import { createJoker, selectTurn, selectGates, DISPATCH } from './joker.js';
 import { endTurnAutoheal } from './damage.js';
 import { menuStep, menuBuffers, mnendturnMenu, scrAttackphase } from './menu.js';
@@ -337,6 +338,14 @@ export const battlecontroller = {
   create(e, state) {
     e.timeron = 1;
     e.reset = 0;
+    // tempitem[i][j] = global.item[i] for all three columns (bc Create).
+    // Scenario scenes carry no inventory -> all zeros -> the ITEM button
+    // gate never opens and the oracle paths are untouched.
+    const inv = state.inventory ?? [];
+    state.tempitem = [];
+    for (let i = 0; i < 13; i += 1) {
+      state.tempitem[i] = [inv[i] ?? 0, inv[i] ?? 0, inv[i] ?? 0];
+    }
     // menu input buffers (obj_battlecontroller Create lines 11-14).
     e.lbuffer = 0;
     e.rbuffer = 0;
@@ -411,7 +420,10 @@ export function buildFightScene(state, { menuPause = 60 } = {}) {
   state.grazeEnabled = false;
   state.menuPause = menuPause;
   state.reminvc = 1;
-  state.mnfight = 1; // straight into the first enemy turn
+  // the battle opens at the MENU (mnfight 0, myfight 0) — the enemy's
+  // first turn comes after the party's, as in the verified scenario.
+  state.mnfight = 0;
+  state.inventory = freshInventory();
   state.joker = createJoker();
 
   spawn(state, battlecontroller);

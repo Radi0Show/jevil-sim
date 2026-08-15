@@ -27,6 +27,13 @@ const ACT_NAMES = ['Check', 'Pirouette', 'Hypnosis'];
 const ACT_COSTS = [0, 50, 125];
 const SPELL_NAMES = { 2: 'Heal Prayer', 3: 'Pacify' };
 const AQUA_BLUE = 'rgb(0,179,255)'; // merge(c_aqua, c_blue, 0.3)
+// scr_iteminfo names for the list column (the sim's items.js table).
+const ITEM_NAMES = {
+  1: 'Dark Candy', 2: 'ReviveMint', 5: 'BrokenCake', 6: 'Top Cake',
+  7: 'Spincake', 8: 'Darkburger', 9: 'LancerCookie', 10: 'GigaSalad',
+  11: 'ClubsSandwich', 12: 'HeartsDonut', 13: 'ChocDiamond',
+  14: 'Favwich', 15: 'RouxlsRoux', 3: 'Glowshard', 4: 'Manual',
+};
 const HP_COLORS = ['#00ffff', '#ff00ff', '#00ff00']; // c_aqua, c_fuchsia, c_lime
 // merge(merge(c_purple, c_black, 0.7), c_dkgray, 0.5) from bc's Create.
 const BCOLOR = 'rgb(45,19,45)';
@@ -308,6 +315,30 @@ export function drawBattleUI(ctx, sprites, state, simAdvanced = true) {
       const pct = Math.round(((costs[selId] ?? 0) / 250) * 100);
       drawText(ctx, FNT, `${pct}% TP`, 500, 440, { color: '#ffa000' });
     }
+  }
+
+  // ---- item list (bmenuno 4, bc Draw_0:193-260) ----
+  if (inMenu && state.bmenuno === 4 && state.tempitem) {
+    const col = state.charturn;
+    const coord = state.bmenucoord4?.[col] ?? 0;
+    const icx = (coord % 2 === 1) ? 230 : 10;
+    const icy = 385 + Math.floor(coord / 2) * 30;
+    blit(ctx, sprites, 'spr_heart', 0, icx, icy);
+    for (let i = 0; i < 6; i += 1) {
+      const id = state.tempitem[i]?.[col] ?? 0;
+      if (id === 0) continue;
+      drawText(ctx, FNT, ITEM_NAMES[id] ?? `Item ${id}`,
+        (i % 2) ? 260 : 30, 375 + Math.floor(i / 2) * 30, { color: '#ffffff' });
+    }
+    if ((state.tempitem[6]?.[col] ?? 0) !== 0) {
+      blit(ctx, sprites, 'spr_morearrow', 0, 470, 445 + Math.sin(state.frame / 10) * 2);
+    }
+  }
+
+  // ---- item ally target (bmenuno 7): heart beside the chosen charbox ----
+  if (inMenu && state.bmenuno === 7) {
+    const coord = state.bmenucoord7?.[state.charturn] ?? 0;
+    blit(ctx, sprites, 'spr_heart', 0, [0, 212, 424][coord] + 6, 480 - bp + 10);
   }
 
   // ---- attack bar (obj_attackpress Draw_0, one-button flag[13]=0) ----
