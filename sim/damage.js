@@ -1,3 +1,4 @@
+import { spawnShake } from './shake.js';
 // The chapter 1 party damage system.
 //
 //   scr_damage        gml_GlobalScript_scr_damage       (runs in the
@@ -27,6 +28,7 @@
 // base df 2, no equipment bonuses (battledf 2 each). Labeled constant per
 // the dodge-only posture.
 
+import { spawn } from './entity.js';
 import { gmlChoose, gmlRandom } from './rng.js';
 
 export function freshParty() {
@@ -127,8 +129,9 @@ export function scrDamage(state, b) {
       tdamage = 1;
     }
   }
-  // obj_shake / charinstance hurt pose / dmgwriter killactive: renderer's.
-  state.shake = 8;
+  // charinstance hurt pose / dmgwriter killactive: renderer's. The shake
+  // is NOT: its view offset feeds view-relative spawns (sim/shake.js).
+  spawnShake(state, spawn, { gated: true }); // scr_damage:39-41
   let hpdiff = tdamage;
   let doomtype = -1;
   if (state.soul && state.soul.alive) {

@@ -84,7 +84,7 @@ export function buildFullFightScene(state, { seed = 4242, txtDraws = null, wrDra
   spawn(state, jokerFight, { x: 500, y: 160 });
   state.fightMode = mode;
 
-  const barCols = mode === 'fight';
+  const barCols = true; // all three oracles share the v3 header
   state.traceCustom = {
     header: ['frame', 'soul_x', 'soul_y', 'hp1', 'hp2', 'hp3', 'inv', 'tension', 'tt',
       'jturn', 'jattack', 'myfight', 'mnfight', 'bmenuno', 'charturn',

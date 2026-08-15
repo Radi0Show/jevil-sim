@@ -429,6 +429,42 @@ function masksOverlapRectA(maskA, ax, ay, maskB, bx, by, bsx, bsy, bangle = 0) {
   //
   // Cardinal-exact f32 trig and JS trig score identically on the probe; JS
   // trig is kept.
+  // UNTRANSFORMED FAST PATH — measured, not designed. When B carries no
+  // rotation and no scaling (and both masks have pixel data), the runner
+  // does NOT run the corner-sampling routine below: it rounds BOTH
+  // instance positions to integers (IEEE half-even — round-half-up is 6
+  // points wrong) and intersects the mask cells directly. Calibrated by
+  // contact-probe3.csv (2,400 heart-vs-heartbullet points brushing the
+  // bottom slope, from the fullfight-pacify f5503 false hit: identical
+  // f32 positions, runner place_meeting = 0) — rint scores 0/2400, the
+  // sampling routine 173/2400. The SAME rule scores 0/600 on
+  // contact-probe2 cfg6 (spr_diamondbullet_vert, the a74 family), which
+  // the sampling routine gets 36 wrong — a74's "mask mystery" was never
+  // the mask, it was this path. Rotated or scaled pairings never touch
+  // this branch; they stay on the calibrated sampling rule below.
+  if (bangle % 360 === 0 && bsx === 1 && bsy === 1
+      && !maskA.axisRect && !maskB.axisRect) {
+    const axi = rintHalfEven(ax);
+    const ayi = rintHalfEven(ay);
+    const bxi = rintHalfEven(bx);
+    const byi = rintHalfEven(by);
+    const [fal, fat, far, fab] = maskA.bbox;
+    const [fbl, fbt, fbr, fbb] = maskB.bbox;
+    const fLeft = Math.max(axi - maskA.originX + fal, bxi - maskB.originX + fbl);
+    const fRight = Math.min(axi - maskA.originX + far, bxi - maskB.originX + fbr);
+    const fTop = Math.max(ayi - maskA.originY + fat, byi - maskB.originY + fbt);
+    const fBottom = Math.min(ayi - maskA.originY + fab, byi - maskB.originY + fbb);
+    for (let py = fTop; py <= fBottom; py++) {
+      for (let px = fLeft; px <= fRight; px++) {
+        if (maskA.px[py - (ayi - maskA.originY)][px - (axi - maskA.originX)]
+            && maskB.px[py - (byi - maskB.originY)][px - (bxi - maskB.originX)]) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
   const cos = Math.cos((bangle * Math.PI) / 180);
   const sin = Math.sin((bangle * Math.PI) / 180);
 

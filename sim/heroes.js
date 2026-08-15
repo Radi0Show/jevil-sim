@@ -1,3 +1,6 @@
+import { spawnShake } from './shake.js';
+import { scrSpell } from './menu.js';
+import { spawn } from './entity.js';
 // The battle heroes — FIGHT-swing scope.
 //
 //   gml_Object_obj_heroparent_Draw_0    state-1 first draw: attacked = 1,
@@ -55,8 +58,21 @@ function makeHero(slot, objIndex, name) {
         e.attacked = 1;
         e.alarm[1] = 10;
       }
+      if (e.state === 2 && (e.hurt ?? 0) === 0) {
+        // spell pose (Draw_0:99-121): first draw arms the strike alarm.
+        if ((e.itemed ?? 0) === 0) {
+          e.itemed = 1;
+          e.alarm[4] = 15;
+        }
+      }
     },
     alarm: {
+      // Alarm_4: the spell strike (faceaction, scr_spell, back to idle).
+      4: (e, state) => {
+        scrSpell(state, state.party.charspecial[e.slot]);
+        e.state = 0;
+        e.attacktimer = 0;
+      },
       1: (e, state) => {
         // scr_retarget: single living monster — target stays 0; cancel
         // only when nothing lives.
@@ -81,6 +97,9 @@ function makeHero(slot, objIndex, name) {
             // the x one. The sprite itself is RNG-free.
             gmlRandom(state.gmlRng, 6);
             gmlRandom(state.gmlRng, 6);
+            // Susie's connect ALONE screen-shakes (Alarm_1:54-61,
+            // object_index == obj_herosusie): snd_impact + obj_shake.
+            if (e.type.objIndex === 214) spawnShake(state, spawn, { gated: false });
             hurtJoker(state, damage);
             const jk = jokerEntity(state);
             if (jk) jk.hurttimer = 30;

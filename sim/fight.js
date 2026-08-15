@@ -28,7 +28,7 @@ import { spawn, destroy } from './entity.js';
 import { soul } from './soul.js';
 import { battlebox } from './battlebox.js';
 import { dbulletController } from './attacks/dbullet-controller.js';
-import { createJoker, selectTurn, DISPATCH } from './joker.js';
+import { createJoker, selectTurn, selectGates, DISPATCH } from './joker.js';
 import { endTurnAutoheal } from './damage.js';
 import { menuStep, menuBuffers, mnendturnMenu, scrAttackphase } from './menu.js';
 import { gmlChoose } from './rng.js';
@@ -137,9 +137,12 @@ export const jokerFight = {
       // Message selection consumes RNG on the hold turns BEFORE the attack
       // choose (stream order matters): rr = choose(0,1,2,3), and rr 0/2
       // draw one more choose between two lines.
+      // the hold-release gates run BEFORE the message draws (Step_0
+      // order: gates 11-90, messages 95-199, selection 213+).
+      selectGates(j);
       const jt = j.jturn;
       state.enemyLine = { jturn: jt, rr: -1 };
-      if (jt === 4 || jt === 9 || jt === 14 || jt >= 19) {
+      if (jt === 4 || jt === 9 || jt === 14 || jt === 19) {
         const rr = gmlChoose(state.gmlRng, [0, 1, 2, 3]);
         state.enemyLine.rr = rr;
         if (rr === 0) {
@@ -222,11 +225,13 @@ export const jokerFight = {
         if (j.at > 10) j.at -= 0.5;
         // obj_hypnofx: its Draw's initsiner random(400) rides the
         // presentation channel (wrapped in the recorder).
-        gmlChoose(state.gmlRng, [0, 1, 2]); // aaa — the line pick
+        gmlChoose(state.gmlRng, [0, 1, 2]); // aaa — the hypnosis line pick
+        // the >= 9 check reads the PRE-increment counter (Step_0:595-599
+        // runs before the += 1): TIRED via this path needs a TENTH cast.
+        if (j.hypnosiscounter >= 9) j.monsterstatus = 1;
         j.pfactor = 0.7;
         j.hypnosis = 1;
         j.hypnosiscounter += 1;
-        if (j.hypnosiscounter >= 9) j.monsterstatus = 1;
         e.actcon = 1;
       }
       if ((e.actcon ?? 0) === 1 && !(state.writerBusy?.(state.frame))) {

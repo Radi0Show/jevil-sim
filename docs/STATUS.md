@@ -1,6 +1,7 @@
 # STATUS
 
-Updated 2026-08-14 (second session, continued).
+Updated 2026-08-15. CORE VERIFICATION COMPLETE — all three
+whole-fight endings replay byte-exact (23 suites green).
 
 ## Done, verified
 
@@ -71,11 +72,22 @@ Updated 2026-08-14 (second session, continued).
 
 ## Next
 
-1. ACT path (Pirouette/Hypnosis) + the Pacify ending fullfight.
-2. Presentation (task #8): sprites, fonts, audio, menu/bar UI.
-3. Replay tokens + deploy (task #9).
-2. Whole-fight harness (joker drives himself + scripted menu inputs) for
-   lifecycle-level verification; battle messages + enemy-talk draws.
-3. obj_dbullet_vert effective-mask sweep (restore a74's full window).
-4. Presentation: sprites (dims check!), triangle background, fonts, audio
-   index, battle messages. Replay tokens + Pages deploy.
+1. Presentation (task #8): sprites (dims check!), triangle background,
+   fonts, audio index, battle messages, menu/bar UI.
+2. Replay tokens + deploy (task #9).
+3. (If a scenario ever pirouettes) obj_healanim star sprays — the one
+   unmodeled RNG consumer, currently avoided by the pacify route.
+
+## Whole-fight verification (2026-08-15)
+
+- fullfight-defend: 1,020 rows PASS (3 one-sided graze steps absorbed).
+- fullfight-fight: 3,442 rows PASS (18 graze steps) — violence ending.
+- fullfight-pacify: 7,086 rows PASS (32 graze steps) — TIRED + Pacify
+  ending, jturn -1 at f7085 = spellphase +5 (alarm0) +15 (hero alarm4).
+- verify-contact replays ALL THREE sweep datasets (9,600 verdicts):
+  corner sampler + untransformed fast path (HANDOFF Facts 5 & 6).
+- a74 full-window byte-exact — the vert-diamond "effective mask" chase
+  was a collision-routine gap, now closed.
+- Seven sabotages verified red: fast-path rounding, fast-path removal,
+  gate order, TIRED pre-increment, box lifecycle, pillar shake, spell
+  strike timing.

@@ -22,14 +22,13 @@ const oracleLines = readFileSync(oraclePath, 'utf8').replace(/\r/g, '').replace(
 const { csv, counters } = runTraceFull({ seed: 1, frames: 600, scene: 'oracle-a74' });
 const simLines = csv.replace(/\n$/, '').split('\n');
 
-// NARROWED CLAIM: one transient hit-flip at f136 (oracle 1, engine 2,
-// resync f137) traces to obj_dbullet_vert's EFFECTIVE collision mask,
-// which matches NEITHER stored diamond mask (contact-probe2 cfg6: 36
-// mismatches vs spr_diamondbullet_vert, 100 vs spr_diamondbullet, no
-// origin shift zeroes it). Reconstructing the effective mask needs a
-// dedicated dense sweep — HANDOFF open item. Contact columns exact to
-// f130, bounded after; everything else full-window.
-const { failed, summaryLine } = diffAttackTrace({ oracleLines, simLines, slotMatch: true, contactExactTo: 130 });
+// FULL-WINDOW EXACT since the untransformed collision fast path landed
+// (sim/masks.js): the old f136 hit-flip was never a mask problem — the
+// stored spr_diamondbullet_vert mask is right, and the RUNNER's
+// angle-0/scale-1 pairs round both positions half-even and intersect
+// cells directly (contact-probe2 cfg6 0/600, contact-probe3 0/2400).
+// The "effective mask" hypothesis chase is closed.
+const { failed, summaryLine } = diffAttackTrace({ oracleLines, simLines, slotMatch: true });
 
 let bad = failed;
 if (counters.collisionHits < 1) {

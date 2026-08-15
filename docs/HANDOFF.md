@@ -4,6 +4,87 @@ Every session appends what it learned, what is open, and the traps it hit.
 (PLAYBOOK §9: this is the difference between sessions that compound and
 sessions that re-learn.)
 
+## 2026-08-15 — PACIFY FULLFIGHT GREEN; a74 mystery CLOSED; verification COMPLETE
+
+**All three whole-fight pairs now verify to the end** (defend 1,020 /
+fight 3,442 / pacify 7,086 rows), all 23 suites green, seven sabotages
+red. Core verification of the fight is DONE. Six real bugs fell, newest
+knowledge first:
+
+**Fact 6 — UNTRANSFORMED COLLISION FAST PATH.** When a pairing has
+angle % 360 == 0 and scale 1 (both masks pixel-carrying), the runner does
+NOT run the corner-sampling routine (Fact 5): it rounds BOTH instance
+positions HALF-EVEN to integers and intersects mask cells directly.
+Found through fullfight-pacify f5503: a heartbomb son at a bit-identical
+f32 position hits in the sim, misses in the runner (proved with a
+place_meeting side-log in the recorder — traces/contact-probe3.csv is the
+2,400-point sweep; rint 0/2400, half-up 6/2400, corner-sampler 173/2400).
+The SAME rule scores 0/600 on contact-probe2 cfg6 — **the a74
+"effective mask" mystery was never a mask problem**; verify-a74 is now
+full-window byte-exact and its narrowed claim is deleted. Sequence of
+generations in sim/masks.js: rect probe → corner sampler → fast path,
+each calibrated by its own dataset, all three replayed by verify-contact.
+
+**Fact 7 — obj_shake is GAMEPLAY, not presentation.** Its Step/Alarm
+chain moves the VIEW (+4, −4, +3, −2, +1, restore), and FINAL CHAOS's
+rank scythes spawn at view_xview-relative x — the pillar hit before a
+spawn frame leaves the view at +4 and the scythe lands 4px right
+(oracle f6164 x=404 vs 400). sim/shake.js models it; creators wired:
+scr_damage (singleton-gated), laserscythe Other_15 (UNGATED), Susie's
+swing connect (obj_heroparent Alarm_1, Susie ONLY).
+
+**Gate order bug (the big one):** obj_joker's hold-release gates
+(Step_0:11-90) run at talk entry BEFORE the hold-message rr draws
+(95-199). The sim drew the message rr with the PRE-gate jturn — one
+extra draw per released hold, first hit at the pacify run's
+hypnosis-gated release (turn 6). joker.js now exports selectGates
+separately; fight.js calls it before the message block. This single fix
+made all 17 pacify turns anchor-exact under ABSOLUTE replay — the
+menu-reanchored replay machinery was never needed (verify-fullfight runs
+the pacify pair absolute; the --reanchor flag remains in
+fullfight-trace.mjs for future long runs).
+
+**TIRED timing:** the hypnosis handler's `hypnosiscounter >= 9` check
+reads the PRE-increment counter (Step_0:595-599 before the += 1) — the
+sim flipped monsterstatus one cast early. The differ now compares the ms
+column strictly (it silently passed before).
+
+**Box lifecycle:** obj_growtangle really instance_destroys at shrink end.
+The sim's destroyOnShrunk flag had NO consumer, so a scale-0 corpse made
+every later attack's "box exists" check skip the fresh spawn — entire
+attacks played with NO wall mask. Invisible until FINAL CHAOS's descent
+shoved the heart through where the wall band should be (the runner's
+heart ejects +10 via the corner-slide loop; the sim's slid through).
+battlebox.js now destroys itself.
+
+**Pacify ending chain (measured f7065/7070/7085):** spellphase Create
+alarm[0]=5 → Alarm_0 puts the caster in state 2 + raises the writer →
+hero Draw first state-2 frame arms alarm[4]=15 → hero Alarm_4 runs
+scr_spell → case 3 on TIRED: event_user(10) + scr_monsterdefeat, joker
+destroyed hp-intact, jturn echoes −1 at exactly create+20. The sim's
+old one-shot spellphase fired ~48 frames early; menu.js now models the
+real chain (spellphase alarm/step split, scrSpell exported, heroes.js
+state-2 draw + alarm 4).
+
+**Recorder is canonical again:** the throwaway posprobe column is OUT of
+oracle_fullfight_ch1.csx (it consumed random(1)/frame — any recording
+made with it in CANNOT byte-match the saved oracles), the son-debug side
+log is removed after use, and the rebuilt app reproduced the saved pacify
+oracle byte-identically through f5509 before the probe work. probe3's
+sweep patch is tools/patches/oracle_contact_probe3.csx.
+
+**Traps hit:** (1) `tail`-buffered stdout made a live driver look
+stalled — check the artifact files, not the pipe. (2) A five-frame
+verify-fullfight context window printed rows that LOOKED like the
+divergence but the real signal was in a column the differ never
+compared (ms) — when a sabotage passes, the first suspect is the differ.
+(3) The heartbomb son that broke f5503 is NOT in the 6 logged slots —
+slot-exactness proves nothing about unlogged bullets.
+
+**Open (staged, unchanged):** Pirouette wheel healanim star sprays
+(unmodeled — pacify route never pirouettes); presentation layer (task
+8); replay tokens + deploy (task 9).
+
 ## 2026-08-14 (final) — three attacks verified; TWO more runtime facts
 
 **Done since the entry below:** attacks 70/65/49 verified two-tier and

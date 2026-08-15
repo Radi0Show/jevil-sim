@@ -57,7 +57,7 @@ const SUITES = [
   ['verify-a73.mjs', 'attack 7: Diamond Release (dc.type 73, jattack 6)'],
   ['verify-a77.mjs', 'attack 16: FINAL CHAOS (dc.type 77, jattack 15)'],
   ['verify-a62.mjs', 'attack 5: Carousel (dc.type 62, jattack 4)'],
-  ['verify-a74.mjs', 'attack 15: Diamond Release II (dc.type 74, jattack 14) — narrowed, see suite header'],
+  ['verify-a74.mjs', 'attack 15: Diamond Release II (dc.type 74, jattack 14)'],
 ];
 
 // EVERY suite file must be in the table. A suite that exists and is never run

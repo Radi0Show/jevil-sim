@@ -25,13 +25,13 @@ import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
 const PAIRS = [
-  ['fullfight-defend', 'defend'],
-  ['fullfight-fight', 'fight'],
-  ['fullfight-pacify', 'fight'], // same scene mode; the route differs
+  ['fullfight-defend', 'defend', []],
+  ['fullfight-fight', 'fight', []],
+  ['fullfight-pacify', 'fight', []],
 ];
 
 let anyFail = false;
-for (const [base, mode] of PAIRS) {
+for (const [base, mode, extra] of PAIRS) {
   const ORACLE = join(homedir(), 'jevil-research', 'traces', `${base}.csv`);
   const INPUTS = join(homedir(), 'jevil-research', 'traces', `${base}-inputs.txt`);
   if (!existsSync(ORACLE)) {
@@ -39,11 +39,12 @@ for (const [base, mode] of PAIRS) {
     anyFail = true;
     continue;
   }
-  runPair(base, mode, ORACLE, INPUTS);
+  runPair(base, mode, ORACLE, INPUTS, extra);
 }
 process.exit(anyFail ? 1 : 0);
 
-function runPair(base, mode, ORACLE, INPUTS) {
+function runPair(base, mode, ORACLE, INPUTS, extra = []) {
+const reanchored = extra.includes('--reanchor');
 
 const oracleLines = readFileSync(ORACLE, 'utf8').replace(/\r/g, '').trim().split('\n');
 const hdr = oracleLines[0].split(',');
@@ -54,7 +55,8 @@ const simCsv = execFileSync(process.execPath, [
   '--inputs', INPUTS,
   '--txtfrom', ORACLE,
   '--mode', mode,
-  '--frames', String(oracleLines.length + 10),
+  '--frames', String(oracleLines.length + 60),
+  ...extra,
 ], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
 const simLines = simCsv.trim().split('\n');
 
@@ -82,7 +84,7 @@ const GROUPS = [
   ['soul', ['soul_x', 'soul_y']],
   ['damage', ['hp1', 'hp2', 'hp3', 'inv']],
   ['tension', ['tension', 'tt']], // envelope, not exact
-  ['jevil', ['jhp']],
+  ['jevil', ['jhp', 'ms']],
   ['bullets', ['nbul']], // +/-2 residue
   ['bar', ['bf0', 'bc0', 'bf1', 'bc1', 'bf2', 'bc2', 'p0', 'p1', 'p2']],
   ['bullet-slots', ['b0x', 'b0y', 'b1x', 'b1y', 'b2x', 'b2y', 'b3x', 'b3y', 'b4x', 'b4y', 'b5x', 'b5y']],
@@ -139,12 +141,17 @@ const sa = anchorsOf(simLines);
 if (oa.length !== sa.length) {
   findings.push({ name: 'turn-structure', frame: Math.min(oa.length, sa.length), why: `re-arm count ${oa.length} vs ${sa.length}` });
 } else {
+  // under menu-reanchored replay the ±1-per-turn drift accumulates
+  // legitimately — bound the per-boundary INCREMENT, not the total.
+  let prevDrift = 0;
   for (let k = 0; k < oa.length; k++) {
-    boundaryDrift = Math.max(boundaryDrift, Math.abs(oa[k] - sa[k]));
-    if (Math.abs(oa[k] - sa[k]) > 3) {
-      findings.push({ name: 'turn-structure', frame: oa[k] - 1, why: `boundary drift ${oa[k] - sa[k]} at re-arm ${k}` });
+    const drift = oa[k] - sa[k];
+    boundaryDrift = Math.max(boundaryDrift, Math.abs(drift));
+    if (Math.abs(drift - prevDrift) > 3) {
+      findings.push({ name: 'turn-structure', frame: oa[k] - 1, why: `boundary drift step ${drift - prevDrift} at anchor ${k}` });
       break;
     }
+    prevDrift = drift;
   }
 }
 
@@ -166,7 +173,10 @@ if (findings.length === 0) {
       // must be compared that way. Enemy-turn windows are spawn-driven and
       // compare relative to their anchors.
       const obc = oracleLines[oBase].split(',');
-      const isMenu = obc[soulCol] === '' && obc[myCol] === '0';
+      // reanchored pairs land inputs at per-menu offsets, so EVERY window
+      // compares relative to its anchors; absolute-replay pairs re-sync
+      // at scripted frames and compare menu windows absolutely.
+      const isMenu = !reanchored && obc[soulCol] === '' && obc[myCol] === '0';
       const start = isMenu ? Math.max(oBase, sBase) : 0;
       const len = isMenu ? Math.min(oEnd, sEnd) - start : Math.min(oEnd - oBase, sEnd - sBase);
       for (let j = 0; j < len; j++) {

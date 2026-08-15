@@ -63,7 +63,13 @@ export const DISPATCH = {
  * jturn/jattack/stats. Call once per turn, BEFORE the launch. Consumes RNG
  * from `rng` exactly where the original draws.
  */
-export function selectTurn(j, rng) {
+/**
+ * The hold-release gates ALONE (Step_0:11-90). They run at TALK ENTRY,
+ * BEFORE the hold-turn message draws — a released turn (jturn moving off
+ * 4/9/14) never draws the hold message rr (measured: the pacify run's
+ * first hypnosis-gated release desynced one draw under the old order).
+ */
+export function selectGates(j) {
   const mhpratio = j.hp / j.maxhp;
 
   // ---- gates: advance OUT of the holds (Step_0:11-90) ----
@@ -110,6 +116,10 @@ export function selectTurn(j, rng) {
       j.dancelv = 2;
     }
   }
+}
+
+/** Selection + phase-5 drift (gates already run via selectGates). */
+export function selectTurn(j, rng) {
 
   // (The enemy-talk message choose() draws — rr = choose(0,1,2,3) on hold
   // turns plus nested line chooses — live in the MESSAGE layer; the

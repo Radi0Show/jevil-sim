@@ -20,6 +20,7 @@
 // t3 pinned the alignment for chapter 3; chapter 1 gets its own trace).
 
 import { mergeColor } from './gml.js';
+import { destroy } from './entity.js';
 import { BATTLEBG_MASK } from './masks.js';
 
 /** Put a box straight into its settled state. */
@@ -83,9 +84,13 @@ export const battlebox = {
         e.image_angle = 0;
       }
       if (e.timer <= 0 && e.growcon === 3) {
-        // instance_destroy() — scenes own the box lifecycle; the flag lets a
-        // scheduler reap it.
-        e.destroyOnShrunk = true;
+        // instance_destroy() — as in the GML. A shrunk box that lingers
+        // makes the next attack's "a growtangle exists" check skip the
+        // fresh spawn, and the whole attack plays with NO wall mask
+        // (caught by fullfight-pacify's FINAL CHAOS descent: the runner's
+        // heart ejects +10 off the box's bottom band, the sim's slid
+        // through a scale-0 ghost).
+        destroy(e);
       }
     }
   },

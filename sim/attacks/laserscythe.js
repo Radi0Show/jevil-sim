@@ -18,7 +18,8 @@
 // room_height is 480 in the fight room; the harness resizes
 // room_battletest to match (state.roomHeight here).
 
-import { destroy } from '../entity.js';
+import { destroy, spawn } from '../entity.js';
+import { spawnShake } from '../shake.js';
 import { gmlRandom } from '../rng.js';
 import { scrDamageAll } from '../damage.js';
 
@@ -116,7 +117,7 @@ export const laserscythe = {
       // 30% HP cut for everyone standing while the party average is
       // healthy, scr_damage_all as the finisher below it.
       if (state.invTimer < 0) {
-        state.shake = 8;
+        spawnShake(state, spawn, { gated: false }); // Other_15:5 — UNGATED
         if (state.soul && state.soul.alive) state.soul.dmgnoise = 1;
         state.audio?.cue('snd_hurt1');
         state.invTimer = state.invc * 40;

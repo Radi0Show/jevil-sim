@@ -161,39 +161,106 @@ export const spellphase = {
   name: 'obj_spellphase',
   objIndex: 191,
   create(e, state) {
+    // obj_spellphase Create, verbatim fields.
     e.spelltimer = 0;
-    e.cast = false;
-    state.spelldelay = 0;
+    e.spellmax = 40;
+    e.spelltotal = 0;
+    e.char = 0;
+    e.castyet = 0;
+    e.re_castyet = 0;
+    e.active = 0;
+    e.alarm[0] = 5;
+    e.using = [0, 0, 0];
+    e.gotspell = [0, 0, 0];
+    e.gotitem = [0, 0, 0];
+  },
+  alarm: {
+    // Alarm_0 (+5 from create): scan charaction, put the first caster in
+    // the spell pose (state 2 — the hero draw arms alarm[4] = 15, whose
+    // handler runs scr_spell), raise the announcement writer (replayed by
+    // the wr channel), arm the step loop. Measured on fullfight-pacify:
+    // myfight 4 at f7065, wr up at f7070, jturn -1 at f7085 = +5 + 15.
+    0: (e, state) => {
+      const p = state.party;
+      for (let xyz = 0; xyz < 3; xyz += 1) {
+        e.using[xyz] = 0;
+        e.gotspell[xyz] = 0;
+        e.gotitem[xyz] = 0;
+        if (p.charaction[xyz] === 2) {
+          e.spelltotal += 1;
+          e.using[xyz] = 1;
+          e.gotspell[xyz] = 1;
+          if (e.castyet === 0) {
+            const hero = state.entities.find(
+              (o) => o.alive && o.slot === xyz && o.type.objIndex >= 213 && o.type.objIndex <= 215);
+            if (hero) {
+              hero.state = 2;
+              hero.attacktimer = 0;
+              hero.itemed = 0;
+            }
+            e.castyet = 1;
+            e.char = xyz + 1;
+            // scr_spelltext + scr_battletext_default: the announcement
+            // writer — its lifetime rides the wr channel.
+          }
+        }
+        if (p.charaction[xyz] === 4) {
+          e.spelltotal += 1;
+          e.using[xyz] = 1;
+          e.gotitem[xyz] = 1;
+          if (e.castyet === 0) {
+            const hero = state.entities.find(
+              (o) => o.alive && o.slot === xyz && o.type.objIndex >= 213 && o.type.objIndex <= 215);
+            if (hero) {
+              hero.state = 4;
+              hero.attacktimer = 0;
+              hero.itemed = 0;
+            }
+            e.castyet = 1;
+            e.char = xyz + 1;
+          }
+        }
+      }
+      e.active = 1;
+      state.spelldelay = 90;
+    },
   },
   step(e, state) {
-    if (!e.cast) {
-      e.cast = true;
-      // scr_spell for the (single) caster — pacify scope.
-      const p = state.party;
-      let caster = -1;
-      for (let i = 0; i < 3; i += 1) if (p.charaction[i] === 2) caster = i;
-      const spellId = caster >= 0 ? p.charspecial[caster] : 0;
-      if (spellId === 3) {
-        if (state.joker.monsterstatus === 1) {
-          // flag[51] = 3; event_user(10): Other_20 — the spare anim,
-          // scr_monsterdefeat, obj_joker destroyed with hp intact.
-          state.jokerDefeated = true;
-          state.jokerPacified = true;
-        }
-        // else: obj_pacifyspell fail anim (cosmetic)
-        state.spelldelay = 20;
-      } else {
-        state.spelldelay = 15; // other spells: outside the pacify scope
-      }
-      return;
-    }
+    if (e.active !== 1) return;
     e.spelltimer += 1;
     if (e.spelltimer >= state.spelldelay && !(state.writerBusy?.(state.frame))) {
-      scrAttackphase(state);
-      destroy(e);
+      if (e.char >= 3 || e.spelltotal === 1) {
+        scrAttackphase(state);
+        destroy(e);
+      } else {
+        // multi-caster re-queue (Step_0:23-68) — outside the pacify
+        // scenario (one caster); translated when a scenario needs it.
+        scrAttackphase(state);
+        destroy(e);
+      }
     }
   },
 };
+
+/**
+ * scr_spell — the effect switch, called from the CASTER's Alarm_4
+ * (obj_heroparent_Alarm_4: faceaction, scr_spell, state = 0), 15 frames
+ * after the first state-2 draw armed it.
+ */
+export function scrSpell(state, spellId) {
+  if (spellId === 3) {
+    if (state.joker.monsterstatus === 1) {
+      // flag[51] = 3; event_user(10): Other_20 — the spare anim,
+      // scr_monsterdefeat, obj_joker destroyed with hp intact.
+      state.jokerDefeated = true;
+      state.jokerPacified = true;
+    }
+    // else: obj_pacifyspell fail anim (cosmetic)
+    state.spelldelay = 20;
+  } else {
+    state.spelldelay = 15; // other spells: outside the pacify scope
+  }
+}
 
 /**
  * obj_attackpress, no-fighter path. Runs in the DRAW event (stepFrame's
