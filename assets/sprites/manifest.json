@@ -1,0 +1,2225 @@
+{
+ "spr_attack_cut1": {
+  "w": 43,
+  "h": 44,
+  "ox": 21,
+  "oy": 22,
+  "frames": 5,
+  "bbox": [
+   0,
+   0,
+   42,
+   43
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_attack_cut1_0.png",
+   "spr_attack_cut1_1.png",
+   "spr_attack_cut1_2.png",
+   "spr_attack_cut1_3.png",
+   "spr_attack_cut1_4.png"
+  ]
+ },
+ "spr_attack_mash1": {
+  "w": 43,
+  "h": 44,
+  "ox": 25,
+  "oy": 20,
+  "frames": 6,
+  "bbox": [
+   0,
+   0,
+   41,
+   42
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_attack_mash1_0.png",
+   "spr_attack_mash1_1.png",
+   "spr_attack_mash1_2.png",
+   "spr_attack_mash1_3.png",
+   "spr_attack_mash1_4.png",
+   "spr_attack_mash1_5.png"
+  ]
+ },
+ "spr_attack_mash2": {
+  "w": 43,
+  "h": 44,
+  "ox": 25,
+  "oy": 25,
+  "frames": 8,
+  "bbox": [
+   0,
+   0,
+   40,
+   43
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_attack_mash2_0.png",
+   "spr_attack_mash2_1.png",
+   "spr_attack_mash2_2.png",
+   "spr_attack_mash2_3.png",
+   "spr_attack_mash2_4.png",
+   "spr_attack_mash2_5.png",
+   "spr_attack_mash2_6.png",
+   "spr_attack_mash2_7.png"
+  ]
+ },
+ "spr_attack_slap1": {
+  "w": 44,
+  "h": 45,
+  "ox": 19,
+  "oy": 23,
+  "frames": 8,
+  "bbox": [
+   0,
+   0,
+   42,
+   43
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_attack_slap1_0.png",
+   "spr_attack_slap1_1.png",
+   "spr_attack_slap1_2.png",
+   "spr_attack_slap1_3.png",
+   "spr_attack_slap1_4.png",
+   "spr_attack_slap1_5.png",
+   "spr_attack_slap1_6.png",
+   "spr_attack_slap1_7.png"
+  ]
+ },
+ "spr_attackspot": {
+  "w": 10,
+  "h": 38,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   2,
+   0,
+   7,
+   37
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_attackspot_0.png"
+  ]
+ },
+ "spr_battlebg_0": {
+  "w": 75,
+  "h": 75,
+  "ox": 37,
+  "oy": 37,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   74,
+   74
+  ],
+  "sepmasks": "Precise",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_battlebg_0_0.png",
+   "spr_battlebg_0_1.png"
+  ]
+ },
+ "spr_battleblcon_clubs": {
+  "w": 150,
+  "h": 90,
+  "ox": 5,
+  "oy": 0,
+  "frames": 3,
+  "bbox": [
+   0,
+   2,
+   141,
+   82
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_battleblcon_clubs_0.png",
+   "spr_battleblcon_clubs_1.png",
+   "spr_battleblcon_clubs_2.png"
+  ]
+ },
+ "spr_battleblcon_long": {
+  "w": 150,
+  "h": 86,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   149,
+   85
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_battleblcon_long_0.png"
+  ]
+ },
+ "spr_battleblcon_long_r": {
+  "w": 150,
+  "h": 86,
+  "ox": 21,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   149,
+   85
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_battleblcon_long_r_0.png"
+  ]
+ },
+ "spr_battleblcon_long_tall": {
+  "w": 150,
+  "h": 140,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   149,
+   139
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_battleblcon_long_tall_0.png"
+  ]
+ },
+ "spr_battleblcon_v": {
+  "w": 121,
+  "h": 70,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   120,
+   69
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_battleblcon_v_0.png"
+  ]
+ },
+ "spr_battlemsg": {
+  "w": 74,
+  "h": 20,
+  "ox": 74,
+  "oy": 0,
+  "frames": 5,
+  "bbox": [
+   2,
+   0,
+   71,
+   19
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_battlemsg_0.png",
+   "spr_battlemsg_1.png",
+   "spr_battlemsg_2.png",
+   "spr_battlemsg_3.png",
+   "spr_battlemsg_4.png"
+  ]
+ },
+ "spr_bnamekris": {
+  "w": 43,
+  "h": 15,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   42,
+   14
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_bnamekris_0.png"
+  ]
+ },
+ "spr_bnameralsei": {
+  "w": 61,
+  "h": 15,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   53,
+   14
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_bnameralsei_0.png"
+  ]
+ },
+ "spr_bnamesusie": {
+  "w": 48,
+  "h": 15,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   47,
+   14
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_bnamesusie_0.png"
+  ]
+ },
+ "spr_bomb_club": {
+  "w": 23,
+  "h": 23,
+  "ox": 11,
+  "oy": 11,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   22,
+   22
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_bomb_club_0.png",
+   "spr_bomb_club_1.png"
+  ]
+ },
+ "spr_bomb_diamond": {
+  "w": 23,
+  "h": 23,
+  "ox": 11,
+  "oy": 11,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   22,
+   22
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_bomb_diamond_0.png",
+   "spr_bomb_diamond_1.png"
+  ]
+ },
+ "spr_bomb_heart": {
+  "w": 23,
+  "h": 23,
+  "ox": 11,
+  "oy": 11,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   22,
+   22
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_bomb_heart_0.png",
+   "spr_bomb_heart_1.png"
+  ]
+ },
+ "spr_bomb_spade": {
+  "w": 23,
+  "h": 23,
+  "ox": 11,
+  "oy": 11,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   22,
+   22
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_bomb_spade_0.png",
+   "spr_bomb_spade_1.png"
+  ]
+ },
+ "spr_btact": {
+  "w": 31,
+  "h": 32,
+  "ox": 0,
+  "oy": 0,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   30,
+   31
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_btact_0.png",
+   "spr_btact_1.png"
+  ]
+ },
+ "spr_btdefend": {
+  "w": 31,
+  "h": 32,
+  "ox": 0,
+  "oy": 0,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   30,
+   31
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_btdefend_0.png",
+   "spr_btdefend_1.png"
+  ]
+ },
+ "spr_btfight": {
+  "w": 31,
+  "h": 32,
+  "ox": 0,
+  "oy": 0,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   30,
+   31
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_btfight_0.png",
+   "spr_btfight_1.png"
+  ]
+ },
+ "spr_btitem": {
+  "w": 31,
+  "h": 32,
+  "ox": 0,
+  "oy": 0,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   30,
+   31
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_btitem_0.png",
+   "spr_btitem_1.png"
+  ]
+ },
+ "spr_btspare": {
+  "w": 31,
+  "h": 32,
+  "ox": 0,
+  "oy": 0,
+  "frames": 3,
+  "bbox": [
+   0,
+   0,
+   30,
+   31
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_btspare_0.png",
+   "spr_btspare_1.png",
+   "spr_btspare_2.png"
+  ]
+ },
+ "spr_bttech": {
+  "w": 31,
+  "h": 32,
+  "ox": 0,
+  "oy": 0,
+  "frames": 3,
+  "bbox": [
+   0,
+   0,
+   30,
+   31
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_bttech_0.png",
+   "spr_bttech_1.png",
+   "spr_bttech_2.png"
+  ]
+ },
+ "spr_carousel": {
+  "w": 36,
+  "h": 29,
+  "ox": 18,
+  "oy": 20,
+  "frames": 3,
+  "bbox": [
+   12,
+   18,
+   25,
+   24
+  ],
+  "sepmasks": "Precise",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_carousel_0.png",
+   "spr_carousel_1.png",
+   "spr_carousel_2.png"
+  ]
+ },
+ "spr_carouselbg": {
+  "w": 700,
+  "h": 300,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   699,
+   299
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_carouselbg_0.png"
+  ]
+ },
+ "spr_chartarget": {
+  "w": 34,
+  "h": 34,
+  "ox": 0,
+  "oy": 0,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   32,
+   32
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_chartarget_0.png",
+   "spr_chartarget_1.png"
+  ]
+ },
+ "spr_clubsball_a": {
+  "w": 34,
+  "h": 34,
+  "ox": 17,
+  "oy": 17,
+  "frames": 1,
+  "bbox": [
+   13,
+   7,
+   16,
+   10
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_clubsball_a_0.png"
+  ]
+ },
+ "spr_clubsball_b": {
+  "w": 34,
+  "h": 34,
+  "ox": 17,
+  "oy": 17,
+  "frames": 1,
+  "bbox": [
+   23,
+   15,
+   26,
+   18
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_clubsball_b_0.png"
+  ]
+ },
+ "spr_clubsball_c": {
+  "w": 34,
+  "h": 34,
+  "ox": 17,
+  "oy": 17,
+  "frames": 1,
+  "bbox": [
+   13,
+   23,
+   16,
+   26
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_clubsball_c_0.png"
+  ]
+ },
+ "spr_clubsbullet": {
+  "w": 34,
+  "h": 34,
+  "ox": 17,
+  "oy": 17,
+  "frames": 1,
+  "bbox": [
+   8,
+   14,
+   25,
+   19
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_clubsbullet_0.png"
+  ]
+ },
+ "spr_clubsbullet_dark": {
+  "w": 34,
+  "h": 34,
+  "ox": 17,
+  "oy": 17,
+  "frames": 1,
+  "bbox": [
+   8,
+   14,
+   25,
+   19
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_clubsbullet_dark_0.png"
+  ]
+ },
+ "spr_diamondbullet": {
+  "w": 33,
+  "h": 32,
+  "ox": 16,
+  "oy": 15,
+  "frames": 1,
+  "bbox": [
+   10,
+   14,
+   23,
+   17
+  ],
+  "sepmasks": "Precise",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_diamondbullet_0.png"
+  ]
+ },
+ "spr_diamondbullet_vert": {
+  "w": 33,
+  "h": 33,
+  "ox": 16,
+  "oy": 16,
+  "frames": 1,
+  "bbox": [
+   14,
+   11,
+   18,
+   22
+  ],
+  "sepmasks": "Precise",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_diamondbullet_vert_0.png"
+  ]
+ },
+ "spr_dodgeheart": {
+  "w": 20,
+  "h": 20,
+  "ox": 0,
+  "oy": 0,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   19,
+   19
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_dodgeheart_0.png",
+   "spr_dodgeheart_1.png"
+  ]
+ },
+ "spr_dodgeheartmask": {
+  "w": 20,
+  "h": 20,
+  "ox": 0,
+  "oy": 0,
+  "frames": 2,
+  "bbox": [
+   2,
+   2,
+   17,
+   17
+  ],
+  "sepmasks": "Precise",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_dodgeheartmask_0.png",
+   "spr_dodgeheartmask_1.png"
+  ]
+ },
+ "spr_grazeappear": {
+  "w": 50,
+  "h": 50,
+  "ox": 25,
+  "oy": 25,
+  "frames": 4,
+  "bbox": [
+   0,
+   0,
+   49,
+   49
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_grazeappear_0.png",
+   "spr_grazeappear_1.png",
+   "spr_grazeappear_2.png",
+   "spr_grazeappear_3.png"
+  ]
+ },
+ "spr_headkris": {
+  "w": 32,
+  "h": 24,
+  "ox": 0,
+  "oy": 0,
+  "frames": 11,
+  "bbox": [
+   0,
+   0,
+   28,
+   23
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_headkris_0.png",
+   "spr_headkris_1.png",
+   "spr_headkris_2.png",
+   "spr_headkris_3.png",
+   "spr_headkris_4.png",
+   "spr_headkris_5.png",
+   "spr_headkris_6.png",
+   "spr_headkris_7.png",
+   "spr_headkris_8.png",
+   "spr_headkris_9.png",
+   "spr_headkris_10.png"
+  ]
+ },
+ "spr_headralsei": {
+  "w": 36,
+  "h": 28,
+  "ox": 0,
+  "oy": 0,
+  "frames": 11,
+  "bbox": [
+   2,
+   0,
+   34,
+   23
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_headralsei_0.png",
+   "spr_headralsei_1.png",
+   "spr_headralsei_2.png",
+   "spr_headralsei_3.png",
+   "spr_headralsei_4.png",
+   "spr_headralsei_5.png",
+   "spr_headralsei_6.png",
+   "spr_headralsei_7.png",
+   "spr_headralsei_8.png",
+   "spr_headralsei_9.png",
+   "spr_headralsei_10.png"
+  ]
+ },
+ "spr_headsusie": {
+  "w": 34,
+  "h": 25,
+  "ox": 0,
+  "oy": 0,
+  "frames": 11,
+  "bbox": [
+   0,
+   0,
+   33,
+   23
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_headsusie_0.png",
+   "spr_headsusie_1.png",
+   "spr_headsusie_2.png",
+   "spr_headsusie_3.png",
+   "spr_headsusie_4.png",
+   "spr_headsusie_5.png",
+   "spr_headsusie_6.png",
+   "spr_headsusie_7.png",
+   "spr_headsusie_8.png",
+   "spr_headsusie_9.png",
+   "spr_headsusie_10.png"
+  ]
+ },
+ "spr_heart": {
+  "w": 16,
+  "h": 16,
+  "ox": 0,
+  "oy": 0,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   15,
+   15
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_heart_0.png",
+   "spr_heart_1.png"
+  ]
+ },
+ "spr_heartbullet": {
+  "w": 18,
+  "h": 18,
+  "ox": 9,
+  "oy": 9,
+  "frames": 1,
+  "bbox": [
+   6,
+   6,
+   11,
+   11
+  ],
+  "sepmasks": "Precise",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_heartbullet_0.png"
+  ]
+ },
+ "spr_hpname": {
+  "w": 16,
+  "h": 11,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   15,
+   7
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_hpname_0.png"
+  ]
+ },
+ "spr_hpslash": {
+  "w": 15,
+  "h": 14,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   14,
+   13
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_hpslash_0.png"
+  ]
+ },
+ "spr_hypnoring": {
+  "w": 38,
+  "h": 38,
+  "ox": 19,
+  "oy": 19,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   37,
+   37
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_hypnoring_0.png"
+  ]
+ },
+ "spr_joker_dance": {
+  "w": 46,
+  "h": 48,
+  "ox": 23,
+  "oy": 24,
+  "frames": 8,
+  "bbox": [
+   0,
+   0,
+   45,
+   47
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_joker_dance_0.png",
+   "spr_joker_dance_1.png",
+   "spr_joker_dance_2.png",
+   "spr_joker_dance_3.png",
+   "spr_joker_dance_4.png",
+   "spr_joker_dance_5.png",
+   "spr_joker_dance_6.png",
+   "spr_joker_dance_7.png"
+  ]
+ },
+ "spr_joker_main": {
+  "w": 42,
+  "h": 41,
+  "ox": 21,
+  "oy": 20,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   41,
+   40
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_joker_main_0.png",
+   "spr_joker_main_1.png"
+  ]
+ },
+ "spr_joker_scythebody": {
+  "w": 48,
+  "h": 45,
+  "ox": 22,
+  "oy": 21,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   46,
+   44
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_joker_scythebody_0.png"
+  ]
+ },
+ "spr_joker_scythebody_mask": {
+  "w": 46,
+  "h": 43,
+  "ox": 21,
+  "oy": 20,
+  "frames": 1,
+  "bbox": [
+   8,
+   3,
+   31,
+   32
+  ],
+  "sepmasks": "Precise",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_joker_scythebody_mask_0.png"
+  ]
+ },
+ "spr_joker_teleport": {
+  "w": 42,
+  "h": 41,
+  "ox": 21,
+  "oy": 20,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   41,
+   40
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_joker_teleport_0.png",
+   "spr_joker_teleport_1.png"
+  ]
+ },
+ "spr_joker_teleport_r": {
+  "w": 42,
+  "h": 41,
+  "ox": 21,
+  "oy": 20,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   41,
+   40
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_joker_teleport_r_0.png",
+   "spr_joker_teleport_r_1.png"
+  ]
+ },
+ "spr_joker_tired": {
+  "w": 42,
+  "h": 41,
+  "ox": 21,
+  "oy": 20,
+  "frames": 1,
+  "bbox": [
+   5,
+   2,
+   41,
+   40
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_joker_tired_0.png"
+  ]
+ },
+ "spr_jokerbody": {
+  "w": 43,
+  "h": 22,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   41,
+   21
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_jokerbody_0.png"
+  ]
+ },
+ "spr_jokerchain": {
+  "w": 8,
+  "h": 8,
+  "ox": 4,
+  "oy": 4,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   7,
+   7
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_jokerchain_0.png"
+  ]
+ },
+ "spr_jokerhead": {
+  "w": 29,
+  "h": 27,
+  "ox": 12,
+  "oy": 13,
+  "frames": 4,
+  "bbox": [
+   1,
+   0,
+   27,
+   26
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_jokerhead_0.png",
+   "spr_jokerhead_1.png",
+   "spr_jokerhead_2.png",
+   "spr_jokerhead_3.png"
+  ]
+ },
+ "spr_krisb_act": {
+  "w": 63,
+  "h": 44,
+  "ox": 4,
+  "oy": 5,
+  "frames": 11,
+  "bbox": [
+   2,
+   6,
+   61,
+   42
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_act_0.png",
+   "spr_krisb_act_1.png",
+   "spr_krisb_act_2.png",
+   "spr_krisb_act_3.png",
+   "spr_krisb_act_4.png",
+   "spr_krisb_act_5.png",
+   "spr_krisb_act_6.png",
+   "spr_krisb_act_7.png",
+   "spr_krisb_act_8.png",
+   "spr_krisb_act_9.png",
+   "spr_krisb_act_10.png"
+  ]
+ },
+ "spr_krisb_actready": {
+  "w": 63,
+  "h": 44,
+  "ox": 4,
+  "oy": 5,
+  "frames": 2,
+  "bbox": [
+   5,
+   6,
+   34,
+   42
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_actready_0.png",
+   "spr_krisb_actready_1.png"
+  ]
+ },
+ "spr_krisb_attack": {
+  "w": 63,
+  "h": 50,
+  "ox": 3,
+  "oy": 5,
+  "frames": 7,
+  "bbox": [
+   1,
+   2,
+   45,
+   49
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_attack_0.png",
+   "spr_krisb_attack_1.png",
+   "spr_krisb_attack_2.png",
+   "spr_krisb_attack_3.png",
+   "spr_krisb_attack_4.png",
+   "spr_krisb_attack_5.png",
+   "spr_krisb_attack_6.png"
+  ]
+ },
+ "spr_krisb_attackready": {
+  "w": 63,
+  "h": 50,
+  "ox": 3,
+  "oy": 5,
+  "frames": 1,
+  "bbox": [
+   1,
+   0,
+   28,
+   42
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_attackready_0.png"
+  ]
+ },
+ "spr_krisb_defeat": {
+  "w": 63,
+  "h": 44,
+  "ox": 6,
+  "oy": 4,
+  "frames": 1,
+  "bbox": [
+   2,
+   13,
+   33,
+   43
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_defeat_0.png"
+  ]
+ },
+ "spr_krisb_defend": {
+  "w": 35,
+  "h": 40,
+  "ox": 3,
+  "oy": 2,
+  "frames": 6,
+  "bbox": [
+   0,
+   0,
+   34,
+   39
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_defend_0.png",
+   "spr_krisb_defend_1.png",
+   "spr_krisb_defend_2.png",
+   "spr_krisb_defend_3.png",
+   "spr_krisb_defend_4.png",
+   "spr_krisb_defend_5.png"
+  ]
+ },
+ "spr_krisb_hurt": {
+  "w": 63,
+  "h": 44,
+  "ox": 3,
+  "oy": 5,
+  "frames": 1,
+  "bbox": [
+   2,
+   6,
+   34,
+   42
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_hurt_0.png"
+  ]
+ },
+ "spr_krisb_idle": {
+  "w": 36,
+  "h": 38,
+  "ox": 3,
+  "oy": 0,
+  "frames": 6,
+  "bbox": [
+   0,
+   0,
+   35,
+   37
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_idle_0.png",
+   "spr_krisb_idle_1.png",
+   "spr_krisb_idle_2.png",
+   "spr_krisb_idle_3.png",
+   "spr_krisb_idle_4.png",
+   "spr_krisb_idle_5.png"
+  ]
+ },
+ "spr_krisb_pirouette": {
+  "w": 36,
+  "h": 40,
+  "ox": 5,
+  "oy": 0,
+  "frames": 6,
+  "bbox": [
+   2,
+   1,
+   31,
+   38
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_pirouette_0.png",
+   "spr_krisb_pirouette_1.png",
+   "spr_krisb_pirouette_2.png",
+   "spr_krisb_pirouette_3.png",
+   "spr_krisb_pirouette_4.png",
+   "spr_krisb_pirouette_5.png"
+  ]
+ },
+ "spr_krisb_victory": {
+  "w": 34,
+  "h": 37,
+  "ox": 1,
+  "oy": -1,
+  "frames": 9,
+  "bbox": [
+   0,
+   0,
+   33,
+   36
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_krisb_victory_0.png",
+   "spr_krisb_victory_1.png",
+   "spr_krisb_victory_2.png",
+   "spr_krisb_victory_3.png",
+   "spr_krisb_victory_4.png",
+   "spr_krisb_victory_5.png",
+   "spr_krisb_victory_6.png",
+   "spr_krisb_victory_7.png",
+   "spr_krisb_victory_8.png"
+  ]
+ },
+ "spr_lightfairy": {
+  "w": 7,
+  "h": 7,
+  "ox": 3,
+  "oy": 3,
+  "frames": 5,
+  "bbox": [
+   0,
+   0,
+   6,
+   6
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_lightfairy_0.png",
+   "spr_lightfairy_1.png",
+   "spr_lightfairy_2.png",
+   "spr_lightfairy_3.png",
+   "spr_lightfairy_4.png"
+  ]
+ },
+ "spr_morearrow": {
+  "w": 13,
+  "h": 16,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   12,
+   15
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_morearrow_0.png"
+  ]
+ },
+ "spr_numbersfontbig": {
+  "w": 20,
+  "h": 20,
+  "ox": 0,
+  "oy": 0,
+  "frames": 10,
+  "bbox": [
+   0,
+   0,
+   19,
+   19
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_numbersfontbig_0.png",
+   "spr_numbersfontbig_1.png",
+   "spr_numbersfontbig_2.png",
+   "spr_numbersfontbig_3.png",
+   "spr_numbersfontbig_4.png",
+   "spr_numbersfontbig_5.png",
+   "spr_numbersfontbig_6.png",
+   "spr_numbersfontbig_7.png",
+   "spr_numbersfontbig_8.png",
+   "spr_numbersfontbig_9.png"
+  ]
+ },
+ "spr_numbersfontsmall": {
+  "w": 6,
+  "h": 10,
+  "ox": 0,
+  "oy": 0,
+  "frames": 12,
+  "bbox": [
+   0,
+   0,
+   5,
+   9
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_numbersfontsmall_0.png",
+   "spr_numbersfontsmall_1.png",
+   "spr_numbersfontsmall_2.png",
+   "spr_numbersfontsmall_3.png",
+   "spr_numbersfontsmall_4.png",
+   "spr_numbersfontsmall_5.png",
+   "spr_numbersfontsmall_6.png",
+   "spr_numbersfontsmall_7.png",
+   "spr_numbersfontsmall_8.png",
+   "spr_numbersfontsmall_9.png",
+   "spr_numbersfontsmall_10.png",
+   "spr_numbersfontsmall_11.png"
+  ]
+ },
+ "spr_pirouette_fx": {
+  "w": 52,
+  "h": 10,
+  "ox": 26,
+  "oy": 5,
+  "frames": 1,
+  "bbox": [
+   2,
+   0,
+   49,
+   9
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_pirouette_fx_0.png"
+  ]
+ },
+ "spr_pressfront": {
+  "w": 75,
+  "h": 38,
+  "ox": 0,
+  "oy": 0,
+  "frames": 3,
+  "bbox": [
+   0,
+   0,
+   74,
+   37
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_pressfront_0.png",
+   "spr_pressfront_1.png",
+   "spr_pressfront_2.png"
+  ]
+ },
+ "spr_pressfront_b": {
+  "w": 75,
+  "h": 38,
+  "ox": 0,
+  "oy": 0,
+  "frames": 3,
+  "bbox": [
+   40,
+   0,
+   74,
+   37
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_pressfront_b_0.png",
+   "spr_pressfront_b_1.png",
+   "spr_pressfront_b_2.png"
+  ]
+ },
+ "spr_pressspot": {
+  "w": 10,
+  "h": 38,
+  "ox": 0,
+  "oy": 0,
+  "frames": 3,
+  "bbox": [
+   0,
+   0,
+   9,
+   37
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_pressspot_0.png",
+   "spr_pressspot_1.png",
+   "spr_pressspot_2.png"
+  ]
+ },
+ "spr_ralseib_act": {
+  "w": 69,
+  "h": 47,
+  "ox": 0,
+  "oy": 0,
+  "frames": 11,
+  "bbox": [
+   3,
+   2,
+   66,
+   44
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_act_0.png",
+   "spr_ralseib_act_1.png",
+   "spr_ralseib_act_2.png",
+   "spr_ralseib_act_3.png",
+   "spr_ralseib_act_4.png",
+   "spr_ralseib_act_5.png",
+   "spr_ralseib_act_6.png",
+   "spr_ralseib_act_7.png",
+   "spr_ralseib_act_8.png",
+   "spr_ralseib_act_9.png",
+   "spr_ralseib_act_10.png"
+  ]
+ },
+ "spr_ralseib_actready": {
+  "w": 69,
+  "h": 47,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   5,
+   3,
+   27,
+   44
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_actready_0.png"
+  ]
+ },
+ "spr_ralseib_attack": {
+  "w": 77,
+  "h": 48,
+  "ox": 8,
+  "oy": 0,
+  "frames": 6,
+  "bbox": [
+   5,
+   1,
+   73,
+   45
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_attack_0.png",
+   "spr_ralseib_attack_1.png",
+   "spr_ralseib_attack_2.png",
+   "spr_ralseib_attack_3.png",
+   "spr_ralseib_attack_4.png",
+   "spr_ralseib_attack_5.png"
+  ]
+ },
+ "spr_ralseib_attackready": {
+  "w": 77,
+  "h": 48,
+  "ox": 8,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   4,
+   4,
+   34,
+   45
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_attackready_0.png"
+  ]
+ },
+ "spr_ralseib_defeat": {
+  "w": 77,
+  "h": 47,
+  "ox": 8,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   3,
+   25,
+   31,
+   46
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_defeat_0.png"
+  ]
+ },
+ "spr_ralseib_defend": {
+  "w": 69,
+  "h": 47,
+  "ox": 0,
+  "oy": 0,
+  "frames": 8,
+  "bbox": [
+   0,
+   2,
+   42,
+   44
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_defend_0.png",
+   "spr_ralseib_defend_1.png",
+   "spr_ralseib_defend_2.png",
+   "spr_ralseib_defend_3.png",
+   "spr_ralseib_defend_4.png",
+   "spr_ralseib_defend_5.png",
+   "spr_ralseib_defend_6.png",
+   "spr_ralseib_defend_7.png"
+  ]
+ },
+ "spr_ralseib_idle": {
+  "w": 50,
+  "h": 47,
+  "ox": 4,
+  "oy": 0,
+  "frames": 5,
+  "bbox": [
+   5,
+   2,
+   30,
+   44
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_idle_0.png",
+   "spr_ralseib_idle_1.png",
+   "spr_ralseib_idle_2.png",
+   "spr_ralseib_idle_3.png",
+   "spr_ralseib_idle_4.png"
+  ]
+ },
+ "spr_ralseib_spell": {
+  "w": 56,
+  "h": 47,
+  "ox": 9,
+  "oy": 0,
+  "frames": 10,
+  "bbox": [
+   0,
+   0,
+   43,
+   46
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_spell_0.png",
+   "spr_ralseib_spell_1.png",
+   "spr_ralseib_spell_2.png",
+   "spr_ralseib_spell_3.png",
+   "spr_ralseib_spell_4.png",
+   "spr_ralseib_spell_5.png",
+   "spr_ralseib_spell_6.png",
+   "spr_ralseib_spell_7.png",
+   "spr_ralseib_spell_8.png",
+   "spr_ralseib_spell_9.png"
+  ]
+ },
+ "spr_ralseib_spellready": {
+  "w": 78,
+  "h": 47,
+  "ox": 9,
+  "oy": 0,
+  "frames": 4,
+  "bbox": [
+   5,
+   2,
+   41,
+   46
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_spellready_0.png",
+   "spr_ralseib_spellready_1.png",
+   "spr_ralseib_spellready_2.png",
+   "spr_ralseib_spellready_3.png"
+  ]
+ },
+ "spr_ralseib_victory": {
+  "w": 39,
+  "h": 47,
+  "ox": 0,
+  "oy": 0,
+  "frames": 17,
+  "bbox": [
+   1,
+   0,
+   32,
+   44
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_ralseib_victory_0.png",
+   "spr_ralseib_victory_1.png",
+   "spr_ralseib_victory_2.png",
+   "spr_ralseib_victory_3.png",
+   "spr_ralseib_victory_4.png",
+   "spr_ralseib_victory_5.png",
+   "spr_ralseib_victory_6.png",
+   "spr_ralseib_victory_7.png",
+   "spr_ralseib_victory_8.png",
+   "spr_ralseib_victory_9.png",
+   "spr_ralseib_victory_10.png",
+   "spr_ralseib_victory_11.png",
+   "spr_ralseib_victory_12.png",
+   "spr_ralseib_victory_13.png",
+   "spr_ralseib_victory_14.png",
+   "spr_ralseib_victory_15.png",
+   "spr_ralseib_victory_16.png"
+  ]
+ },
+ "spr_savepoint": {
+  "w": 20,
+  "h": 19,
+  "ox": 0,
+  "oy": 0,
+  "frames": 6,
+  "bbox": [
+   0,
+   10,
+   19,
+   19
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_savepoint_0.png",
+   "spr_savepoint_1.png",
+   "spr_savepoint_2.png",
+   "spr_savepoint_3.png",
+   "spr_savepoint_4.png",
+   "spr_savepoint_5.png"
+  ]
+ },
+ "spr_smallface_a2": {
+  "w": 54,
+  "h": 48,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   53,
+   47
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_smallface_a2_0.png"
+  ]
+ },
+ "spr_smallface_s0": {
+  "w": 54,
+  "h": 48,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   53,
+   47
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_smallface_s0_0.png"
+  ]
+ },
+ "spr_spadebullet": {
+  "w": 36,
+  "h": 34,
+  "ox": 18,
+  "oy": 17,
+  "frames": 1,
+  "bbox": [
+   10,
+   12,
+   26,
+   22
+  ],
+  "sepmasks": "Precise",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_spadebullet_0.png"
+  ]
+ },
+ "spr_sparestar": {
+  "w": 16,
+  "h": 16,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   14,
+   14
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_sparestar_0.png"
+  ]
+ },
+ "spr_susieb_act": {
+  "w": 103,
+  "h": 71,
+  "ox": 21,
+  "oy": 24,
+  "frames": 11,
+  "bbox": [
+   3,
+   24,
+   89,
+   67
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_susieb_act_0.png",
+   "spr_susieb_act_1.png",
+   "spr_susieb_act_2.png",
+   "spr_susieb_act_3.png",
+   "spr_susieb_act_4.png",
+   "spr_susieb_act_5.png",
+   "spr_susieb_act_6.png",
+   "spr_susieb_act_7.png",
+   "spr_susieb_act_8.png",
+   "spr_susieb_act_9.png",
+   "spr_susieb_act_10.png"
+  ]
+ },
+ "spr_susieb_actready": {
+  "w": 103,
+  "h": 71,
+  "ox": 21,
+  "oy": 24,
+  "frames": 1,
+  "bbox": [
+   25,
+   24,
+   51,
+   67
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_susieb_actready_0.png"
+  ]
+ },
+ "spr_susieb_attack": {
+  "w": 103,
+  "h": 71,
+  "ox": 21,
+  "oy": 24,
+  "frames": 6,
+  "bbox": [
+   12,
+   6,
+   99,
+   70
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_susieb_attack_0.png",
+   "spr_susieb_attack_1.png",
+   "spr_susieb_attack_2.png",
+   "spr_susieb_attack_3.png",
+   "spr_susieb_attack_4.png",
+   "spr_susieb_attack_5.png"
+  ]
+ },
+ "spr_susieb_attackready": {
+  "w": 103,
+  "h": 71,
+  "ox": 21,
+  "oy": 24,
+  "frames": 1,
+  "bbox": [
+   0,
+   27,
+   62,
+   67
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_susieb_attackready_0.png"
+  ]
+ },
+ "spr_susieb_defeat": {
+  "w": 60,
+  "h": 46,
+  "ox": 19,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   17,
+   0,
+   59,
+   44
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_susieb_defeat_0.png"
+  ]
+ },
+ "spr_susieb_defend": {
+  "w": 56,
+  "h": 66,
+  "ox": 17,
+  "oy": 22,
+  "frames": 6,
+  "bbox": [
+   0,
+   0,
+   55,
+   65
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_susieb_defend_0.png",
+   "spr_susieb_defend_1.png",
+   "spr_susieb_defend_2.png",
+   "spr_susieb_defend_3.png",
+   "spr_susieb_defend_4.png",
+   "spr_susieb_defend_5.png"
+  ]
+ },
+ "spr_susieb_hurt": {
+  "w": 54,
+  "h": 45,
+  "ox": 20,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   2,
+   0,
+   49,
+   43
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_susieb_hurt_0.png"
+  ]
+ },
+ "spr_susieb_idle": {
+  "w": 54,
+  "h": 45,
+  "ox": 19,
+  "oy": 0,
+  "frames": 4,
+  "bbox": [
+   1,
+   3,
+   53,
+   43
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_susieb_idle_0.png",
+   "spr_susieb_idle_1.png",
+   "spr_susieb_idle_2.png",
+   "spr_susieb_idle_3.png"
+  ]
+ },
+ "spr_susieb_victory": {
+  "w": 60,
+  "h": 51,
+  "ox": 25,
+  "oy": 6,
+  "frames": 20,
+  "bbox": [
+   0,
+   0,
+   59,
+   50
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 0.2,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_susieb_victory_0.png",
+   "spr_susieb_victory_1.png",
+   "spr_susieb_victory_2.png",
+   "spr_susieb_victory_3.png",
+   "spr_susieb_victory_4.png",
+   "spr_susieb_victory_5.png",
+   "spr_susieb_victory_6.png",
+   "spr_susieb_victory_7.png",
+   "spr_susieb_victory_8.png",
+   "spr_susieb_victory_9.png",
+   "spr_susieb_victory_10.png",
+   "spr_susieb_victory_11.png",
+   "spr_susieb_victory_12.png",
+   "spr_susieb_victory_13.png",
+   "spr_susieb_victory_14.png",
+   "spr_susieb_victory_15.png",
+   "spr_susieb_victory_16.png",
+   "spr_susieb_victory_17.png",
+   "spr_susieb_victory_18.png",
+   "spr_susieb_victory_19.png"
+  ]
+ },
+ "spr_tallpx": {
+  "w": 5,
+  "h": 640,
+  "ox": 2,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   1,
+   0,
+   3,
+   639
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_tallpx_0.png"
+  ]
+ },
+ "spr_tensionbar": {
+  "w": 25,
+  "h": 196,
+  "ox": 0,
+  "oy": 0,
+  "frames": 2,
+  "bbox": [
+   0,
+   0,
+   24,
+   195
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_tensionbar_0.png",
+   "spr_tensionbar_1.png"
+  ]
+ },
+ "spr_tensionmarker": {
+  "w": 19,
+  "h": 2,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   18,
+   1
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_tensionmarker_0.png"
+  ]
+ },
+ "spr_tiredmark": {
+  "w": 16,
+  "h": 16,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   0,
+   14,
+   15
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_tiredmark_0.png"
+  ]
+ },
+ "spr_tplogo": {
+  "w": 22,
+  "h": 44,
+  "ox": 0,
+  "oy": 0,
+  "frames": 1,
+  "bbox": [
+   0,
+   5,
+   21,
+   40
+  ],
+  "sepmasks": "AxisAlignedRect",
+  "playback": 1,
+  "playbacktype": "FramesPerGameFrame",
+  "files": [
+   "spr_tplogo_0.png"
+  ]
+ }
+}

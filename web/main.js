@@ -10,10 +10,19 @@ import { buildPracticeScene, ATTACKS } from '../sim/scenes/practice.js';
 import { buildFightScene } from '../sim/fight.js';
 import { bindKeyboard } from '../input/keyboard.js';
 import { createRenderer } from '../render/canvas.js';
+import { loadSprites } from '../render/sprites.js';
 
 const canvas = document.getElementById('game');
 const hud = document.getElementById('hud');
-const renderer = createRenderer(canvas);
+// The sprite pack is optional: pack absent (fresh clone before extraction)
+// -> renderer falls back to collision-mask drawing for everything.
+let sprites = null;
+try {
+  sprites = await loadSprites();
+} catch {
+  sprites = null;
+}
+const renderer = createRenderer(canvas, sprites);
 const keys = bindKeyboard(window);
 
 const params = new URLSearchParams(location.search);
