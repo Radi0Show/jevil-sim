@@ -87,11 +87,18 @@ whole-fight endings replay byte-exact (23 suites green).
   the GML play sites, two suites (audibility/stacking/index coverage +
   dump-derived sound coverage with traced excuses). 25 suites total.
 
+- **Battle text shipped**: Jevil's clubs talk balloon (every jturn line +
+  hold rr/alt pairs from lang_en.json, typer reveal) and the bottom
+  flavor line with its override ladder. Presentation session also
+  landed: hero pose machine at 2x, jokerbg port, obj_joker_body port
+  (hurt head-swing, shadow dance), darkener, two-layer battle box,
+  startup music, the charbox layering fix, and the battleat freeze fix.
+
 ## Next
 
-1. Battle messages / enemy dialogue bubbles (writer strings per jturn
-   from lang_en.json), hero act/spell poses in fight scenes.
-2. Replay tokens + deploy (task #9).
+1. Replay tokens (?seed= exists; add input recording/replay in the URL).
+2. Deploy (Pages) — BLOCKED on user authorization: this repo's standing
+   rule is commits local, never pushed.
 3. (If a scenario ever pirouettes) obj_healanim star sprays — the one
    unmodeled RNG consumer, currently avoided by the pacify route.
 
