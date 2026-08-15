@@ -15,6 +15,7 @@ import { runPhase, runAlarms, reap } from './entity.js';
 import { traceRow } from './trace.js';
 import { spriteMaskHit } from './masks.js';
 import { grazeBullet } from './graze.js';
+import { gmlRandom } from './rng.js';
 
 export { createState } from './state.js';
 export { spawn, destroy, ALARM_COUNT } from './entity.js';
@@ -124,19 +125,28 @@ function runCollisions(state) {
   const heart = state.soul;
   if (!heart || !heart.alive) return;
 
-  // Pair iteration is NEWEST-FIRST — the with()-style order, distinct from
-  // event dispatch (live-70 f34: the newer hitting spade resolves its
-  // graze+hit before the older passer, whose trickle the fresh inv then
-  // gates).
+  // COLLISION PAIRS RUN PER BULLET, [GRAZE, HIT], BULLETS NEWEST-FIRST.
+  // Measured with an event-order probe (oracle_pairorder_probe.csx,
+  // traces/pairorder3-{65,70}-events.csv): live-70 f34 logs
+  // G(newer spade) -> H(newer spade) -> G(older spade, inv already 40) —
+  // per-bullet interleave, newest first, graze ahead of the hit.
+  //
+  // DOCUMENTED RUNTIME DEVIATION — THE DEATH-FRAME G-SKIP: on a minority
+  // of the frames where a bullet dies on the heart (27/93 heart-contact
+  // deaths in the type-65 log, 2/11 in type 70), the runner never fires
+  // that bullet's grazebox event, even though its own place_meeting says
+  // the pair overlaps (P rows in the same log) and identical positions in
+  // other rings DO fire it. The skip phases toggle mid-ring with no
+  // GML-visible cause — collision-grid insertion history inside the
+  // runtime decides whether the heart's pair (which destroys the bullet)
+  // dispatches ahead of the grazebox's. The sim always grazes first, so
+  // on those frames it can award a trickle/contact the runner skipped:
+  // sim tension >= oracle tension, turntimer <=, offsets changing only on
+  // bullet-death frames. tools/verify-live.mjs enforces exactly that
+  // envelope; every other column stays byte-exact.
   for (const b of [...state.entities].sort((a, z) => z.seq - a.seq)) {
     if (!b.alive || !b.isBullet || !b.type.other15) continue;
     if (b.maskOff) continue; // mask_index = spr_nomask
-    // COLLISION PAIRS INTERLEAVE PER BULLET: each bullet's graze event
-    // (grazebox, object 206) fires before its damage event (heart, 313),
-    // and the NEXT bullet sees the updated inv. Measured — live-70 f34:
-    // bullet A grazes then hits (inv -> 40), and bullet B, overlapping the
-    // same frame, gets NO trickle. A whole-phase graze pass either misses
-    // A's trickle (damage first) or awards B's too (graze first).
     grazeBullet(state, b);
     const collides = b.type.collides;
     let hit;
@@ -219,6 +229,21 @@ export function stepFrame(state, input) {
     state.grazePrev = { x: state.soul.x + 10, y: state.soul.y + 10 };
   } else {
     state.grazePrev = null;
+  }
+
+  // Draw phase: obj_dmgwriter's Draw draws -5 - random(2) on its second
+  // draw frame (delaytimer reaching delay=2; the first tick happens on the
+  // creation frame). The writer keeps drawing ~50 frames but never touches
+  // the stream again, so it retires here once the draw is consumed.
+  if (state.dmgwriters && state.dmgwriters.length > 0) {
+    for (const w of state.dmgwriters) {
+      w.delaytimer += 1;
+      if (w.delaytimer === 2) {
+        gmlRandom(state.gmlRng, 2);
+        w.done = true;
+      }
+    }
+    state.dmgwriters = state.dmgwriters.filter((w) => !w.done);
   }
 
   // Destroyed entities disappear before the row is written, matching GML

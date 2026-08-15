@@ -27,7 +27,7 @@
 // base df 2, no equipment bonuses (battledf 2 each). Labeled constant per
 // the dodge-only posture.
 
-import { gmlChoose } from './rng.js';
+import { gmlChoose, gmlRandom } from './rng.js';
 
 export function freshParty() {
   return {
@@ -144,6 +144,14 @@ export function scrDamage(state, b) {
         scrDead(p, target);
       }
     }
+    // instance_create(obj_dmgwriter): its Create draws round(random(600))
+    // into `damage` (immediately overwritten — but the draw is consumed),
+    // and its Draw event draws -5 - random(2) on its SECOND draw frame.
+    // The stream shift is real: skipping these desyncs every spawn after
+    // the first hit (live-65/70 graze frames caught it).
+    gmlRandom(state.gmlRng, 600);
+    if (!state.dmgwriters) state.dmgwriters = [];
+    state.dmgwriters.push({ delaytimer: 0 });
     state.dmgNumbers?.push({ slot: target, damage: hpdiff, type: doomtype });
   }
   if (target === 3) {

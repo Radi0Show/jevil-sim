@@ -43,16 +43,24 @@ Updated 2026-08-14 (second session, continued).
 - Damage system translated (sim/damage.js) with three more original bugs
   preserved; graze system translated (sim/graze.js) with the measured
   per-bullet graze-then-damage pair interleave, newest-first.
-- verify-live (damage+graze vs unsterilized recordings): live-70 clean
-  through two hits + i-frames to f116; both residual diffs are grazebox
-  PAIR GEOMETRY (the runner's region sits ~2px off my mask-data model) —
-  grazepair sweep recording now.
+- verify-live GREEN (two-tier): live-70/65 to the wipe. Root causes of the
+  last desyncs, all measured: obj_dmgwriter consumes RNG on every hit
+  (random(600) at create + random(2) next draw frame — now consumed by
+  scrDamage/stepFrame); the probe stage is a FRESH-FILE party (char
+  [1,0,0], charcantarget all 0 — scr_gamestart); and the DEATH-FRAME
+  G-SKIP, a real runtime quirk: the runner sometimes skips a dying
+  bullet's grazebox event though its own place_meeting says overlap
+  (event-order probe, 29/104 contact deaths). Sim keeps the majority
+  order (per-bullet [graze, hit], newest-first); the suite enforces the
+  one-sided envelope. verify-grazepair holds the 3,600-verdict pair-model
+  sweeps (0 missed hits; the 8 corner-band rows reclassified as
+  dispatch skips, not geometry).
 - LATENT ORIGINAL CRASH found (charinstance[3] on wipe-window redirects) —
   plausibly the PS4 v1.03 fix; see HANDOFF.
 
 ## Next
 
-1. Fit the grazepair sweep; verify-live green; register it.
+1. Whole-fight harness prerequisites (below).
 2. Whole-fight harness (joker drives himself + scripted menu inputs) for
    lifecycle-level verification; battle messages + enemy-talk draws.
 3. obj_dbullet_vert effective-mask sweep (restore a74's full window).

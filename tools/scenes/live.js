@@ -30,6 +30,15 @@ export function buildLiveScene(state, { type = 70, grazepoints = 2 } = {}) {
   state.grazeEnabled = true;
   state.gmlRng = gmlCreate(4242);
 
+  // The probe stage never runs obj_battlecontroller, so the party is the
+  // FRESH-FILE state (scr_gamestart): Kris alone — char [1,0,0] — and
+  // charcantarget all 0 (only scr_revive ever sets one). That makes the
+  // wipe a one-down affair (the f124 gameover with Susie/Ralsei untouched)
+  // and sends the redirect straight to target 3 (the latent
+  // charinstance[3] crash the probe absorbs with a fourth marker).
+  state.party.char = [1, 0, 0];
+  state.party.charcantarget = [0, 0, 0];
+
   spawn(state, bcLite);
   const gt = spawn(state, battlebox, { x: 320, y: 170 });
   settleBox(gt);

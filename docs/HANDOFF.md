@@ -206,3 +206,35 @@ both caught from the game window mid-run:
 Also: bullet inv fields confirmed WRITE-ONLY (i-frames always invc*40) —
 dc.inv 20 on jattack 4/8 does nothing; three more original bugs preserved
 in damage.js (AOE downs at hp 0 sans scr_dead; pillar low-HP no-op).
+
+## 2026-08-14 (graze-order session) — dmgwriter RNG; fresh-file party; the DEATH-FRAME G-SKIP
+
+verify-live's last desyncs were three separate things, and none was the
+graze geometry:
+1. **obj_dmgwriter consumes RNG.** Its Create draws `round(random(600))`
+   (immediately overwritten — the draw still counts) and its Draw draws
+   `-5 - random(2)` on its second draw frame. Every hit therefore shifts
+   the stream; scrDamage + stepFrame's draw-phase hook now consume both.
+   Any live-path probe comparison made WITHOUT this desyncs every spawn
+   after the first hit while soul positions stay identical — the failure
+   looks exactly like bad graze geometry. It isn't.
+2. **The probe stage is a fresh-file party** (scr_gamestart): char
+   [1,0,0], charcantarget ALL 0 (only scr_revive sets one). Kris alone;
+   the wipe is one down; the charinstance[3] crash fires on the FIRST
+   down. tools/scenes/live.js overrides freshParty accordingly.
+3. **The DEATH-FRAME G-SKIP** (documented runtime deviation). Event-order
+   probe (jevil-research/tools/patches/oracle_pairorder_probe.csx) logs
+   every grazebox/heart collision event + the runner's own place_meeting.
+   Result: pairs run per bullet, [graze, hit], newest-first (f34:
+   G(new) H(new) G(old, inv 40)) — BUT on 27/93 (t65) + 2/11 (t70)
+   heart-contact deaths, the dying bullet's G never fires while
+   place_meeting says overlap, at positions that fire in other rings.
+   Toggles mid-ring; no GML-visible cause (collision-grid internals).
+   Sim always grazes first; verify-live enforces the one-sided envelope
+   (tension >= oracle, tt <=, steps only on death frames, cap 2). The
+   macro grazepair sweep's 8 corner-band mismatches are the same class
+   (event-fire records) — verify-grazepair absorbs exactly those 8 and
+   allows ZERO model-missed-hits.
+TRAP FOR LATER SESSIONS: sabotage-testing by editing sim files then
+`git checkout` restores the COMMITTED version — commit first or re-apply;
+this session lost and re-applied the dmgwriter fix that way.
