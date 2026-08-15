@@ -65,7 +65,7 @@ export function grazeBullet(state, b) {
         if (state.turntimer >= 10) {
           state.turntimer -= b.timepoints;
         }
-        state.audio?.cue('snd_grab'); // battlecontroller grazenoise
+        state.audio?.cue('snd_graze'); // bc grazenoise relay (Step_0:829-831)
         state.grazeFlash = 10;
       }
     }

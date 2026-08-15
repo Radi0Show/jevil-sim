@@ -103,7 +103,12 @@ export const suitbomb = {
     if (e.con === 1) {
       e.timer += 1;
       if (e.timer >= 10) {
-        state.audio?.cue('snd_bombfall'); // obj_joker beepnoise relay
+        // obj_joker beepnoise relay: bombs SET A FLAG and the joker's
+        // draw plays once — several bombs on one frame are ONE beep.
+        if (state.beepnoiseFrame !== state.frame) {
+          state.beepnoiseFrame = state.frame;
+          state.audio?.cue('snd_bombfall');
+        }
         e.image_speed = e.timer / e.maxtimer;
       }
       if (e.timer >= e.maxtimer) {
@@ -116,7 +121,11 @@ export const suitbomb = {
       }
     }
     if (e.con === 2) {
-      state.audio?.cue('snd_bomb'); // obj_joker burstnoise relay
+      // obj_joker burstnoise relay — same flag dedupe as the beep.
+      if (state.burstnoiseFrame !== state.frame) {
+        state.burstnoiseFrame = state.frame;
+        state.audio?.cue('snd_bomb');
+      }
       const heart = state.soul;
       if (e.gmlType === 0) {
         const dir = gmlRandom(state.gmlRng, 360);

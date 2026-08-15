@@ -96,9 +96,18 @@ export const jokerFight = {
       e.hurttimer = 0;
       const j = state.joker;
       const mhpratio = j.hp / j.maxhp;
+      // laughnoise = choose(0,1,2) rides the PRESENTATION channel — the
+      // pick here is frame-derived, NOT a stream draw (LABELLED: the
+      // original chooses uniformly on the counted channel).
+      state.audio?.cue(['snd_joker_laugh0', 'snd_joker_ha1', 'snd_joker_ha0'][state.frame % 3]);
+      const prevDance = j.dancelv ?? 0;
       if (mhpratio <= 0.8 && (j.dancelv ?? 0) === 0) j.dancelv = 1;
       if (mhpratio <= 0.4 && j.jturn < 17) j.dancelv = 3;
       if (mhpratio <= 0.2 && j.jturn === 17) j.dancelv = 2;
+      if ((j.dancelv ?? 0) !== prevDance) {
+        // obj_joker_body Draw_0:175 — the spin-change sting.
+        state.audio?.cue('snd_joker_metamorphosis');
+      }
       if (mhpratio <= 0) {
         // event_user(10) + flag[241] = 6 — the violence ending; the
         // whole-fight claim window ends here.
@@ -142,12 +151,18 @@ export const jokerFight = {
       selectGates(j);
       const jt = j.jturn;
       state.enemyLine = { jturn: jt, rr: -1 };
+      // per-turn message voice lines (Step_0:95-200): chaos at 0, ANYTHING
+      // at 7; the hold-message rr plays chaos (0) or ANYTHING (1) below.
+      if (jt === 0) state.audio?.cue('snd_joker_chaos');
+      if (jt === 7) state.audio?.cue('snd_joker_anything');
       if (jt === 4 || jt === 9 || jt === 14 || jt === 19) {
         const rr = gmlChoose(state.gmlRng, [0, 1, 2, 3]);
         state.enemyLine.rr = rr;
         if (rr === 0) {
           state.enemyLine.alt = gmlChoose(state.gmlRng, [0, 1]);
+          state.audio?.cue('snd_joker_chaos'); // Step_0:184
         }
+        if (rr === 1) state.audio?.cue('snd_joker_anything'); // Step_0:189
         if (rr === 2) {
           state.enemyLine.alt = gmlChoose(state.gmlRng, [0, 1]);
         }
@@ -223,6 +238,7 @@ export const jokerFight = {
       if (e.acting === 3 && (e.actcon ?? 0) === 0) {
         const j = state.joker;
         if (j.at > 10) j.at -= 0.5;
+        state.audio?.cue('snd_hypnosis'); // Step_0:574
         // obj_hypnofx: its Draw's initsiner random(400) rides the
         // presentation channel (wrapped in the recorder).
         gmlChoose(state.gmlRng, [0, 1, 2]); // aaa — the hypnosis line pick
@@ -249,6 +265,7 @@ export const jokerFight = {
         // event_user(5) — Other_15's launch, with pfactor applied to AT for
         // the launch only.
         const d = DISPATCH[j.jattack];
+        state.audio?.cue('snd_joker_anything'); // Other_15:57/95
         const dc = spawn(state, dbulletController, { x: e.x, y: e.y });
         dc.gmlType = d.type;
         dc.target = e.mytarget ?? 0;

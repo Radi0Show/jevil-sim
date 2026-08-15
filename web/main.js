@@ -11,6 +11,7 @@ import { buildFightScene } from '../sim/fight.js';
 import { bindKeyboard } from '../input/keyboard.js';
 import { createRenderer } from '../render/canvas.js';
 import { loadSprites } from '../render/sprites.js';
+import { createAudio } from '../render/audio.js';
 
 const canvas = document.getElementById('game');
 const hud = document.getElementById('hud');
@@ -23,6 +24,19 @@ try {
   sprites = null;
 }
 const renderer = createRenderer(canvas, sprites);
+const audio = createAudio();
+// The sim cues through state.audio?.cue(name); adapt to the player's play().
+// play() takes a cue LIST of {name,...} records (knight's drain shape).
+const audioSink = { cue: (name) => audio.play([{ name }]) };
+// global.batmusic: the fight loops joker.ogg. Cue on the FIRST input —
+// before a user gesture the context is suspended AND the manifest may not
+// have resolved, so a load-time cue is silently dropped (knight pattern).
+let musicStarted = false;
+window.addEventListener('keydown', () => {
+  if (musicStarted) return;
+  musicStarted = true;
+  audio.play([{ name: 'mus_joker', pitch: 1, gain: 1, loop: true }]);
+}, { passive: true });
 const keys = bindKeyboard(window);
 
 const params = new URLSearchParams(location.search);
@@ -41,6 +55,7 @@ function rebuild(newSeed = seed) {
     state.damageEnabled = true;
     state.grazeEnabled = true;
   }
+  state.audio = audioSink;
   window.__state = state; // debug handle (read-only use)
   const u = new URL(location.href);
   u.searchParams.set('mode', mode);

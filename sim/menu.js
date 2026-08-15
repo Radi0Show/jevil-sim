@@ -441,6 +441,21 @@ export const attackpress = {
  * of the mnfight-2 timer block, exactly where the original keeps it.
  */
 export function menuStep(e, state) {
+  // bc noise relays (Step_0:823-848): movenoise on any cursor change,
+  // selnoise on any menu transition. One observation point instead of a
+  // cue at every branch — the flags dedupe per frame in the original too.
+  const preMenu = state.bmenuno;
+  const preSnap = JSON.stringify([state.bmenucoord0, state.bmenucoord9, state.bmenucoord2, state.charturn]);
+  menuStepInner(e, state);
+  if (state.myfight === 0) {
+    if (state.bmenuno !== preMenu) state.audio?.cue('snd_select');
+    else if (JSON.stringify([state.bmenucoord0, state.bmenucoord9, state.bmenucoord2, state.charturn]) !== preSnap) {
+      state.audio?.cue('snd_menumove');
+    }
+  }
+}
+
+function menuStepInner(e, state) {
   if (state.myfight !== 0) return;
   const p = state.party;
   const inp = state.menuEdges;

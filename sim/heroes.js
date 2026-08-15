@@ -54,7 +54,11 @@ function makeHero(slot, objIndex, name) {
     },
     drawStep(e, state) {
       if (e.state === 1 && e.attacked === 0) {
-        // first swing draw: sound, crit fairies (channel), then the timer
+        // first swing draw: sound, crit fairies (channel), then the timer.
+        // Kris's slash voice is his alone (Draw_0:53-56); a perfect bar
+        // (150) stings on any hero (Draw_0 crit block).
+        if (e.type.objIndex === 213) state.audio?.cue('snd_laz_c');
+        if (e.points === 150) state.audio?.cue('snd_criticalswing');
         e.attacked = 1;
         e.alarm[1] = 10;
       }
@@ -99,7 +103,12 @@ function makeHero(slot, objIndex, name) {
             gmlRandom(state.gmlRng, 6);
             // Susie's connect ALONE screen-shakes (Alarm_1:54-61,
             // object_index == obj_herosusie): snd_impact + obj_shake.
-            if (e.type.objIndex === 214) spawnShake(state, spawn, { gated: false });
+            if (e.type.objIndex === 214) {
+              state.audio?.cue('snd_impact'); // Alarm_1:59
+              spawnShake(state, spawn, { gated: false });
+            }
+            // bc damagenoise relay — the enemy-hit thud.
+            state.audio?.cue('snd_damage');
             hurtJoker(state, damage);
             const jk = jokerEntity(state);
             if (jk) jk.hurttimer = 30;
