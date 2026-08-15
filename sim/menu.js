@@ -156,43 +156,152 @@ export const attackpress = {
   create(e, state) {
     const p = state.party;
     const havechar = [0, 1, 2].map((i) => (p.charaction[i] === 1 ? 1 : 0));
-    if (havechar.some((h) => h === 1)) {
-      // FIGHT chose — the press bar proper is outside the defend path.
-      // The spawn still happens so the differ sees the frozen phase.
-      e.unsupportedFight = true;
-    }
-    const b0 = gmlChoose(state.gmlRng, [0, 1, 2]);
-    let boltorder0 = b0;
+    e.havechar = havechar;
+    // boltorder: the pair of draws ALWAYS runs; with a full FIGHT roster
+    // the no-char override never fires and the chain keys off the real
+    // first draw. (havechar[1] && !havechar[2] would add a third.)
+    let boltorder0 = gmlChoose(state.gmlRng, [0, 1, 2]);
     if (havechar[1] === 0 && havechar[2] === 0) boltorder0 = 0;
     if (boltorder0 === 2) gmlChoose(state.gmlRng, [0, 1]);
     else if (boltorder0 === 1) gmlChoose(state.gmlRng, [0, 2]);
     else gmlChoose(state.gmlRng, [1, 2]);
     if (havechar[1] === 1 && havechar[2] === 0) gmlChoose(state.gmlRng, [0, 1]);
+
+    // mymethod 1 bolt build: charbolt 1 per fighter; boltchar by
+    // rejection-sampled choose; boltframe walk seeded by lastbolt = -1
+    // (the FIRST bolt lands at 30 - 1 = 29 — original quirk); diff 12
+    // with flag[13] == 0.
+    const charbolt = havechar.map((h) => (h === 1 ? 1 : 0));
+    const bolttotal = charbolt[0] + charbolt[1] + charbolt[2];
+    e.bolttotal = bolttotal;
+    e.boltchar = [];
+    e.boltframe = [];
+    e.boltalive = [];
+    const boltuse = [0, 0, 0];
+    const diff = 12;
+    for (let i = 0; i < bolttotal; i += 1) {
+      e.boltalive[i] = 1;
+      let c = gmlChoose(state.gmlRng, [0, 1, 2]);
+      while (havechar[c] === 0) c = gmlChoose(state.gmlRng, [0, 1, 2]);
+      while (boltuse[c] >= charbolt[c]) {
+        c = gmlChoose(state.gmlRng, [0, 1, 2]);
+        while (havechar[c] === 0) c = gmlChoose(state.gmlRng, [0, 1, 2]);
+      }
+      e.boltchar[i] = c;
+      boltuse[c] += 1;
+    }
+    let boltxoff = 0;
+    let lastbolt = -1;
+    for (let i = 0; i < bolttotal; i += 1) {
+      boltxoff += lastbolt;
+      e.boltframe[i] = 30 + boltxoff;
+      if (i < bolttotal - 1) {
+        if (lastbolt !== 0 && e.boltchar[i] !== e.boltchar[i + 1]) {
+          lastbolt = gmlChoose(state.gmlRng, [0, diff, diff * 1.5]);
+        } else {
+          lastbolt = gmlChoose(state.gmlRng, [diff, diff * 1.5]);
+        }
+      } else {
+        lastbolt = gmlChoose(state.gmlRng, [diff, diff * 1.5]);
+      }
+    }
+    // trace echo for the oracle's bf/bc columns
+    state.lastBoltData = { frame: state.frame, boltframe: [...e.boltframe], boltchar: [...e.boltchar] };
+
+    e.points = [0, 0, 0];
+    e.attackedH = [0, 0, 0];
     e.maxdelay = 0;
     e.maxdelaytimer = 0;
     e.active = 0;
     e.posttimer = 0;
+    e.boltx = 0;
     e.timermax = havechar.every((h) => h === 0) ? 3 : 50;
     e.fade = 0;
     e.fadeamt = 0;
   },
   drawStep(e, state) {
-    if (e.unsupportedFight) return; // labeled: press bar untranslated
+    const monsterAlive = state.joker.hp > 0 ? 1 : 0;
     e.maxdelaytimer += 1;
     if (e.maxdelaytimer >= e.maxdelay) e.active = 1;
     if (e.active !== 1) return;
-    // no-char branch: fakefade + the posttimer snap (inert at timermax 3).
-    if (e.posttimer < e.timermax - 35) e.posttimer = e.timermax - 34;
-    // goahead is unconditional with no fighters alive on the bar.
-    e.posttimer += 1;
-    if (e.posttimer > e.timermax && e.fade === 0) {
-      state.mnfight = 1;
-      state.myfight = -1;
-      e.fade = 1;
+
+    // bolt walk: expiry past the window, live counts per hero, and the
+    // Other_11 handoff when a hero's bolts are spent.
+    const boltcount = [0, 0, 0];
+    for (let i = 0; i < e.bolttotal; i += 1) {
+      if (e.boltframe[i] - e.boltx < -5) e.boltalive[i] = 0;
+      if (e.boltalive[i] === 1) boltcount[e.boltchar[i]] += 1;
     }
-    if (e.fade === 1) {
-      e.fadeamt += 0.08;
-      if (e.fadeamt > 1) destroy(e);
+    for (let i = 0; i < 3; i += 1) {
+      if (boltcount[i] === 0 && e.havechar[i] === 1 && e.attackedH[i] === 0) {
+        e.attackedH[i] = 1;
+        // event_user(1): hand the points to the hero, start the swing.
+        if (monsterAlive) {
+          const hero = state.entities.find((h) => h.alive && h.slot === i && h.type.alarm?.[1]);
+          if (hero) {
+            hero.points = e.points[i];
+            hero.state = 1;
+            hero.attacked = 0;
+          }
+        }
+      }
+    }
+
+    // the one-button press (flag[13] = 0): nearest live bolt in the
+    // -5..+15 window, dual on an exact tie.
+    if (monsterAlive && state.menuEdges?.confirm) {
+      let qualify = -1;
+      let topclose = 999;
+      let dual = -1;
+      for (let i = 0; i < e.bolttotal; i += 1) {
+        if (e.boltalive[i] !== 1) continue;
+        const close = e.boltframe[i] - e.boltx;
+        if (close < 15 && close > -5) {
+          if (close === topclose) dual = i;
+          if (close < topclose) { topclose = close; qualify = i; }
+        }
+      }
+      const award = (idx) => {
+        const bc = e.boltchar[idx];
+        const pp = Math.abs(topclose);
+        if (pp === 0) e.points[bc] += 150;
+        else if (pp === 1) e.points[bc] += 120;
+        else if (pp === 2) e.points[bc] += 110;
+        else e.points[bc] += 100 - pp * 2;
+        e.boltalive[idx] = 0;
+      };
+      if (qualify !== -1) {
+        award(qualify);
+        if (dual !== -1) award(dual);
+      }
+    }
+
+    if (monsterAlive === 0) {
+      // the monster died mid-bar: fakefade + the snap forward.
+      if (e.posttimer < e.timermax - 35) e.posttimer = e.timermax - 34;
+    }
+    e.boltx += 1;
+
+    let goahead = 0;
+    if ((e.attackedH[0] === 1 || e.havechar[0] === 0)
+      && (e.attackedH[1] === 1 || e.havechar[1] === 0)
+      && (e.attackedH[2] === 1 || e.havechar[2] === 0)) goahead = 1;
+    if (monsterAlive === 0) goahead = 1;
+    if (goahead === 1) {
+      e.posttimer += 1;
+      if (e.posttimer > e.timermax && e.fade === 0) {
+        if (monsterAlive) {
+          state.mnfight = 1;
+          state.myfight = -1;
+        } else {
+          state.jokerDefeated = true; // scr_wincombat — claim window ends
+        }
+        e.fade = 1;
+      }
+      if (e.fade === 1) {
+        e.fadeamt += 0.08;
+        if (e.fadeamt > 1) destroy(e);
+      }
     }
   },
 };
@@ -203,11 +312,30 @@ export const attackpress = {
  */
 export function menuStep(e, state) {
   if (state.myfight !== 0) return;
-  if (state.bmenuno !== 0) return; // an open submenu waits (labeled above)
   const p = state.party;
   const inp = state.menuEdges;
   if (!inp) return;
   const coord = state.bmenucoord0;
+
+  // ---- bmenuno 1: the FIGHT target column ----
+  // (Step_0's grouped 7/1/8/3/11/12 block, single-monster scope: the
+  // cursor pins to slot 0 — Jevil is the only monster — so up/down are
+  // no-ops and confirm locks charaction 1. Cancel returns to the row.)
+  if (state.bmenuno === 1) {
+    if (inp.cancel && e.onebuffer < 0) {
+      e.twobuffer = 1;
+      state.bmenuno = 0;
+      return;
+    }
+    if (inp.confirm && e.onebuffer < 0) {
+      e.onebuffer = 1;
+      p.chartarget && (p.chartarget[state.charturn] = 0);
+      p.charaction[state.charturn] = 1;
+      scrNexthero(state);
+    }
+    return;
+  }
+  if (state.bmenuno !== 0) return; // other submenus wait (labeled above)
 
   if (inp.left && e.lbuffer < 0) {
     coord[state.charturn] = coord[state.charturn] === 0 ? 4 : coord[state.charturn] - 1;

@@ -87,6 +87,30 @@ export const returnheart = {
 
 /** obj_joker, fight edition: the per-turn state machine around selectTurn. */
 export const jokerFight = {
+  // obj_joker Draw, state-3 hurt entry (Draw_0:1-56): one reaction per
+  // hurt push — body flail (visual), mhpratio gates, the laughnoise
+  // choose (PRESENTATION CHANNEL — counted by the recorder's oracle_rc3,
+  // so the sim must NOT draw it), and the defeat check at hp <= 0.
+  drawStep(e, state) {
+    if ((e.hurttimer ?? 0) > 0) {
+      e.hurttimer = 0;
+      const j = state.joker;
+      const mhpratio = j.hp / j.maxhp;
+      if (mhpratio <= 0.8 && (j.dancelv ?? 0) === 0) j.dancelv = 1;
+      if (mhpratio <= 0.4 && j.jturn < 17) j.dancelv = 3;
+      if (mhpratio <= 0.2 && j.jturn === 17) j.dancelv = 2;
+      if (mhpratio <= 0) {
+        // event_user(10) + flag[241] = 6 — the violence ending; the
+        // whole-fight claim window ends here.
+        state.jokerDefeated = true;
+      }
+    }
+    if (e.hurttimer !== undefined) {
+      e.hurttimer -= 1;
+      if (e.hurttimer < 0) e.hurttimer = 0;
+    }
+  },
+
   name: 'obj_joker',
   objIndex: 292, // dump object order
 

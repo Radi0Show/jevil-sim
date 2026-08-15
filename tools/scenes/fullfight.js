@@ -15,6 +15,7 @@
 import { spawn } from '../../sim/entity.js';
 import { gmlCreate, gmlRandom } from '../../sim/rng.js';
 import { battlecontroller, jokerFight } from '../../sim/fight.js';
+import { HEROES } from '../../sim/heroes.js';
 import { createJoker } from '../../sim/joker.js';
 import { freshParty } from '../../sim/damage.js';
 import { real, int } from '../../sim/trace.js';
@@ -31,7 +32,7 @@ export function maskToInput(m) {
   };
 }
 
-export function buildFullFightScene(state, { seed = 4242, txtDraws = null } = {}) {
+export function buildFullFightScene(state, { seed = 4242, txtDraws = null, mode = 'defend', at = 30 } = {}) {
   state.phase = 'fullfight';
   state.view = { x: 0, y: 0 };
   state.roomHeight = 480;
@@ -60,13 +61,29 @@ export function buildFullFightScene(state, { seed = 4242, txtDraws = null } = {}
   for (let k = 0; k < (globalThis.BOOT_TAIL ?? 0); k++) gmlRandom(state.gmlRng, 0);
   state.joker = createJoker();
 
-  spawn(state, battlecontroller);
-  spawn(state, jokerFight, { x: 500, y: 160 });
+  if (mode === 'fight') {
+    // FIGHT scenario: boosted AT (battleat = at + no items) and the
+    // immortal-party pin — the recorder's mode=1.
+    state.party.battleat = [at, at, at];
+    state.immortalParty = true;
+  } else {
+    state.party.battleat = [10, 10, 10]; // fresh at, unused by defend
+  }
+  state.monsters = [1, 0, 0];
 
+  spawn(state, battlecontroller);
+  // heroes carry the FIGHT swing (creation order puts them ahead of the
+  // attackpress in the drawStep walk — the runner's depth order).
+  for (const h of HEROES) spawn(state, h, { x: 80 + 10 * h.objIndex, y: 100 });
+  spawn(state, jokerFight, { x: 500, y: 160 });
+  state.fightMode = mode;
+
+  const barCols = mode === 'fight';
   state.traceCustom = {
     header: ['frame', 'soul_x', 'soul_y', 'hp1', 'hp2', 'hp3', 'inv', 'tension', 'tt',
       'jturn', 'jattack', 'myfight', 'mnfight', 'bmenuno', 'charturn',
       'ca0', 'ca1', 'ca2', 'jhp', 'nbul', 'gameover', 'mt', 'txt',
+      ...(barCols ? ['bf0', 'bc0', 'bf1', 'bc1', 'bf2', 'bc2', 'p0', 'p1', 'p2'] : []),
       'b0x', 'b0y', 'b1x', 'b1y', 'b2x', 'b2y', 'b3x', 'b3y', 'b4x', 'b4y', 'b5x', 'b5y'],
     row: (s) => {
       const p = s.party;
@@ -91,6 +108,19 @@ export function buildFullFightScene(state, { seed = 4242, txtDraws = null } = {}
         int(s.gameOver ? 1 : 0),
         int(s.lastMytarget ?? -1),
         int(s.txtDraws?.get(s.frame) ?? 0),
+        ...(barCols ? (() => {
+          const bd = s.lastBoltData;
+          const cells = [];
+          for (let k = 0; k < 3; k++) {
+            if (bd && bd.boltframe[k] !== undefined) cells.push(int(bd.boltframe[k]), int(bd.boltchar[k]));
+            else cells.push(int(-1), int(-1));
+          }
+          for (let k = 0; k < 3; k++) {
+            const hero = s.entities.find((h) => h.alive && h.slot === k && h.type.alarm?.[1]);
+            cells.push(int(hero && hero.points !== undefined ? hero.points : -1));
+          }
+          return cells;
+        })() : []),
         // six bullet slots in `with` order (newest first), blank when
         // absent — the recorder's iteration order.
         ...(() => {

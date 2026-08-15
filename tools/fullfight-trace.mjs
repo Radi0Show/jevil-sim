@@ -50,13 +50,14 @@ if (existsSync(txtFrom)) {
   }
 }
 
+const mode = opt('--mode', 'defend');
 const state = createState({ seed: 1, traceBulletSlots: 0 });
-buildFullFightScene(state, { seed: 4242, txtDraws });
+buildFullFightScene(state, { seed: 4242, txtDraws, mode });
 
 let rows = frames;
 for (let i = 0; i < frames; i++) {
   stepFrame(state, maskToInput(masks.get(i) ?? 0));
-  if (state.gameOver && rows === frames) rows = Math.min(frames, i + 30); // recorder keeps a 30-frame tail
+  if ((state.gameOver || state.jokerDefeated) && rows === frames) rows = Math.min(frames, i + 30); // recorder keeps a 30-frame tail
   if (i + 1 >= rows) break;
 }
 

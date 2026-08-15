@@ -24,13 +24,25 @@ import { homedir } from 'node:os';
 import { join } from 'node:path';
 import { execFileSync } from 'node:child_process';
 
-const ORACLE = join(homedir(), 'jevil-research', 'traces', 'fullfight-defend.csv');
-const INPUTS = join(homedir(), 'jevil-research', 'traces', 'fullfight-defend-inputs.txt');
+const PAIRS = [
+  ['fullfight-defend', 'defend'],
+  ['fullfight-fight', 'fight'],
+];
 
-if (!existsSync(ORACLE)) {
-  console.log(`MISSING ${ORACLE} — record with jevil-research/tools/record-fullfight.mjs`);
-  process.exit(1);
+let anyFail = false;
+for (const [base, mode] of PAIRS) {
+  const ORACLE = join(homedir(), 'jevil-research', 'traces', `${base}.csv`);
+  const INPUTS = join(homedir(), 'jevil-research', 'traces', `${base}-inputs.txt`);
+  if (!existsSync(ORACLE)) {
+    console.log(`MISSING ${ORACLE}`);
+    anyFail = true;
+    continue;
+  }
+  runPair(base, mode, ORACLE, INPUTS);
 }
+process.exit(anyFail ? 1 : 0);
+
+function runPair(base, mode, ORACLE, INPUTS) {
 
 const oracleLines = readFileSync(ORACLE, 'utf8').replace(/\r/g, '').trim().split('\n');
 const hdr = oracleLines[0].split(',');
@@ -39,20 +51,25 @@ const col = (n) => hdr.indexOf(n);
 const simCsv = execFileSync(process.execPath, [
   join(import.meta.dirname, 'fullfight-trace.mjs'),
   '--inputs', INPUTS,
+  '--txtfrom', ORACLE,
+  '--mode', mode,
   '--frames', String(oracleLines.length + 10),
 ], { encoding: 'utf8', maxBuffer: 64 * 1024 * 1024 });
 const simLines = simCsv.trim().split('\n');
 
 if (simLines[0] !== oracleLines[0]) {
-  console.log(`HEADER MISMATCH\n  oracle: ${oracleLines[0]}\n  engine: ${simLines[0]}`);
-  process.exit(1);
+  console.log(`HEADER MISMATCH (${base})\n  oracle: ${oracleLines[0]}\n  engine: ${simLines[0]}`);
+  anyFail = true;
+  return;
 }
 
-// claim window: to the wipe (inclusive of the gameover row).
+// claim window: the wipe (gameover) or the kill (jhp <= 0), inclusive.
 const goCol = col('gameover');
+const jhpCol = col('jhp');
 let rows = Math.min(oracleLines.length, simLines.length) - 1;
 for (let i = 1; i <= rows; i++) {
-  if (oracleLines[i].split(',')[goCol] === '1') { rows = i; break; }
+  const rc = oracleLines[i].split(',');
+  if (rc[goCol] === '1' || parseFloat(rc[jhpCol]) <= 0) { rows = i; break; }
 }
 
 // causal column groups
@@ -64,9 +81,10 @@ const GROUPS = [
   ['tension', ['tension', 'tt']], // envelope, not exact
   ['jevil', ['jhp']],
   ['bullets', ['nbul']], // +/-2 residue
+  ['bar', ['bf0', 'bc0', 'bf1', 'bc1', 'bf2', 'bc2', 'p0', 'p1', 'p2']],
   ['bullet-slots', ['b0x', 'b0y', 'b1x', 'b1y', 'b2x', 'b2y', 'b3x', 'b3y', 'b4x', 'b4y', 'b5x', 'b5y']],
   ['ending', ['gameover']],
-];
+].map(([n, cs]) => [n, cs.filter((c) => hdr.includes(c))]).filter(([, cs]) => cs.length);
 
 const nbulCol = col('nbul');
 const tenCol = col('tension');
@@ -143,11 +161,12 @@ for (const [name, cols] of GROUPS) {
 
 findings.sort((a, z) => a.frame - z.frame);
 if (findings.length === 0) {
-  console.log(`PASS  fullfight-defend: ${rows} rows to the wipe` +
-    (skipAwards ? ` (${skipAwards} death-frame G-skip award(s) absorbed)` : ''));
-  process.exit(0);
+  console.log(`PASS  ${base}: ${rows} rows to the end` +
+    (skipAwards ? ` (${skipAwards} one-sided graze step(s) absorbed)` : ''));
+  return;
 }
-console.log(`FAIL  fullfight-defend — first divergence per system, earliest first:`);
+anyFail = true;
+console.log(`FAIL  ${base} — first divergence per system, earliest first:`);
 for (const f of findings) {
   console.log(`  [${f.name}] frame ${f.frame} (${f.why})`);
   for (let k = Math.max(1, f.frame + 1 - context); k <= Math.min(rows, f.frame + 1 + context); k++) {
@@ -155,4 +174,4 @@ for (const f of findings) {
     console.log(`      engine: ${simLines[k]}`);
   }
 }
-process.exit(1);
+}

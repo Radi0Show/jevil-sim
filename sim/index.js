@@ -282,6 +282,16 @@ export function stepFrame(state, input) {
   reap(state);
 
   state.trace.push(traceRow(state));
+
+  // IMMORTAL-PARTY scenario (the FIGHT-path whole-fight harness): hp is
+  // restored to max after the row is written, mirroring the recorder —
+  // hit frames stay visible, the wipe cannot happen.
+  if (state.immortalParty) {
+    const p = state.party;
+    p.hp[1] = p.maxhp[1];
+    p.hp[2] = p.maxhp[2];
+    p.hp[3] = p.maxhp[3];
+  }
   state.inputPrev = state.input;
   state.frame += 1;
 
